@@ -1,0 +1,83 @@
+import { FastifyPluginAsync } from 'fastify'
+import { idSchema } from '@src/schema'
+import { Json } from '@blackglory/types'
+
+export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
+  server.get(
+    '/mq-with-json-schema'
+  , {
+      schema: {
+        response: {
+          200: {
+            type: 'array'
+          , items: { type: 'string' }
+          }
+        }
+      }
+    }
+  , async (req, reply) => {
+      const result = await Core.JsonSchema.getAllIds()
+      reply.send(result)
+    }
+  )
+
+  server.get<{ Params: { id: string }}>(
+    '/mq/:id/json-schema'
+  , {
+      schema: {
+        params: { id: idSchema }
+      , response: {
+          200: { type: 'string' }
+        , 404: { type: 'null' }
+        }
+      }
+    }
+  , async (req, reply) => {
+      const id = req.params.id
+      const result = await Core.JsonSchema.get(id)
+      if (result) {
+        reply.header('content-type', 'application/json').send(result)
+      } else {
+        reply.status(404).send()
+      }
+    }
+  )
+
+  server.put<{
+    Params: { id: string }
+    Body: Json
+  }>(
+    '/mq/:id/json-schema'
+  , {
+      schema: {
+        params: { id: idSchema }
+      , response: {
+          204: { type: 'null' }
+        }
+      }
+    }
+  , async (req, reply) => {
+      const id = req.params.id
+      const schema = req.body
+      await Core.JsonSchema.set(id, schema)
+      reply.status(204).send()
+    }
+  )
+
+  server.delete<{ Params: { id: string }}>(
+    '/mq/:id/json-schema'
+  , {
+      schema: {
+        params: { id: idSchema }
+      , response: {
+          204: { type: 'null' }
+        }
+      }
+    }
+  , async (req, reply) => {
+      const id = req.params.id
+      await Core.JsonSchema.remove(id)
+      reply.status(204).send()
+    }
+  )
+}

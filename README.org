@@ -1,0 +1,912 @@
+* MQ
+一个受[[https://github.com/BlackGlory/chan][Chan]]启发的Web友好的自托管ad-hoc微服务,
+提供基于 HTTP 的持久化消息队列,
+带有基于token和名单的访问控制策略,
+支持JSON Schema.
+
+** Quickstart
+#+BEGIN_SRC sh
+docker run --detach --log 8080:8080 blackglory/mq
+
+curl http://localhost:8080/mq/queue-id/messages/message-id \
+#+END_SRC
+
+** Install
+*** 从源代码运行
+可以使用环境变量 =MQ_HOST= 和 =MQ_PORT= 决定服务器监听的地址和端口, 默认值为localhost和8080.
+
+#+BEGIN_SRC sh
+git clone https://github.com/BlackGlory/mq
+cd log
+yarn install
+yarn build
+yarn --silent start
+#+END_SRC
+
+*** Docker
+#+BEGIN_SRC sh
+docker run \
+  --detach \
+  --publish 8080:8080 \
+  blackglory/mq
+#+END_SRC
+
+**** 从源代码构建
+#+BEGIN_SRC sh
+git clone https://github.com/BlackGlory/mq
+cd mq
+yarn install
+yarn docker:build
+#+END_SRC
+
+**** Recipes
+***** 公开服务器
+****** docker-compose.yml
+#+BEGIN_SRC yaml
+version: '3.8'
+
+services:
+  mq:
+    image: 'blackglory/mq'
+    restart: always
+    volumes:
+      - 'mq-data:/data'
+    ports:
+      - '8080:8080'
+
+volumes:
+  mq-data:
+#+END_SRC
+
+***** 私人服务器
+****** docker-compose.yml
+#+BEGIN_SRC yaml
+version: '3.8'
+
+services:
+  mq:
+    image: 'blackglory/mq'
+    restart: always
+    environment:
+      - MQ_ADMIN_PASSWORD=password
+      - MQ_TOKEN_BASED_ACCESS_CONTROL=true
+      - MQ_PUBLISH_TOKEN_REQUIRED=true
+      - MQ_CONSUME_TOKEN_REQUIRED=true
+      - MQ_DELETE_TOKEN_REQUIRED=true
+    volumes:
+      - 'mq-data:/data'
+    ports:
+      - '8080:8080'
+
+volumes:
+  mq-data:
+#+END_SRC
+
+** API
+*** Public
+**** producer
+***** enqueue
+****** draft
+=POST /mq/<id>/messages=
+
+申请往特定消息队列放入消息, id用于标识消息队列.
+该动作创建一个drafting状态的message, 返回此message的id.
+
+需要按以下格式发送Payload:
+#+BEGIN_SRC ts
+{
+  priority: number | null // 数字越小, 优先级越高, 0是最高优先级, null是最低优先级.
+}
+#+END_SRC
+
+一个处于drafting状态的消息会在设定的超时时间后被删除, 因此需要生产者调用[[set]].
+
+****** <<set>>
+=PUT /mq/<id>/messages/<message-id>=
+
+确认入列, 当消息的状态是drafting时, 转为waiting状态.
+若消息的状态是waiting, 可以再次调用此操作对消息内容进行更新.
+
+**** consumer
+***** dequeue
+****** order
+=GET /mq/<id>/messages=
+
+从特定消息队列取出消息, 优先级最高且最早的消息会先被取出.
+返回message id.
+如果没有可用的消息, 则会阻塞直到有可用的消息返回.
+
+该操作会使消息从waiting状态转为ordered状态.
+一个处于ordered状态的消息会在设定的超时时间后以waiting状态在队列末端重新入列,
+因此需要消费者调用[[get]].
+
+****** <<get>>
+=GET /mq/<mq-id>/messages/<message-id>=
+
+获取特定队列的指定消息, 当消息的状态为ordered时, 消息会从ordered状态转为active状态.
+一个处于active状态的消息会在设定的超时时间后以waiting状态在队列末端重新入列,
+因此需要消费者调用[[complete]]或[[abandon]].
+
+此操作是幂等的, 可以在消息完成前反复使用.
+
+***** <<complete>>
+=POST /mq/<mq-id>/messages/<message-id>=
+
+仅当消息处于active状态时可用, 表示消息被消耗完毕, 消息作为已完成的消息纳入统计.
+
+***** <<abandon>>
+=DELETE /mq/<mq-id>/messages/<message-id>=
+
+废弃此消息, 消息将在不纳入统计的情况下被删除.
+
+**** clear
+=DELETE /mq/<id>=
+
+清空队列内的所有消息和统计信息.
+
+**** stats
+=GET /mq/<id>/stats=
+
+获取统计信息, 查看队列中有多少消息, 已经消耗了多少消息.
+
+#+BEGIN_SRC ts
+{
+  drafting: number
+  waiting: number
+  ordered: number
+  active: number
+  completed: number
+}
+#+END_SRC
+
+**** 统计信息
+=GET /stats=
+
+输出JSON:
+#+BEGIN_SRC ts
+{
+  memoryUsage: NodeJS.MemoryUsage
+  cpuUsage: NodeJS.CpuUsage
+  resourceUsage: NodeJS.ResourceUsage
+}
+#+END_SRC
+
+***** Example
+****** curl
+#+BEGIN_SRC sh
+curl 'http://localhost:8080/stats'
+#+END_SRC
+
+****** JavaScript
+#+BEGIN_SRC js
+await fetch('http://localhost:8080/stats').then(res => res.json())
+#+END_SRC
+
+*** Private
+**** 队列配置(configurations)
+#+BEGIN_SRC ts
+{
+  unique: boolean | null // 队列是否对消息自动去重, null表示继承全局设置
+  draftingTimeout: number | null // 允许处于draft状态的毫秒数, null表示继承全局设置
+  orderedTimeout: number | null // 允许处于ordered状态的毫秒数, null表示继承全局设置
+  activeTimeout: number | null // 允许处于active状态的毫秒数, null表示继承全局设置
+  concurrency: number | null // 允许派发的并发任务数, null表示继承全局设置
+  throttle: {
+    duration: number // 以毫秒为单位的时间周期, 由队列的任务第一次进入ordered状态时开始计算, 在指定毫秒数后进入下一周期
+    limit: number // 在时间周期内允许的最大任务数
+  } | null // null表示继承全局设置
+}
+#+END_SRC
+
+可用以下环境变量作为全局设置:
+=MQ_UNIQUE=, 默认为 =false=
+=MQ_DRAFTING_TIMEOUT=, 默认为 =600=.
+=MQ_ORDERED_TIMEOUT=, 默认为 =600=.
+=MQ_ACTIVE_TIMEOUT=, 默认为无限.
+=MQ_THROTTLE=, 需满足JSON语法, 默认为无限制.
+
+***** 获取所有具有配置的MQ id
+=GET /api/mq-with-configurations=
+
+返回由JSON表示的字符串数组 =string[]=.
+
+****** Example
+******* curl
+#+BEGIN_SRC sh
+curl \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq-with-configurations"
+#+END_SRC
+
+******* fetch
+#+BEGIN_SRC js
+await fetch('http://localhost:8080/api/mq-with-configurations', {
+  headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+}).then(res => res.json())
+#+END_SRC
+
+***** 获取特定队列的配置
+=GET /api/mq/<id>/configurations=
+
+返回JSON:
+#+BEGIN_SRC ts
+{
+  unique: boolean | null
+  draftingTimeout: number | null
+  orderedTimeout: number | null
+  activeTimeout: number | null
+  concurrency: number | null
+  throttle: {
+    duration: number // 时间间隔
+    limit: number // 在时间间隔内允许的最大任务数
+  } | null
+}
+#+END_SRC
+
+****** Example
+******* curl
+#+BEGIN_SRC sh
+curl \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq/$id/configurations"
+#+END_SRC
+
+******* fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/configurations`, {
+  headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+}).then(res => res.json())
+#+END_SRC
+
+***** 设置配置
+=PUT /api/mq/<mq-id>/configurations/unique=
+=PUT /api/mq/<mq-id>/configurations/drafting-timeout=
+=PUT /api/mq/<mq-id>/configurations/ordered-timeout=
+=PUT /api/mq/<mq-id>/configurations/active-timeout=
+=PUT /api/mq/<mq-id>/configurations/concurrency=
+=PUT /api/mq/<mq-id>/configurations/throttle=
+
+Payload必须为对应的null以外的JSON值.
+
+****** Example
+******* curl
+#+BEGIN_SRC sh
+curl \
+  --request PUT \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  --header "Content-Type: application/json" \
+  --data "$UNIQUE" \
+  "http://localhost:8080/api/mq/$id/configurations/unique"
+#+END_SRC
+
+******* fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/configurations/unique`, {
+  method: 'PUT'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  , 'Content-Type': 'application/json'
+  }
+, body: JSON.stringify(unique)
+})
+#+END_SRC
+
+***** 移除配置
+=DELETE /api/mq/<mq-id>/configurations/unique=
+=DELETE /api/mq/<mq-id>/configurations/drafting-timeout=
+=DELETE /api/mq/<mq-id>/configurations/ordered-timeout=
+=DELETE /api/mq/<mq-id>/configurations/active-timeout=
+=DELETE /api/mq/<mq-id>/configurations/concurrency=
+=DELETE /api/mq/<mq-id>/configurations/throttle=
+
+****** Example
+******* curl
+#+BEGIN_SRC sh
+curl \
+  --request DELETE \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq/$id/configurations/unique"
+#+END_SRC
+
+******* fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/$id/configurations/unique`, {
+  method: 'DELETE'
+})
+#+END_SRC
+
+**** JSON Schema验证
+通过设置环境变量 =MQ_JSON_VALIDATION=true= 可开启set的JSON Schema验证功能.
+任何带有 =Content-Type: application/json= 的请求都会被验证,
+即使没有设置JSON Schema, 也会拒绝不合法的JSON文本.
+JSON验证仅用于验证, 不会重新序列化消息, 因此follow得到的payload会与write发送的消息相同.
+
+在开启验证功能的情况下, 通过环境变量 =MQ_DEFAULT_JSON_SCHEMA= 可设置默认的JSON Schema,
+该验证仅对带有 =Content-Type: application/json= 的请求有效.
+
+通过设置环境变量 =MQ_JSON_PAYLOAD_ONLY=true=,
+可以强制write只接受带有 =Content-Type: application/json= 的请求.
+此设置在未开启JSON Schema验证的情况下也有效, 但在这种情况下服务器能够接受不合法的JSON.
+
+***** 为mq单独设置JSON Schema
+可单独为mq设置JSON Schema, 被设置的mq将仅接受 =Content-Type: application/json= 请求.
+
+****** 获取所有具有JSON Schema的mqId
+=GET /api/mq-with-json-schema=
+
+获取所有具有JSON Schema的mqId, 返回由JSON表示的字符串数组 =string[]=.
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq-with-json-schema"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch('http://localhost:8080/api/mq-with-json-schema', {
+  headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+}).then(res => res.json())
+#+END_SRC
+
+****** 获取JSON Schema
+=GET /api/mq/<id>/json-schema=
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq/$id/json-schema"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/json-schema`, {
+  headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+}).then(res => res.json())
+#+END_SRC
+
+****** 设置JSON Schema
+=PUT /api/mq/<id>/json-schema=
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --request PUT \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  --header "Content-Type: application/json" \
+  --data "$JSON_SCHEMA" \
+  "http://localhost:8080/api/mq/$id/jsonschema"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/json-schema`, {
+  method: 'PUT'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+    'Content-Type': 'application/json'
+  }
+, body: JSON.stringify(jsonSchema)
+})
+#+END_SRC
+
+****** 移除JSON Schema
+=DELETE /api/mq/<id>/json-schema=
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --request DELETE \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq/$id/json-schema"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/json-schema`, {
+  method: 'DELETE'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+#+END_SRC
+
+**** 访问控制
+mq提供两种可以同时启用的访问控制策略.
+
+所有访问控制API都使用基于口令的Bearer Token Authentication.
+口令需通过环境变量 =MQ_ADMIN_PASSWORD= 进行设置.
+
+访问控制规则是通过[[https://www.sqlite.org/wal.html][WAL模式]]的SQLite3持久化的, 开启访问控制后,
+服务器的吞吐量和响应速度会受到硬盘性能的影响.
+
+已经打开的连接不会受到新的访问控制规则的影响.
+
+***** 基于名单的访问控制
+通过设置环境变量 =MQ_LIST_BASED_ACCESS_CONTROL= 开启基于名单的访问控制:
+- =whitelist=
+  启用基于mq白名单的访问控制, 只有在名单内的mq允许被访问.
+- =blacklist=
+  启用基于mq黑名单的访问控制, 只有在名单外的mq允许被访问.
+
+****** 黑名单
+******* 获取黑名单
+=GET /api/blacklist=
+
+获取位于黑名单中的所有mqId, 返回JSON表示的字符串数组 =string[]=.
+
+******** Example
+********* curl
+#+BEGIN_SRC sh
+curl \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/blacklist"
+#+END_SRC
+
+********* fetch
+#+BEGIN_SRC js
+await fetch('http://localhost:8080/api/blacklist', {
+  headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+}).then(res => res.json())
+#+END_SRC
+
+******* 添加黑名单
+=PUT /api/blacklist/<id>=
+
+将特定mq加入黑名单.
+
+******** Example
+********* curl
+#+BEGIN_SRC sh
+curl \
+  --request PUT \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/blacklist/$id"
+#+END_SRC
+
+********* fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/blacklist/${id}`, {
+  method: 'PUT'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+#+END_SRC
+
+******* 移除黑名单
+=DELETE /api/blacklist/<id>=
+
+将特定mq从黑名单中移除.
+
+******** Example
+********* curl
+#+BEGIN_SRC sh
+curl \
+  --request DELETE \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/blacklist/$id"
+#+END_SRC
+
+********* fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/blacklist/${id}`, {
+  method: 'DELETE'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+#+END_SRC
+
+****** 白名单
+******* 获取白名单
+=GET /api/whitelist=
+
+获取位于黑名单中的所有mqId, 返回JSON表示的字符串数组 =string[]=.
+
+******** Example
+********* curl
+#+BEGIN_SRC sh
+curl \
+  --header "Authorization: Bearer $ADMIM_PASSWORD" \
+  "http://localhost:8080/api/whitelist"
+#+END_SRC
+
+********* fetch
+#+BEGIN_SRC js
+await fetch('http://localhost:8080/api/whitelist', {
+  headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+}).then(res => res.json())
+#+END_SRC
+
+******* 添加白名单
+=PUT /api/whitelist/<id>=
+
+将特定mq加入白名单.
+
+******** Example
+********* curl
+#+BEGIN_SRC sh
+curl \
+  --request PUT \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/whitelist/$id"
+#+END_SRC
+
+********* fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/whitelist/${id}`, {
+  method: 'PUT'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+#+END_SRC
+
+******* 移除白名单
+=DELETE /api/whitelist/<id>=
+
+将特定mq从白名单中移除.
+
+******** Example
+********* curl
+#+BEGIN_SRC sh
+curl \
+  --request DELETE \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/whitelist/$id"
+#+END_SRC
+
+********* fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/whitelist/${id}`, {
+  method: 'DELETE'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+#+END_SRC
+
+***** 基于token的访问控制
+对token的要求: =^[a-zA-Z0-9\.\-_]{1,256}$=
+
+通过设置环境变量 =MQ_TOKEN_BASED_ACCESS_CONTROL=true= 开启基于token的访问控制.
+
+基于token的访问控制将根据消息队列的token access policy决定其访问规则.
+可通过环境变量 =MQ_PRODUCE_TOKEN_REQUIRED=, =MQ_CONSUME_TOKEN_REQUIRED=, =MQ_CLEAR_TOKEN_REQUIRED= 设置相关默认值,
+未设置情况下为 =false=.
+
+一个消息队列可以有多个token, 每个token可以单独设置produce和consume权限, 不同消息队列的token不共用.
+
+基于token的访问控制作出了以下假设
+- token的传输过程是安全的
+- token难以被猜测
+- token的意外泄露可以被迅速处理
+
+****** 获取所有具有token策略的频道id
+=GET /api/mq-with-token-policies=
+
+获取所有具有token策略的频道id, 返回由JSON表示的字符串数组 =string[]=.
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq-with-token-policies"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch('http://localhost:8080/api/mq-with-token-policies')
+#+END_SRC
+
+****** 获取特定频道的token策略
+=GET /api/mq/<id>/token-policies=
+
+返回JSON:
+#+BEGIN_SRC ts
+{
+  produceTokenRequired: boolean | null
+  consumeTokenRequired: boolean | null
+  clearTokenRequired: boolean | null
+}
+#+END_SRC
+=null= 代表沿用相关默认值.
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq/$id/token-policies"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fethc(`http://localhost:8080/api/mq/${id}/token-policies`, {
+  headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+}).then(res => res.json())
+#+END_SRC
+
+****** 设置token策略
+=PUT /api/mq/<id>/token-policies/produce-token-required=
+=PUT /api/mq/<id>/token-policies/consume-token-required=
+=PUT /api/mq/<id>/token-policies/clear-token-required=
+
+Payload必须是一个布尔值.
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --request PUT \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  --header "Content-Type: application/json" \
+  --data "$PRODUCE_TOKEN_REQUIRED" \
+  "http://localhost:8080/api/mq/$id/token-policies/produce-token-required"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/token-policies/produce-token-required`, {
+  method: 'PUT'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  , 'Content-Type': 'application/json'
+  }
+, body: JSON.stringify(produceTokenRequired)
+})
+#+END_SRC
+
+****** 移除token策略
+=DELETE /api/mq/<id>/token-policies/produce-token-required=
+=DELETE /api/mq/<id>/token-policies/consume-token-required=
+=DELETE /api/mq/<id>/token-policies/clear-token-required=
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --request DELETE \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq/$id/token-policies/produce-token-required"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/token-policies/produce-token-required`, {
+  method: 'DELETE'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+#+END_SRC
+
+****** 获取所有具有token的mqId
+=GET /api/mq-with-tokens=
+
+获取所有具有token的mqId, 返回由JSON表示的字符串数组 =string[]=
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq-with-tokens"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq-with-tokens`, {
+  headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+}).then(res => res.json())
+#+END_SRC
+
+****** 获取特定mq的所有token信息
+=GET /api/mq/<id>/tokens=
+
+获取特定mq的所有token信息, 返回JSON表示的token信息数组:
+#+BEGIN_SRC ts
+Array<{
+  token: string
+  enquque: boolean
+  consume: boolean
+  clear: boolean
+}>
+#+END_SRC
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq/$id/tokens"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/tokens`, {
+  headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+}).then(res => res.json())
+#+END_SRC
+
+****** 为特定mq的token设置produce权限
+=PUT /api/mq/<id>/tokens/<token>/produce=
+
+添加/更新token, 为token设置produce权限.
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --request PUT \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq/$id/tokens/$token/log"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/tokens/$token/log`, {
+  method: 'PUT'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+#+END_SRC
+
+****** 取消特定mq的token的produce权限
+=DELETE /api/mq/<id>/tokens/<token>/produce=
+
+取消token的consume权限.
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --request DELETE \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq/$id/tokens/$token/produce"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/produce`, {
+  method: 'DELETE'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+#+END_SRC
+
+****** 为特定mq的token设置consume权限
+=PUT /api/mq/<id>/tokens/<token>/consume=
+
+添加/更新token, 为token设置consume权限.
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --request PUT \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq/$id/tokens/$token/consume"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/tokens/$token/consume`, {
+  method: 'PUT'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+#+END_SRC
+
+****** 取消特定mq的token的consume权限
+=DELETE /api/mq/<id>/tokens/<token>/consume=
+
+取消token的consume权限.
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --request DELETE \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq/$id/tokens/$token/consume"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/consume`, {
+  method: 'DELETE'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+#+END_SRC
+
+****** 为特定mq的token设置clear权限
+=PUT /api/mq/<id>/tokens/<token>/clear=
+
+添加/更新token, 为token设置clear权限.
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --request PUT \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq/$id/tokens/$token/clear"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/tokens/$token/clear`, {
+  method: 'PUT'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+#+END_SRC
+
+****** 取消特定mq的token的clear权限
+=DELETE /api/mq/<id>/tokens/<token>/clear=
+
+取消token的clear权限.
+
+******* Example
+******** curl
+#+BEGIN_SRC sh
+curl \
+  --request DELETE \
+  --header "Authorization: Bearer $ADMIN_PASSWORD" \
+  "http://localhost:8080/api/mq/$id/tokens/$token/clear"
+#+END_SRC
+
+******** fetch
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/clear`, {
+  method: 'DELETE'
+, headers: {
+    'Authorization': `Bearer ${adminPassword}`
+  }
+})
+#+END_SRC
+
+** HTTP/2
+MQ支持HTTP/2, 以多路复用反向代理时的连接, 可通过设置环境变量 =MQ_HTTP2=true= 开启.
+
+此HTTP/2支持不提供从HTTP/1.1自动升级的功能, 亦不提供HTTPS.
+因此, 在本地curl里进行测试时, 需要开启 =--http2-prior-knowledge= 选项.
+
+** 限制Payload大小
+设置环境变量 =MQ_PAYLOAD_LIMIT= 可限制服务接受的单个请求的Payload字节数, 默认值为1048576(1MB).
+
+设置环境变量 =MQ_SET_PAYLOAD_LIMIT= 可限制set接受的单个请求的Payload字节数,
+默认值继承自 =MQ_PAYLOAD_LIMIT=.

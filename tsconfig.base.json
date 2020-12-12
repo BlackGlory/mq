@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2019"
+  , "module": "CommonJS"
+  , "strict": true
+  , "baseUrl": "."
+  , "paths": {
+      "@src/*": ["src/*"]
+    , "@dao": ["src/dao/index"]
+    , "@dao/*": ["src/dao/*"]
+    , "@core": ["src/core/index"]
+    , "@core/*": ["src/core/*"]
+    , "@env": ["src/env"]
+    , "@test/*": ["__tests__/*"]
+    , "@services/*": ["src/services/*"]
+    }
+  }
+}

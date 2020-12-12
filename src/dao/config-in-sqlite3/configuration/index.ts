@@ -1,0 +1,30 @@
+import * as Configuration from './configuration'
+
+export const ConfigurationDAO: IConfigurationDAO = {
+  getAllIdsWithConfigurations: asyncify(Configuration.getAllIdsWithConfigurations)
+, getConfigurations: asyncify(Configuration.getConfigurations)
+
+, setUnique: asyncify(Configuration.setUnique)
+, unsetUnique: asyncify(Configuration.unsetUnique)
+
+, setDraftingTimeout: asyncify(Configuration.setDraftingTimeout)
+, unsetDraftingTimeout: asyncify(Configuration.unsetDraftingTimeout)
+
+, setOrderedTimeout: asyncify(Configuration.setOrderedTimeout)
+, unsetOrderedTimeout: asyncify(Configuration.unsetOrderedTimeout)
+
+, setActiveTimeout: asyncify(Configuration.setActiveTimeout)
+, unsetActiveTimeout: asyncify(Configuration.unsetActiveTimeout)
+
+, setConcurrency: asyncify(Configuration.setConcurrency)
+, unsetConcurrency: asyncify(Configuration.unsetConcurrency)
+
+, setThrottle: asyncify(Configuration.setThrottle)
+, unsetThrottle: asyncify(Configuration.unsetThrottle)
+}
+
+function asyncify<T extends any[], U>(fn: (...args: T) => U): (...args: T) => Promise<U> {
+  return async function (this: unknown, ...args: T): Promise<U> {
+    return Reflect.apply(fn, this, args)
+  }
+}
