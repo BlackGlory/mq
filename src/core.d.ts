@@ -1,3 +1,15 @@
+interface IMessage {
+  type: string
+  payload: string
+}
+
+interface IStats {
+  drafting: number
+  waiting: number
+  ordered: number
+  active: number
+  completed: number
+}
 interface ICore {
   isAdmin(password: string): boolean
 

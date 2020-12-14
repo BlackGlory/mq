@@ -1,16 +1,3 @@
-interface IMessage {
-  type: string
-  payload: string
-}
-
-interface IStats {
-  drafting: number
-  waiting: number
-  ordered: number
-  active: number
-  completed: number
-}
-
 interface IMQDAO {
   draftMessage(queueId: string, messageId: string, priority?: number): Promise<void>
   setMessage(queueId: string, messageId: string, type: string, payload: string): Promise<void>
