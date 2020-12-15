@@ -33,7 +33,6 @@ async function checkProducePermission(id: string, token?: string) {
     if (!token) throw new Unauthorized()
     if (!await AccessControlDAO.matchProduceToken({ token, id })) throw new Unauthorized()
   }
-
 }
 
 async function checkConsumePermission(id: string, token?: string) {
