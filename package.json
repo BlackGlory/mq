@@ -68,6 +68,7 @@
     "@blackglory/better-sqlite3-migrations": "^0.1.1",
     "@blackglory/errors": "^0.1.2",
     "@blackglory/types": "^0.1.9",
+    "abort-controller": "^3.0.0",
     "ajv": "^7.0.1",
     "app-root-path": "^3.0.0",
     "better-sqlite3": "^7.1.1",

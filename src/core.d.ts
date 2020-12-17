@@ -30,6 +30,7 @@ interface ICore {
   }
 
   MQ: {
+    autoMaintain(abortSignal: AbortSignal): void
     draft(queueId: string, priority?: number): Promise<string>
 
     /**

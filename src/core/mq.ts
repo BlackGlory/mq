@@ -5,12 +5,14 @@ import { CustomError } from '@blackglory/errors'
 import 'core-js/features/queue-microtask'
 import { delay } from 'extra-promise'
 
-;(async function loop() {
-  while (true) {
-    await maintainAllQueues()
-    await delay(1_000)
-  }
-})
+export function autoMaintain(abortSignal: AbortSignal): void {
+  ;(async () => {
+    while (!abortSignal.aborted) {
+      await maintainAllQueues()
+      await delay(1_000)
+    }
+  })
+}
 
 export async function draft(queueId: string, priority?: number): Promise<string> {
   await maintain(queueId)
