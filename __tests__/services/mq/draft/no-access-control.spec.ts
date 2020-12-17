@@ -13,7 +13,7 @@ beforeEach(async () => {
 })
 
 describe('no access control', () => {
-  it.skip('204', async () => {
+  it('204', async () => {
     const mqId = 'mq-id'
     const payload = { priority: null }
     const server = await buildServer()
