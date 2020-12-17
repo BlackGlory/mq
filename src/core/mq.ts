@@ -112,17 +112,17 @@ async function maintain(queueId: string): Promise<void> {
 
   const draftingTimeout = configurations.draftingTimeout ?? DRAFTING_TIMEOUT()
   if (draftingTimeout !== Infinity) {
-    await MQDAO.clearOutdatedDraftingMessages(queueId, timestamp - draftingTimeout)
+    await MQDAO.fallbackOutdatedDraftingMessages(queueId, timestamp - draftingTimeout)
   }
 
   const orderedTimeout = configurations.orderedTimeout ?? ORDERED_TIMEOUT()
   if (orderedTimeout !== Infinity) {
-    await MQDAO.clearOutdatedOrderedMessages(queueId, timestamp - orderedTimeout)
+    await MQDAO.fallbackOutdatedOrderedMessages(queueId, timestamp - orderedTimeout)
   }
 
   const activeTimeout = configurations.activeTimeout ?? ACTIVE_TIMEOUT()
   if (activeTimeout !== Infinity) {
-    await MQDAO.clearOutdatedActiveMessages(queueId, timestamp - activeTimeout)
+    await MQDAO.fallbackOutdatedActiveMessages(queueId, timestamp - activeTimeout)
   }
 }
 

@@ -7,10 +7,10 @@ import { abandonMessage } from './abandon-message'
 import { stats } from './stats'
 import { clear } from './clear'
 import {
-  clearOutdatedDraftingMessages
-, clearOutdatedOrderedMessages
-, clearOutdatedActiveMessages
-} from './clear-outdated-messages'
+  fallbackOutdatedDraftingMessages
+, fallbackOutdatedOrderedMessages
+, fallbackOutdatedActiveMessages
+} from './fallback-outdated-messages'
 import { BadMessageState, NotFound } from './error'
 
 export const MQDAO: IMQDAO = {
@@ -24,9 +24,9 @@ export const MQDAO: IMQDAO = {
 , clear: asyncify(clear)
 , stats: asyncify(stats)
 
-, clearOutdatedDraftingMessages: asyncify(clearOutdatedDraftingMessages)
-, clearOutdatedOrderedMessages: asyncify(clearOutdatedOrderedMessages)
-, clearOutdatedActiveMessages: asyncify(clearOutdatedActiveMessages)
+, fallbackOutdatedDraftingMessages: asyncify(fallbackOutdatedDraftingMessages)
+, fallbackOutdatedOrderedMessages: asyncify(fallbackOutdatedOrderedMessages)
+, fallbackOutdatedActiveMessages: asyncify(fallbackOutdatedActiveMessages)
 
 , NotFound
 , BadMessageState

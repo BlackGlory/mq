@@ -1,18 +1,25 @@
-import * as DAO from '@dao/data-in-sqlite3/mq/clear-outdated-messages'
+import * as DAO from '@dao/data-in-sqlite3/mq/fallback-outdated-messages'
 import { getDatabase } from '@dao/data-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
-import { setRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
+import { setRawMessage, setRawStats, getRawStats, hasRawMessage, getRawMessage } from './utils'
 import 'jest-extended'
+
+const timestamp = Date.now()
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
+jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
+  getTimestamp() {
+    return timestamp
+  }
+}))
 
 beforeEach(async () => {
   resetEnvironment()
   await resetDatabases()
 })
 
-describe('clearOutdatedDraftingMessages(queueId: string, timestamp: number): void', () => {
+describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): void', () => {
   it('return undefined', async () => {
     const db = await getDatabase()
     const queueId = 'queue-id'
@@ -45,7 +52,7 @@ describe('clearOutdatedDraftingMessages(queueId: string, timestamp: number): voi
     , completed: 0
     })
 
-    const result = DAO.clearOutdatedDraftingMessages(queueId, 1)
+    const result = DAO.fallbackOutdatedDraftingMessages(queueId, 1)
     const message1Exists = hasRawMessage(db, queueId, '1')
     const message2Exists = hasRawMessage(db, queueId, '2')
     const stats = getRawStats(db, queueId)
@@ -63,7 +70,7 @@ describe('clearOutdatedDraftingMessages(queueId: string, timestamp: number): voi
   })
 })
 
-describe('clearOutdatedOrderedMessages(queueId: string, timestamp: number): void', () => {
+describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): void', () => {
   it('return undefined', async () => {
     const db = await getDatabase()
     const queueId = 'queue-id'
@@ -96,17 +103,24 @@ describe('clearOutdatedOrderedMessages(queueId: string, timestamp: number): void
     , completed: 0
     })
 
-    const result = DAO.clearOutdatedOrderedMessages(queueId, 1)
-    const message1Exists = hasRawMessage(db, queueId, '1')
-    const message2Exists = hasRawMessage(db, queueId, '2')
+    const result = DAO.fallbackOutdatedOrderedMessages(queueId, 1)
+    const message1 = getRawMessage(db, queueId, '1')
+    const message2 = getRawMessage(db, queueId, '2')
     const stats = getRawStats(db, queueId)
 
     expect(result).toBeUndefined()
-    expect(message1Exists).toBeFalse()
-    expect(message2Exists).toBeTrue()
+    expect(message1).toMatchObject({
+      state: 'waiting'
+    , state_updated_at: timestamp
+    })
+    expect(message2).toMatchObject({
+      state: 'ordered'
+    , state_updated_at: 1
+    , type: null
+    })
     expect(stats).toMatchObject({
       drafting: 0
-    , waiting: 0
+    , waiting: 1
     , ordered: 1
     , active: 0
     , completed: 0
@@ -114,7 +128,7 @@ describe('clearOutdatedOrderedMessages(queueId: string, timestamp: number): void
   })
 })
 
-describe('clearOutdatedActiveMessages(queueId: string, timestamp: number): void', () => {
+describe('fallbackOutdatedActiveMessages(queueId: string, timestamp: number): void', () => {
   it('return undefined', async () => {
     const db = await getDatabase()
     const queueId = 'queue-id'
@@ -147,17 +161,23 @@ describe('clearOutdatedActiveMessages(queueId: string, timestamp: number): void'
     , completed: 0
     })
 
-    const result = DAO.clearOutdatedActiveMessages(queueId, 1)
-    const message1Exists = hasRawMessage(db, queueId, '1')
-    const message2Exists = hasRawMessage(db, queueId, '2')
+    const result = DAO.fallbackOutdatedActiveMessages(queueId, 1)
+    const message1 = getRawMessage(db, queueId, '1')
+    const message2 = getRawMessage(db, queueId, '2')
     const stats = getRawStats(db, queueId)
 
     expect(result).toBeUndefined()
-    expect(message1Exists).toBeFalse()
-    expect(message2Exists).toBeTrue()
+    expect(message1).toMatchObject({
+      state: 'waiting'
+    , state_updated_at: timestamp
+    })
+    expect(message2).toMatchObject({
+      state: 'active'
+    , state_updated_at: 1
+    })
     expect(stats).toMatchObject({
       drafting: 0
-    , waiting: 0
+    , waiting: 1
     , ordered: 0
     , active: 1
     , completed: 0

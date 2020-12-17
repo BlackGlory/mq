@@ -1,7 +1,8 @@
 import { getDatabase } from '../database'
-import { downcreaseDrafting, downcreaseOrdered, downcreaseActive } from './utils/stats'
+import { downcreaseDrafting, downcreaseOrdered, downcreaseActive, increaseWaiting } from './utils/stats'
+import { getTimestamp } from './utils/get-timestamp'
 
-export function clearOutdatedDraftingMessages(queueId: string, timestamp: number): void {
+export function fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): void {
   const db = getDatabase()
 
   db.transaction(() => {
@@ -16,32 +17,40 @@ export function clearOutdatedDraftingMessages(queueId: string, timestamp: number
   })()
 }
 
-export function clearOutdatedOrderedMessages(queueId: string, timestamp: number): void {
+export function fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): void {
   const db = getDatabase()
 
   db.transaction(() => {
+    const now = getTimestamp()
     const result = db.prepare(`
-      DELETE FROM mq_message
+      UPDATE mq_message
+         SET state = 'waiting'
+           , state_updated_at = $now
        WHERE mq_id = $queueId
          AND state = 'ordered'
          AND state_updated_at < $timestamp;
-    `).run({ queueId, timestamp })
+    `).run({ queueId, timestamp, now })
 
     downcreaseOrdered(queueId, result.changes)
+    increaseWaiting(queueId, result.changes)
   })()
 }
 
-export function clearOutdatedActiveMessages(queueId: string, timestamp: number): void {
+export function fallbackOutdatedActiveMessages(queueId: string, timestamp: number): void {
   const db = getDatabase()
 
   db.transaction(() => {
+    const now = getTimestamp()
     const result = db.prepare(`
-      DELETE FROM mq_message
+      UPDATE mq_message
+         SET state = 'waiting'
+           , state_updated_at = $now
        WHERE mq_id = $queueId
          AND state = 'active'
          AND state_updated_at < $timestamp;
-    `).run({ queueId, timestamp })
+    `).run({ queueId, timestamp, now })
 
     downcreaseActive(queueId, result.changes)
+    increaseWaiting(queueId, result.changes)
   })()
 }

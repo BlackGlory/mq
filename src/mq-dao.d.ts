@@ -26,9 +26,9 @@ interface IMQDAO {
   stats(queueId: string): Promise<IStats>
   clear(queueId: string): Promise<void>
 
-  clearOutdatedDraftingMessages(queueId: string, timestamp: number): Promise<void>
-  clearOutdatedOrderedMessages(queueId: string, timestamp: number): Promise<void>
-  clearOutdatedActiveMessages(queueId: string, timestamp: number): Promise<void>
+  fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): Promise<void>
+  fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): Promise<void>
+  fallbackOutdatedActiveMessages(queueId: string, timestamp: number): Promise<void>
 
   NotFound: CustomErrorConstructor
   BadMessageState: new (...states: [string, ...string[]]) => CustomError
