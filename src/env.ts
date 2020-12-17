@@ -111,7 +111,7 @@ export const DRAFTING_TIMEOUT = memoize(function (): number {
     assert(val > 0)
     return val
   } else {
-    return 600
+    return 60_000
   }
 })
 
@@ -121,7 +121,7 @@ export const ORDERED_TIMEOUT = memoize(function (): number {
     assert(val > 0)
     return val
   } else {
-    return 600
+    return 60_000
   }
 })
 

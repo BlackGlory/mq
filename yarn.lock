@@ -2679,10 +2679,21 @@ extglob@^2.0.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-extra-promise@^0.9.1, extra-promise@^0.9.3, extra-promise@^0.9.5:
+extra-promise@^0.9.1, extra-promise@^0.9.3:
   version "0.9.5"
   resolved "https://registry.yarnpkg.com/extra-promise/-/extra-promise-0.9.5.tgz#e46e35d527a3c59d72b80a8f90284016998c01bf"
   integrity sha512-cVUtQJkrlUeui+iJTUcpSz5ZszRWlPS8PgCbYvRsynEFmx7JlwbWEXOTCQXYgN0faunZTc3+q3fW/yYW3hNvqw==
+  dependencies:
+    "@blackglory/types" "^0.1.6"
+    eventemitter3 "^4.0.7"
+    iterable-operator "^0.12.2"
+    reflect-metadata "^0.1.13"
+    return-style "^0.10.1"
+
+extra-promise@^0.9.6:
+  version "0.9.6"
+  resolved "https://registry.yarnpkg.com/extra-promise/-/extra-promise-0.9.6.tgz#1574e17153be07dcbc48d11fe005da314d6fb3b5"
+  integrity sha512-GL4lJFItlP50/Xt9YHjVGLuqeo4VHZrgZ3lv+gIn/KEKE+14q+Tequ5y1ASFQB/kRUp13TNghAnokydMfpLqnA==
   dependencies:
     "@blackglory/types" "^0.1.6"
     eventemitter3 "^4.0.7"

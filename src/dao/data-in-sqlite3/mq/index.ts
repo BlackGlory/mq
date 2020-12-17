@@ -6,6 +6,7 @@ import { completeMessage } from './complete-message'
 import { abandonMessage } from './abandon-message'
 import { stats } from './stats'
 import { clear } from './clear'
+import { getAllWorkingQueueIds } from './get-all-working-queue-ids'
 import {
   fallbackOutdatedDraftingMessages
 , fallbackOutdatedOrderedMessages
@@ -24,6 +25,7 @@ export const MQDAO: IMQDAO = {
 , clear: asyncify(clear)
 , stats: asyncify(stats)
 
+, getAllWorkingQueueIds: asyncify(getAllWorkingQueueIds)
 , fallbackOutdatedDraftingMessages: asyncify(fallbackOutdatedDraftingMessages)
 , fallbackOutdatedOrderedMessages: asyncify(fallbackOutdatedOrderedMessages)
 , fallbackOutdatedActiveMessages: asyncify(fallbackOutdatedActiveMessages)

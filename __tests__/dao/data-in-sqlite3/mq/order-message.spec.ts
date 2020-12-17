@@ -22,7 +22,7 @@ beforeEach(async () => {
   await resetDatabases()
 })
 
-describe('orderMessage(queueId: string): string | null', () => {
+describe('orderMessage(queueId: string, concurrency: number, duration: number, limit: number): string | null', () => {
   describe('exist', () => {
     describe('concurrency', () => {
       describe('not over concurrency', () => {

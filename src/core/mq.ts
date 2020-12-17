@@ -3,6 +3,14 @@ import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, THROTTLE, UNIQUE, CO
 import { nanoid } from 'nanoid'
 import { CustomError } from '@blackglory/errors'
 import 'core-js/features/queue-microtask'
+import { delay } from 'extra-promise'
+
+;(async function loop() {
+  while (true) {
+    await maintainAllQueues()
+    await delay(1_000)
+  }
+})
 
 export async function draft(queueId: string, priority?: number): Promise<string> {
   await maintain(queueId)
@@ -43,7 +51,6 @@ export async function order(queueId: string): Promise<string> {
     const messageId = await MQDAO.orderMessage(queueId, concurrency, duration, limit)
     if (messageId) return messageId
 
-    // TODO: waiting outdated signal?
     await SignalDAO.wait(queueId)
   }
 }
@@ -106,6 +113,7 @@ export async function stats(queueId: string): Promise<IStats> {
 }
 
 async function maintain(queueId: string): Promise<void> {
+  let emit = false
   const timestamp = Date.now()
 
   const configurations = await ConfigurationDAO.getConfigurations(queueId)
@@ -118,11 +126,22 @@ async function maintain(queueId: string): Promise<void> {
   const orderedTimeout = configurations.orderedTimeout ?? ORDERED_TIMEOUT()
   if (orderedTimeout !== Infinity) {
     await MQDAO.fallbackOutdatedOrderedMessages(queueId, timestamp - orderedTimeout)
+    emit = true
   }
 
   const activeTimeout = configurations.activeTimeout ?? ACTIVE_TIMEOUT()
   if (activeTimeout !== Infinity) {
     await MQDAO.fallbackOutdatedActiveMessages(queueId, timestamp - activeTimeout)
+    emit = true
+  }
+
+  if (emit) await SignalDAO.emit(queueId)
+}
+
+async function maintainAllQueues() {
+  const ids = await MQDAO.getAllWorkingQueueIds()
+  for (const id of ids) {
+    await maintain(id)
   }
 }
 

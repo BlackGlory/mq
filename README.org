@@ -187,21 +187,21 @@ await fetch('http://localhost:8080/stats').then(res => res.json())
 #+BEGIN_SRC ts
 {
   unique: boolean | null // 队列是否对消息自动去重, null表示继承全局设置
-  draftingTimeout: number | null // 允许处于draft状态的毫秒数, null表示继承全局设置
-  orderedTimeout: number | null // 允许处于ordered状态的毫秒数, null表示继承全局设置
-  activeTimeout: number | null // 允许处于active状态的毫秒数, null表示继承全局设置
+  draftingTimeout: number | null // 允许处于draft状态的秒数, null表示继承全局设置
+  orderedTimeout: number | null // 允许处于ordered状态的秒数, null表示继承全局设置
+  activeTimeout: number | null // 允许处于active状态的秒数, null表示继承全局设置
   concurrency: number | null // 允许派发的并发任务数, null表示继承全局设置
   throttle: {
-    duration: number // 以毫秒为单位的时间周期, 由队列的任务第一次进入ordered状态时开始计算, 在指定毫秒数后进入下一周期
-    limit: number // 在时间周期内允许的最大任务数
+    duration: number // 以秒为单位的时间周期, 由队列的任务第一次进入ordered状态时开始计算, 在指定秒数后进入下一周期
+    limit: number // 在周期内允许的最大任务数
   } | null // null表示继承全局设置
 }
 #+END_SRC
 
 可用以下环境变量作为全局设置:
 =MQ_UNIQUE=, 默认为 =false=
-=MQ_DRAFTING_TIMEOUT=, 默认为 =600=.
-=MQ_ORDERED_TIMEOUT=, 默认为 =600=.
+=MQ_DRAFTING_TIMEOUT=, 默认为60秒.
+=MQ_ORDERED_TIMEOUT=, 默认为60m秒.
 =MQ_ACTIVE_TIMEOUT=, 默认为无限.
 =MQ_CONCURRENCY=, 默认为无限.
 =MQ_THROTTLE=, 需满足JSON语法, 默认为无限制.
