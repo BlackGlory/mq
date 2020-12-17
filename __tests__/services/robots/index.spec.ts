@@ -9,7 +9,7 @@ beforeEach(async () => {
   await resetDatabases()
 })
 
-describe('stats', () => {
+describe('robots', () => {
   describe('GET /robots.txt', () => {
     it('200', async () => {
       const server = await buildServer()
