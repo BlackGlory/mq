@@ -203,6 +203,7 @@ await fetch('http://localhost:8080/stats').then(res => res.json())
 =MQ_DRAFTING_TIMEOUT=, 默认为 =600=.
 =MQ_ORDERED_TIMEOUT=, 默认为 =600=.
 =MQ_ACTIVE_TIMEOUT=, 默认为无限.
+=MQ_CONCURRENCY=, 默认为无限.
 =MQ_THROTTLE=, 需满足JSON语法, 默认为无限制.
 
 ***** 获取所有具有配置的MQ id

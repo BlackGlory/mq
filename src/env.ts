@@ -135,6 +135,16 @@ export const ACTIVE_TIMEOUT = memoize(function (): number {
   }
 })
 
+export const CONCURRENCY = memoize(function (): number {
+  if (process.env.MQ_CONCURRENCY) {
+    const val = Number.parseInt(process.env.MQ_CONCURRENCY, 10)
+    assert(val > 0)
+    return val
+  } else {
+    return Infinity
+  }
+})
+
 export const THROTTLE = memoize(function (): Throttle {
   if (process.env.MQ_THROTTLE) {
     const throttle = JSON.parse(process.env.MQ_THROTTLE) as Throttle

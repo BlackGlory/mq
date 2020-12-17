@@ -1,5 +1,5 @@
 import { ConfigurationDAO, MQDAO, SignalDAO } from '@dao'
-import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, THROTTLE, UNIQUE } from '@env'
+import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, THROTTLE, UNIQUE, CONCURRENCY } from '@env'
 import { nanoid } from 'nanoid'
 import { CustomError } from '@blackglory/errors'
 import 'core-js/features/queue-microtask'
@@ -31,18 +31,19 @@ export async function set(queueId: string, messageId: string, type: string, payl
 }
 
 export async function order(queueId: string): Promise<string> {
-  // TODO: support concurrency
-  await maintain(queueId)
-
-  const configurations = await ConfigurationDAO.getConfigurations(queueId)
-  const throttle = THROTTLE()
-  const duration = configurations.throttle?.duration ?? throttle.duration
-  const limit = configurations.throttle?.limit ?? throttle.limit
-
   while (true) {
-    const messageId = await MQDAO.orderMessage(queueId, duration, limit)
+    await maintain(queueId)
+
+    const configurations = await ConfigurationDAO.getConfigurations(queueId)
+    const concurrency = configurations.concurrency ?? CONCURRENCY()
+    const throttle = THROTTLE()
+    const duration = configurations.throttle?.duration ?? throttle.duration
+    const limit = configurations.throttle?.limit ?? throttle.limit
+
+    const messageId = await MQDAO.orderMessage(queueId, concurrency, duration, limit)
     if (messageId) return messageId
-    // TODO: waiting outdated
+
+    // TODO: waiting outdated signal?
     await SignalDAO.wait(queueId)
   }
 }

@@ -1,11 +1,15 @@
 import { getDatabase } from '../database'
 import { getTimestamp } from './utils/get-timestamp'
 import { downcreaseWaiting, increaseOrdered } from './utils/stats'
+import { stats } from './stats'
 
-export function orderMessage(queueId: string, duration: number, limit: number): string | null {
+export function orderMessage(queueId: string, concurrency: number, duration: number, limit: number): string | null {
   const db = getDatabase()
 
   return db.transaction(() => {
+    const { active, ordered } = stats(queueId)
+    if (active + ordered >= concurrency) return null
+
     const now = getTimestamp()
 
     const throttle = getThrottle(queueId)
