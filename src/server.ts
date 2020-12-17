@@ -3,6 +3,7 @@ import cors from 'fastify-cors'
 import { routes as api } from '@services/api'
 import { routes as stats } from '@services/stats'
 import { routes as mq } from '@services/mq'
+import { routes as robots } from '@services/robots'
 import { HTTP2, PAYLOAD_LIMIT, NODE_ENV, NodeEnv } from '@env'
 import { Core } from '@core'
 
@@ -23,6 +24,7 @@ export async function buildServer() {
   server.register(api, { Core })
   server.register(stats, { Core })
   server.register(mq, { Core })
+  server.register(robots)
   return server
 }
 
