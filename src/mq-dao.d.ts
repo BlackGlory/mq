@@ -4,7 +4,7 @@ interface IMQDAO {
   /**
    * @throws {BadMessageState}
    */
-  setMessage(queueId: string, messageId: string, type: string, payload: string): Promise<void>
+  setMessage(queueId: string, messageId: string, type: string, payload: string, unique?: boolean): Promise<void>
   orderMessage(queueId: string, duration: number, limit: number): Promise<string | null>
 
   /**

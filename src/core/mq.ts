@@ -1,5 +1,5 @@
 import { ConfigurationDAO, MQDAO, SignalDAO } from '@dao'
-import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, THROTTLE } from '@env'
+import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, THROTTLE, UNIQUE } from '@env'
 import { nanoid } from 'nanoid'
 import { CustomError } from '@blackglory/errors'
 import 'core-js/features/queue-microtask'
@@ -16,11 +16,13 @@ export async function draft(queueId: string, priority?: number): Promise<string>
  * @throws {BadMessageState}
  */
 export async function set(queueId: string, messageId: string, type: string, payload: string): Promise<void> {
-  // TODO: support unique
   await maintain(queueId)
 
+  const configurations = await ConfigurationDAO.getConfigurations(queueId)
+  const unique = configurations.unique ?? UNIQUE()
+
   try {
-    await MQDAO.setMessage(queueId, messageId, type, payload)
+    await MQDAO.setMessage(queueId, messageId, type, payload, unique)
     queueMicrotask(() => SignalDAO.emit(queueId))
   } catch (e) {
     if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)

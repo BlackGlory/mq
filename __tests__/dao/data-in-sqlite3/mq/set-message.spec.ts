@@ -1,5 +1,6 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/set-message'
-import { BadMessageState } from '@dao/data-in-sqlite3/mq/error'
+import { hash } from '@dao/data-in-sqlite3/mq/utils/hash'
+import { BadMessageState, DuplicatePayload } from '@dao/data-in-sqlite3/mq/error'
 import { getDatabase } from '@dao/data-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import { setRawMessage, setRawStats, getRawMessage, getRawStats } from './utils'
@@ -21,7 +22,127 @@ beforeEach(async () => {
   await resetDatabases()
 })
 
-describe('setMessage(queueId: string, messageId: string, type: string, payload: string): void', () => {
+describe('setMessage(queueId: string, messageId: string, type: string, payload: string, unique?: boolean): void', () => {
+  describe('unique', () => {
+    describe('duplicate', () => {
+      it('throw DuplicatePayload', async () => {
+        const db = await getDatabase()
+        const queueId = 'queue-id'
+        const messageId = 'message-id'
+        const type = 'text/plain'
+        const payload = 'payload'
+        setRawStats(db, {
+          mq_id: queueId
+        , drafting: 1
+        , waiting: 1
+        , ordered: 0
+        , active: 0
+        , completed: 0
+        })
+        setRawMessage(db, {
+          mq_id: queueId
+        , message_id: 'old-message'
+        , priority: null
+        , type: 'text/plain'
+        , payload
+        , hash: hash(payload)
+        , state: 'waiting'
+        , state_updated_at: 0
+        })
+        setRawMessage(db, {
+          mq_id: queueId
+        , message_id: messageId
+        , priority: null
+        , type: null
+        , payload: null
+        , hash: null
+        , state: 'drafting'
+        , state_updated_at: 0
+        })
+
+        const result = getError(() => DAO.setMessage(queueId, messageId, type, payload, true))
+        const message = getRawMessage(db, queueId, messageId)
+        const stats = getRawStats(db, queueId)
+
+        expect(result).toBeInstanceOf(DuplicatePayload)
+        expect(message).toMatchObject({
+          priority: null
+        , type: null
+        , payload: null
+        , hash: null
+        , state: 'drafting'
+        , state_updated_at: 0
+        })
+        expect(stats).toMatchObject({
+          drafting: 1
+        , waiting: 1
+        , ordered: 0
+        , active: 0
+        , completed: 0
+        })
+      })
+    })
+
+    describe('not duplicate', () => {
+      it('update message and convert state to waiting', async () => {
+        const db = await getDatabase()
+        const queueId = 'queue-id'
+        const messageId = 'message-id'
+        const type = 'text/plain'
+        const payload = 'payload'
+        setRawStats(db, {
+          mq_id: queueId
+        , drafting: 1
+        , waiting: 1
+        , ordered: 0
+        , active: 0
+        , completed: 0
+        })
+        setRawMessage(db, {
+          mq_id: queueId
+        , message_id: 'old-message'
+        , priority: null
+        , type: 'text/plain'
+        , payload: 'old-payload'
+        , hash: hash('old-payload')
+        , state: 'waiting'
+        , state_updated_at: 0
+        })
+        setRawMessage(db, {
+          mq_id: queueId
+        , message_id: messageId
+        , priority: null
+        , type: null
+        , payload: null
+        , hash: null
+        , state: 'drafting'
+        , state_updated_at: 0
+        })
+
+        const result = DAO.setMessage(queueId, messageId, type, payload, true)
+        const message = getRawMessage(db, queueId, messageId)
+        const stats = getRawStats(db, queueId)
+
+        expect(result).toBeUndefined()
+        expect(message).toMatchObject({
+          priority: null
+        , type
+        , payload
+        , hash: expect.any(String)
+        , state: 'waiting'
+        , state_updated_at: timestamp
+        })
+        expect(stats).toMatchObject({
+          drafting: 0
+        , waiting: 2
+        , ordered: 0
+        , active: 0
+        , completed: 0
+        })
+      })
+    })
+  })
+
   describe('state: drafting', () => {
     it('update message and convert state to waiting', async () => {
       const db = await getDatabase()

@@ -14,3 +14,5 @@ export class BadMessageState extends CustomError {
 }
 
 export class NotFound extends CustomError {}
+
+export class DuplicatePayload extends CustomError {}
