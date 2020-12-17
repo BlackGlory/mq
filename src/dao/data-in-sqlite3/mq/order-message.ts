@@ -2,11 +2,6 @@ import { getDatabase } from '../database'
 import { getTimestamp } from './utils/get-timestamp'
 import { downcreaseWaiting, increaseOrdered } from './utils/stats'
 
-interface Throttle {
-  cycleStartTime: number
-  count: number
-}
-
 export function orderMessage(queueId: string, duration: number, limit: number): string | null {
   const db = getDatabase()
 
@@ -42,12 +37,12 @@ export function orderMessage(queueId: string, duration: number, limit: number): 
   })()
 }
 
-function getThrottle(queueId: string): Throttle | null {
+function getThrottle(queueId: string): IThrottle | null {
   const row = getDatabase().prepare(`
     SELECT cycle_start_time
           , count
       FROM mq_throttle
-      WHERE mq_id = $queueId;
+     WHERE mq_id = $queueId;
   `).get({ queueId })
   if (row) {
     return {

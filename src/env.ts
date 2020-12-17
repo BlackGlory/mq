@@ -21,16 +21,16 @@ export const NODE_ENV = memoize(function (): NodeEnv | undefined {
   }
 })
 
+export const HOST = memoize(function (): string {
+  return process.env.MQ_HOST || 'localhost'
+})
+
 export const PORT = memoize(function (): number {
   if (process.env.MQ_PORT) {
     return Number.parseInt(process.env.MQ_PORT, 10)
   } else {
     return 8080
   }
-})
-
-export const HOST = memoize(function (): string {
-  return process.env.MQ_HOST || 'localhost'
 })
 
 export const ADMIN_PASSWORD = memoize(function (): string | undefined {

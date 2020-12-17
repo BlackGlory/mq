@@ -3,6 +3,8 @@ import { JsonSchemaDAO } from '@dao'
 import { DEFAULT_JSON_SCHEMA } from '@env'
 import { JSON_VALIDATION } from '@env'
 import { Json } from '@blackglory/types'
+import { getErrorResult } from 'return-style'
+import { CustomError } from '@blackglory/errors'
 
 export function isEnabled(): boolean {
   return JSON_VALIDATION()
@@ -25,12 +27,20 @@ export function remove(id: string): Promise<void> {
   return JsonSchemaDAO.removeJsonSchema(id)
 }
 
-export async function validate(id: string, payload: unknown): Promise<void> {
-  const jsonSchema= await JsonSchemaDAO.getJsonSchema(id)
+/**
+ * @throws {InvalidPayload}
+ */
+export async function validate(id: string, payload: string): Promise<void> {
+  const [err, json] = getErrorResult(() => JSON.parse(payload))
+  if (err) throw new InvalidPayload(err.message)
+
+  const jsonSchema = await JsonSchemaDAO.getJsonSchema(id)
   const schema = jsonSchema ?? DEFAULT_JSON_SCHEMA()
   if (schema) {
     const ajv = new Ajv()
-    const valid = ajv.validate(JSON.parse(schema), payload)
-    if (!valid) throw new Error(ajv.errorsText())
+    const valid = ajv.validate(JSON.parse(schema), json)
+    if (!valid) throw new InvalidPayload(ajv.errorsText())
   }
 }
+
+export class InvalidPayload extends CustomError {}

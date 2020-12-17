@@ -4,6 +4,10 @@ import { getTimestamp } from './utils/get-timestamp'
 import { downcreaseOrdered, increaseActive } from './utils/stats'
 import { State } from './utils/state'
 
+/**
+ * @throws {NotFound}
+ * @throws {BadMessageState}
+ */
 export function getMessage(queueId: string, messageId: string): IMessage {
   const timestamp = getTimestamp()
   const db = getDatabase()

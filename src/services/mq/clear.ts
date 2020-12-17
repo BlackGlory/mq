@@ -23,11 +23,11 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       try {
         await Core.Blacklist.check(queueId)
         await Core.Whitelist.check(queueId)
-        await Core.TBAC.checkConsumePermission(queueId, token)
+        await Core.TBAC.checkClearPermission(queueId, token)
       } catch (e) {
-        if (e instanceof Core.Error.Unauthorized) return reply.status(401).send()
-        if (e instanceof Core.Error.Forbidden) return reply.status(403).send()
-        if (e instanceof Error) return reply.status(400).send(e.message)
+        if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
+        if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
+        if (e instanceof Core.TBAC.Unauthorized) return reply.status(401).send()
         throw e
       }
 

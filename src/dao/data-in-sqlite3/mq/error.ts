@@ -1,4 +1,6 @@
-export class BadMessageState extends Error {
+import { CustomError } from '@blackglory/errors'
+
+export class BadMessageState extends CustomError {
   constructor(...requiredStates: [string, ...string[]]) {
     if (requiredStates.length === 1) {
       super(`The state of message must be "${requiredStates[0]}"`)
@@ -8,10 +10,7 @@ export class BadMessageState extends Error {
         .join(', ')
       super(`The state of message must be one of ${text}`)
     }
-    this.name = this.constructor.name
   }
 }
 
-export class NotFound extends Error {
-  name = this.constructor.name
-}
+export class NotFound extends CustomError {}

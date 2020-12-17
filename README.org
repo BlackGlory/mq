@@ -70,9 +70,9 @@ services:
     environment:
       - MQ_ADMIN_PASSWORD=password
       - MQ_TOKEN_BASED_ACCESS_CONTROL=true
-      - MQ_PUBLISH_TOKEN_REQUIRED=true
+      - MQ_PRODUCE_TOKEN_REQUIRED=true
       - MQ_CONSUME_TOKEN_REQUIRED=true
-      - MQ_DELETE_TOKEN_REQUIRED=true
+      - MQ_CLEAR_TOKEN_REQUIRED=true
     volumes:
       - 'mq-data:/data'
     ports:

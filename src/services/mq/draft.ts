@@ -37,14 +37,14 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         await Core.Whitelist.check(queueId)
         await Core.TBAC.checkProducePermission(queueId, token)
       } catch (e) {
-        if (e instanceof Core.Error.Unauthorized) return reply.status(401).send()
-        if (e instanceof Core.Error.Forbidden) return reply.status(403).send()
-        if (e instanceof Error) return reply.status(400).send(e.message)
+        if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
+        if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
+        if (e instanceof Core.TBAC.Unauthorized) return reply.status(401).send()
         throw e
       }
 
       const result = await Core.MQ.draft(queueId)
-      reply.send(result)
+      reply.status(204).send(result)
     }
   )
 }

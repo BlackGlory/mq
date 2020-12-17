@@ -11,6 +11,7 @@ import {
 , clearOutdatedOrderedMessages
 , clearOutdatedActiveMessages
 } from './clear-outdated-messages'
+import { BadMessageState, NotFound } from './error'
 
 export const MQDAO: IMQDAO = {
   draftMessage: asyncify(draftMessage)
@@ -26,6 +27,9 @@ export const MQDAO: IMQDAO = {
 , clearOutdatedDraftingMessages: asyncify(clearOutdatedDraftingMessages)
 , clearOutdatedOrderedMessages: asyncify(clearOutdatedOrderedMessages)
 , clearOutdatedActiveMessages: asyncify(clearOutdatedActiveMessages)
+
+, NotFound
+, BadMessageState
 }
 
 function asyncify<T extends any[], U>(fn: (...args: T) => U): (...args: T) => Promise<U> {

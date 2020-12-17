@@ -8,6 +8,9 @@ import {
 } from './utils/stats'
 import { State } from './utils/state'
 
+/**
+ * @throws {BadMessageState}
+ */
 export function abandonMessage(queueId: string, messageId: string): void {
   const db = getDatabase()
 

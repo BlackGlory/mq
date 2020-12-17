@@ -29,9 +29,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         await Core.Whitelist.check(queueId)
         await Core.TBAC.checkConsumePermission(queueId, token)
       } catch (e) {
-        if (e instanceof Core.Error.Unauthorized) return reply.status(401).send()
-        if (e instanceof Core.Error.Forbidden) return reply.status(403).send()
-        if (e instanceof Error) return reply.status(400).send(e.message)
+        if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
+        if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
+        if (e instanceof Core.TBAC.Unauthorized) return reply.status(401).send()
         throw e
       }
 
@@ -42,7 +42,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
           .header('Content-Type', result.type)
           .send(result.payload)
       } catch (e) {
-        if (e instanceof Core.Error.NotFound) return reply.status(404).send()
+        if (e instanceof Core.MQ.NotFound) return reply.status(404).send()
         throw e
       }
     }

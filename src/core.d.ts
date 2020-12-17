@@ -1,3 +1,7 @@
+type Json = import('@blackglory/types').Json
+type CustomErrorConstructor = import('@blackglory/errors').CustomErrorConstructor
+type CustomError = import('@blackglory/errors').CustomError
+
 interface IMessage {
   type: string
   payload: string
@@ -10,6 +14,12 @@ interface IStats {
   active: number
   completed: number
 }
+
+interface IThrottle {
+  cycleStartTime: number
+  count: number
+}
+
 interface ICore {
   isAdmin(password: string): boolean
 
@@ -21,14 +31,35 @@ interface ICore {
 
   MQ: {
     draft(queueId: string, priority?: number): Promise<string>
+
+    /**
+     * @throws {BadMessageState}
+     */
     set(queueId: string, messageId: string, type: string, payload: string): Promise<void>
+
     order(queueId: string): Promise<string>
+
+    /**
+     * @throws {NotFound}
+     * @throws {BadMessageState}
+     */
     get(queueId: string, messageId: string): Promise<IMessage>
+
+    /**
+     * @throws {BadMessageState}
+     */
     complete(queueId: string, messageId: string): Promise<void>
+
+    /**
+     * @throws {BadMessageState}
+     */
     abandon(queueId: string, messageId: string): Promise<void>
 
     clear(queueId: string): Promise<void>
     stats(id: string): Promise<IStats>
+
+    NotFound: CustomErrorConstructor
+    BadMessageState: CustomErrorConstructor
   }
 
   Configuration: {
@@ -57,35 +88,64 @@ interface ICore {
   Blacklist: {
     isEnabled(): boolean
     isBlocked(id: string): Promise<boolean>
-    check(id: string): Promise<void>
     getAll(): Promise<string[]>
     add(id: string): Promise<void>
     remove(id: string): Promise<void>
+
+    /**
+     * @throws {Forbidden}
+     */
+    check(id: string): Promise<void>
+    Forbidden: CustomErrorConstructor
   }
 
   Whitelist: {
     isEnabled(): boolean
     isBlocked(id: string): Promise<boolean>
-    check(id: string): Promise<void>
     getAll(): Promise<string[]>
     add(id: string): Promise<void>
     remove(id: string): Promise<void>
+
+    /**
+     * @throws {Forbidden}
+     */
+    check(id: string): Promise<void>
+    Forbidden: CustomErrorConstructor
   }
 
   JsonSchema: {
     isEnabled(): boolean
-    validate(id: string, payload: unknown): Promise<void>
     getAllIds(): Promise<string[]>
     get(id: string): Promise<string | null>
     set(id: string, schema: import('@blackglory/types').Json): Promise<void>
     remove(id: string): Promise<void>
+
+    /**
+     * @throws {InvalidPayload}
+     */
+    validate(id: string, payload: string): Promise<void>
+    InvalidPayload: CustomErrorConstructor
   }
 
   TBAC: {
     isEnabled(): boolean
+
+    /**
+     * @throws {Unauthorized}
+     */
     checkProducePermission(id: string, token?: string): Promise<void>
+
+    /**
+     * @throws {Unauthorized}
+     */
     checkConsumePermission(id: string, token?: string): Promise<void>
+
+    /**
+     * @throws {Unauthorized}
+     */
     checkClearPermission(id: string, token?: string): Promise<void>
+
+    Unauthorized: CustomErrorConstructor
 
     Token: {
       getAllIds(): Promise<string[]>
@@ -114,12 +174,5 @@ interface ICore {
       setClearTokenRequired(id: string, val: boolean): Promise<void>
       unsetClearTokenRequired(id: string): Promise<void>
     }
-  }
-
-  Error: {
-    Forbidden: new () => Error
-    Unauthorized: new () => Error
-    NotFound: new () => Error
-    IncorrectRevision: new () => Error
   }
 }

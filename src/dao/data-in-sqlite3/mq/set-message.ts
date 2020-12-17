@@ -5,6 +5,9 @@ import { BadMessageState } from './error'
 import { downcreaseDrafting, increaseWaiting } from './utils/stats'
 import { State } from './utils/state'
 
+/**
+ * @throws {BadMessageState}
+ */
 export function setMessage(queueId: string, messageId: string, type: string, payload: string): void {
   const timestamp = getTimestamp()
   const db = getDatabase()

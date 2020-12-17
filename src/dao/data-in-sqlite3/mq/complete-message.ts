@@ -2,6 +2,9 @@ import { getDatabase } from '../database'
 import { BadMessageState } from './error'
 import { downcreaseActive, increaseCompleted } from './utils/stats'
 
+/**
+ * @throws {BadMessageState}
+ */
 export function completeMessage(queueId: string, messageId: string): void {
   const db = getDatabase()
 
