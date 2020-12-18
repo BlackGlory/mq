@@ -12,15 +12,9 @@ CREATE TABLE mq_blacklist (
   mq_id VARCHAR(255) NOT NULL UNIQUE
 );
 
-CREATE UNIQUE INDEX idx_mq_blacklist_mq_id
-    ON mq_blacklist(mq_id);
-
 CREATE TABLE mq_whitelist (
   mq_id VARCHAR(255) NOT NULL UNIQUE
 );
-
-CREATE UNIQUE INDEX idx_mq_whitelist_mq_id
-    ON mq_whitelist(mq_id);
 
 CREATE TABLE mq_token_policy (
   mq_id                  VARCHAR(255) NOT NULL UNIQUE
@@ -28,9 +22,6 @@ CREATE TABLE mq_token_policy (
 , consume_token_required BOOLEAN
 , clear_token_required   BOOLEAN
 );
-
-CREATE UNIQUE INDEX idx_mq_token_policy_mq_id
-    ON mq_token_policy(mq_id);
 
 CREATE TABLE mq_token (
   mq_id              VARCHAR(255) NOT NULL
@@ -41,16 +32,10 @@ CREATE TABLE mq_token (
 , UNIQUE (token, mq_id)
 );
 
-CREATE UNIQUE INDEX idx_mq_token_mq_id_token
-    ON mq_token(mq_id,token);
-
 CREATE TABLE mq_json_schema (
   mq_id       VARCHAR(255) NOT NULL UNIQUE
 , json_schema TEXT         NOT NULL
 );
-
-CREATE UNIQUE INDEX idx_mq_json_schema_mq_id
-    ON mq_json_schema(mq_id);
 
 CREATE TABLE mq_configuration (
   mq_id             VARCHAR(255) NOT NULL UNIQUE
@@ -62,9 +47,6 @@ CREATE TABLE mq_configuration (
 , throttle_duration INTEGER
 , throttle_limit    INTEGER
 );
-
-CREATE UNIQUE INDEX idx_mq_configuration_mq_id
-    ON mq_configuration(mq_id);
 
 --------------------------------------------------------------------------------
 -- Down

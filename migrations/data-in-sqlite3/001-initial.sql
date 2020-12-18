@@ -14,9 +14,6 @@ CREATE TABLE mq_throttle (
 , count            INTEGER      NOT NULL DEFAULT 0
 );
 
-CREATE UNIQUE INDEX mq_throttle_mq_id
-    ON mq_throttle(mq_id);
-
 CREATE TABLE mq_stats (
   mq_id     VARCHAR(255) NOT NULL UNIQUE
 , drafting  INTEGER      NOT NULL DEFAULT 0
@@ -25,9 +22,6 @@ CREATE TABLE mq_stats (
 , active    INTEGER      NOT NULL DEFAULT 0
 , completed INTEGER      NOT NULL DEFAULT 0
 );
-
-CREATE UNIQUE INDEX idx_mq_stats_mq_id
-    ON mq_stats(mq_id);
 
 CREATE INDEX idx_mq_stats_ordered
     ON mq_stats(ordered);
