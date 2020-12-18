@@ -2,7 +2,6 @@ import { ConfigurationDAO, MQDAO, SignalDAO } from '@dao'
 import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, THROTTLE, UNIQUE, CONCURRENCY } from '@env'
 import { nanoid } from 'nanoid'
 import { CustomError } from '@blackglory/errors'
-import 'core-js/features/queue-microtask'
 import { delay } from 'extra-promise'
 
 export function autoMaintain(abortSignal: AbortSignal): void {
