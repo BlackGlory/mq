@@ -7,4 +7,8 @@ export class Station<T> {
     if (!this.#map.has(key)) this.#map.set(key, this.create())
     return this.#map.get(key)!
   }
+
+  refresh(key: string) {
+    this.#map.set(key, this.create())
+  }
 }
