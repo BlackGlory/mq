@@ -10,7 +10,7 @@ export function autoMaintain(abortSignal: AbortSignal): void {
       await maintainAllQueues()
       await delay(1_000)
     }
-  })
+  })()
 }
 
 export async function draft(queueId: string, priority?: number): Promise<string> {
