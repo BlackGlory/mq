@@ -6,12 +6,12 @@ export function clear(queueId: string): void {
   db.transaction(() => {
     db.prepare(`
       DELETE FROM mq_message
-       WHERE mq_id = $queueId
+       WHERE mq_id = $queueId;
     `).run({ queueId })
 
     db.prepare(`
       DELETE FROM mq_stats
-       WHERE mq_id = $queueId
+       WHERE mq_id = $queueId;
     `).run({ queueId })
 
     db.prepare(`
