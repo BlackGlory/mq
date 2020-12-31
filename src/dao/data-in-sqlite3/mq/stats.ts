@@ -13,7 +13,8 @@ export function stats(id: string): IStats {
 
   if (row) {
     return {
-      drafting: row['drafting']
+      id
+    , drafting: row['drafting']
     , waiting: row['waiting']
     , ordered: row['ordered']
     , active: row['active']
@@ -21,7 +22,8 @@ export function stats(id: string): IStats {
     }
   } else {
     return {
-      drafting: 0
+      id
+    , drafting: 0
     , waiting: 0
     , ordered: 0
     , active: 0

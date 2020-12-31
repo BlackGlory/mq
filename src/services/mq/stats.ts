@@ -9,8 +9,12 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         params: { queueId: idSchema }
       , response: {
           200: {
-            type: 'array'
-          , items: { type: 'string' }
+            id: { type: 'string' }
+          , drafting: { type: 'number', minimum: 0 }
+          , waiting: { type: 'number', minimum: 0 }
+          , ordered: { type: 'number', minimum: 0 }
+          , active: { type: 'number', minimum: 0 }
+          , completed: { type: 'number', minimum: 0 }
           }
         }
       }

@@ -151,6 +151,7 @@ volumes:
 
 #+BEGIN_SRC ts
 {
+  id: string
   drafting: number
   waiting: number
   ordered: number

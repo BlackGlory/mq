@@ -8,6 +8,7 @@ interface IMessage {
 }
 
 interface IStats {
+  id: string
   drafting: number
   waiting: number
   ordered: number

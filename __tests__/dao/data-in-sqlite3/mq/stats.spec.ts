@@ -28,7 +28,8 @@ describe('stats(queueId: string): IStats', () => {
       const result = DAO.stats(queueId)
 
       expect(result).toEqual({
-        drafting: 1
+        id: queueId
+      , drafting: 1
       , waiting: 2
       , ordered: 3
       , active: 4
@@ -44,7 +45,8 @@ describe('stats(queueId: string): IStats', () => {
       const result = DAO.stats(queueId)
 
       expect(result).toEqual({
-        drafting: 0
+        id: queueId
+      , drafting: 0
       , waiting: 0
       , ordered: 0
       , active: 0
