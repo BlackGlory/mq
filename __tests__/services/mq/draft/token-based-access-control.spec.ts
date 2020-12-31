@@ -17,7 +17,7 @@ describe('token-based access control', () => {
   describe('enabled', () => {
     describe('id need delete tokens', () => {
       describe('token matched', () => {
-        it('204', async () => {
+        it('200', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const mqId = 'mq-id'
           const token = 'token'
@@ -34,7 +34,7 @@ describe('token-based access control', () => {
           , payload: JSON.stringify(payload)
           })
 
-          expect(res.statusCode).toBe(204)
+          expect(res.statusCode).toBe(200)
         })
       })
 
@@ -102,7 +102,7 @@ describe('token-based access control', () => {
       })
 
       describe('PRODUCE_TOKEN_REQUIRED=false', () => {
-        it('204', async () => {
+        it('200', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const mqId = 'mq-id'
           const payload = { priority: null }
@@ -115,7 +115,7 @@ describe('token-based access control', () => {
           , payload: JSON.stringify(payload)
           })
 
-          expect(res.statusCode).toBe(204)
+          expect(res.statusCode).toBe(200)
         })
       })
     })
@@ -124,7 +124,7 @@ describe('token-based access control', () => {
   describe('disabled', () => {
     describe('id need produce tokens', () => {
       describe('no token', () => {
-        it('204', async () => {
+        it('200', async () => {
           const mqId = 'mq-id'
           const token = 'token'
           const payload = { priority: null }
@@ -139,14 +139,14 @@ describe('token-based access control', () => {
           , payload: JSON.stringify(payload)
           })
 
-          expect(res.statusCode).toBe(204)
+          expect(res.statusCode).toBe(200)
         })
       })
     })
 
     describe('id does not need produce tokens', () => {
       describe('PRODUCE_TOKEN_REQUIRED=true', () => {
-        it('204', async () => {
+        it('200', async () => {
           process.env.MQ_PRODUCE_TOKEN_REQUIRED = 'true'
           const mqId = 'mq-id'
           const token = 'token'
@@ -162,7 +162,7 @@ describe('token-based access control', () => {
           , payload: JSON.stringify(payload)
           })
 
-          expect(res.statusCode).toBe(204)
+          expect(res.statusCode).toBe(200)
         })
       })
     })

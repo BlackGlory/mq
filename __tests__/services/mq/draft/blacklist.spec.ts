@@ -35,7 +35,7 @@ describe('blacklist', () => {
     })
 
     describe('id not in blacklist', () => {
-      it('204', async () => {
+      it('200', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const mqId = 'mq-id'
         const payload = { priority: null }
@@ -48,14 +48,14 @@ describe('blacklist', () => {
         , payload: JSON.stringify(payload)
         })
 
-        expect(res.statusCode).toBe(204)
+        expect(res.statusCode).toBe(200)
       })
     })
   })
 
   describe('disabled', () => {
     describe('id in blacklist', () => {
-      it('204', async () => {
+      it('200', async () => {
         const mqId = 'mq-id'
         const payload = { priority: null }
         const server = await buildServer()
@@ -68,7 +68,7 @@ describe('blacklist', () => {
         , payload: JSON.stringify(payload)
         })
 
-        expect(res.statusCode).toBe(204)
+        expect(res.statusCode).toBe(200)
       })
     })
   })

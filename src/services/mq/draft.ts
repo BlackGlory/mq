@@ -44,7 +44,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
 
       const result = await Core.MQ.draft(queueId)
-      reply.status(204).send(result)
+      reply.status(200).send(result)
     }
   )
 }

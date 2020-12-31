@@ -16,7 +16,7 @@ beforeEach(async () => {
 describe('whitelist', () => {
   describe('enabled', () => {
     describe('id in whitelist', () => {
-      it('204', async () => {
+      it('200', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'whitelist'
         const mqId = 'mq-id'
         const payload = { priority: null }
@@ -30,7 +30,7 @@ describe('whitelist', () => {
         , payload: JSON.stringify(payload)
         })
 
-        expect(res.statusCode).toBe(204)
+        expect(res.statusCode).toBe(200)
       })
     })
 
@@ -55,7 +55,7 @@ describe('whitelist', () => {
 
   describe('disabled', () => {
     describe('id not in whitelist', () => {
-      it('204', async () => {
+      it('200', async () => {
         const mqId = 'mq-id'
         const payload = { priority: null }
         const server = await buildServer()
@@ -67,7 +67,7 @@ describe('whitelist', () => {
         , payload: JSON.stringify(payload)
         })
 
-        expect(res.statusCode).toBe(204)
+        expect(res.statusCode).toBe(200)
       })
     })
   })
