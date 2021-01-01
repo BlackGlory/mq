@@ -113,6 +113,10 @@ export async function stats(queueId: string): Promise<IStats> {
   return await MQDAO.stats(queueId)
 }
 
+export async function list(): Promise<string[]> {
+  return await MQDAO.listAllQueueIds()
+}
+
 async function maintain(queueId: string): Promise<void> {
   let emit = false
   const timestamp = Date.now()

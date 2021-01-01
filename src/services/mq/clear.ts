@@ -12,7 +12,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         params: { queueId: idSchema }
       , querystring: { token: tokenSchema }
       , response: {
-          200: {type: 'null' }
+          200: { type: 'null' }
         }
       }
     }

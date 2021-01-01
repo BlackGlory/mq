@@ -27,6 +27,7 @@ interface IMQDAO {
   clear(queueId: string): Promise<void>
 
   getAllWorkingQueueIds(): Promise<string[]>
+  listAllQueueIds(): Promise<string[]>
   fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): Promise<void>
   fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): Promise<void>
   fallbackOutdatedActiveMessages(queueId: string, timestamp: number): Promise<void>

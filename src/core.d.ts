@@ -59,6 +59,7 @@ interface ICore {
 
     clear(queueId: string): Promise<void>
     stats(id: string): Promise<IStats>
+    list(): Promise<string[]>
 
     NotFound: CustomErrorConstructor
     BadMessageState: CustomErrorConstructor

@@ -160,6 +160,13 @@ volumes:
 }
 #+END_SRC
 
+**** list
+=GET /mq=
+
+获取所有有统计信息的队列id.
+
+返回 =Array<string>=.
+
 **** 统计信息
 =GET /stats=
 

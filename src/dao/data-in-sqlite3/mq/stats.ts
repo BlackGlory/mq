@@ -8,7 +8,7 @@ export function stats(id: string): IStats {
          , active
          , completed
       FROM mq_stats
-     WHERE mq_id = $id
+     WHERE mq_id = $id;
   `).get({ id })
 
   if (row) {

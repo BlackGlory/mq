@@ -7,6 +7,7 @@ import { routes as getRoutes } from './get'
 import { routes as completeRoutes } from './complete'
 import { routes as abandonRoutes } from './abandon'
 import { routes as clearRoutes } from './clear'
+import { routes as listRoutes } from './list'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.register(statsRoutes, { Core })
@@ -17,4 +18,5 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.register(completeRoutes, { Core })
   server.register(abandonRoutes, { Core })
   server.register(clearRoutes, { Core })
+  server.register(listRoutes, { Core })
 }
