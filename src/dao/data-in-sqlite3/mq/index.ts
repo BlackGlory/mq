@@ -15,7 +15,7 @@ import {
 } from './fallback-outdated-messages'
 import { BadMessageState, NotFound } from './error'
 
-export const MQDAO: IDataDAO = {
+export const MQDAO: IMQDAO = {
   draftMessage: asyncify(draftMessage)
 , setMessage: asyncify(setMessage)
 , orderMessage: asyncify(orderMessage)

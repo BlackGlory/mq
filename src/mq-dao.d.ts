@@ -1,4 +1,4 @@
-interface IDataDAO {
+interface IMQDAO {
   draftMessage(queueId: string, messageId: string, priority?: number): Promise<void>
 
   /**
