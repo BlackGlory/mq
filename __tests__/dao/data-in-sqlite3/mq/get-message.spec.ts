@@ -1,6 +1,5 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/get-message'
 import { NotFound, BadMessageState } from '@dao/data-in-sqlite3/mq/error'
-import { getDatabase } from '@dao/data-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import { setRawMessage, getRawMessage, setRawStats, getRawStats } from './utils'
 import { getError } from 'return-style'
@@ -25,10 +24,9 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
   describe('exist', () => {
     describe('state: ordered', () => {
       it('convert state to active and return IMessage', () => {
-        const db = getDatabase()
         const queueId = 'queue-id'
         const messageId = 'message-id'
-        setRawMessage(db, {
+        setRawMessage({
           mq_id: queueId
         , message_id: messageId
         , type: 'type'
@@ -38,7 +36,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , state: 'ordered'
         , state_updated_at: 0
         })
-        setRawStats(db, {
+        setRawStats({
           mq_id: queueId
         , drafting: 0
         , waiting: 0
@@ -48,8 +46,8 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         })
 
         const result = DAO.getMessage(queueId, messageId)
-        const message = getRawMessage(db, queueId, messageId)
-        const stats = getRawStats(db, queueId)
+        const message = getRawMessage(queueId, messageId)
+        const stats = getRawStats(queueId)
 
         expect(result).toEqual({
           type: 'type'
@@ -71,10 +69,9 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
 
     describe('state: drafting', () => {
       it('throw BadMessageState', () => {
-        const db = getDatabase()
         const queueId = 'queue-id'
         const messageId = 'message-id'
-        setRawMessage(db, {
+        setRawMessage({
           mq_id: queueId
         , message_id: messageId
         , type: null
@@ -84,7 +81,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , state: 'drafting'
         , state_updated_at: 0
         })
-        setRawStats(db, {
+        setRawStats({
           mq_id: queueId
         , drafting: 0
         , waiting: 0
@@ -101,10 +98,9 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
 
     describe('other states', () => {
       it('return IMessage', () => {
-        const db = getDatabase()
         const queueId = 'queue-id'
         const messageId = 'message-id'
-        setRawMessage(db, {
+        setRawMessage({
           mq_id: queueId
         , message_id: messageId
         , type: 'type'
@@ -114,7 +110,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , state: 'waiting'
         , state_updated_at: 0
         })
-        setRawStats(db, {
+        setRawStats({
           mq_id: queueId
         , drafting: 0
         , waiting: 1
@@ -124,8 +120,8 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         })
 
         const result = DAO.getMessage(queueId, messageId)
-        const message = getRawMessage(db, queueId, messageId)
-        const stats = getRawStats(db, queueId)
+        const message = getRawMessage(queueId, messageId)
+        const stats = getRawStats(queueId)
 
         expect(result).toEqual({
           type: 'type'

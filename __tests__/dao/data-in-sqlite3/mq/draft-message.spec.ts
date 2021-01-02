@@ -1,5 +1,4 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/draft-message'
-import { getDatabase } from '@dao/data-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import { getRawMessage, getRawStats } from './utils'
 import 'jest-extended'
@@ -21,13 +20,12 @@ beforeEach(async () => {
 
 describe('draftMessage(queueId: string, messageId: string, priority?: number): void', () => {
   it('insert a drafting message', () => {
-    const db = getDatabase()
     const queueId = 'queue-id'
     const messageId = 'message-id'
 
     const result = DAO.draftMessage(queueId, messageId)
-    const message = getRawMessage(db, queueId, messageId)
-    const stats = getRawStats(db, queueId)
+    const message = getRawMessage(queueId, messageId)
+    const stats = getRawStats(queueId)
 
     expect(result).toBeUndefined()
     expect(message).toMatchObject({

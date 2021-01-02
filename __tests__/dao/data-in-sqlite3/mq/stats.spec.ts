@@ -1,5 +1,4 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/stats'
-import { getDatabase } from '@dao/data-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import { setRawStats } from './utils'
 
@@ -14,9 +13,8 @@ beforeEach(async () => {
 describe('stats(queueId: string): IStats', () => {
   describe('exist', () => {
     it('return IStats', () => {
-      const db = getDatabase()
       const queueId = 'queue-id'
-      setRawStats(db, {
+      setRawStats({
         mq_id: queueId
       , drafting: 1
       , waiting: 2

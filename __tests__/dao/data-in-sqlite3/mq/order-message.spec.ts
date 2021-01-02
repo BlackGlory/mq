@@ -1,5 +1,4 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/order-message'
-import { getDatabase } from '@dao/data-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import {
   setRawMessage, setRawStats, setRawThrottle
@@ -27,10 +26,9 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
     describe('concurrency', () => {
       describe('not over concurrency', () => {
         it('return a message id and convert state to ordered', () => {
-          const db = getDatabase()
           const queueId = 'queue-id'
           const concurrency = 3
-          setRawMessage(db, {
+          setRawMessage({
             mq_id: queueId
           , message_id: '1'
           , type: 'type'
@@ -40,7 +38,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           , state: 'active'
           , state_updated_at: 0
           })
-          setRawMessage(db, {
+          setRawMessage({
             mq_id: queueId
           , message_id: '2'
           , type: 'type'
@@ -50,7 +48,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           , state: 'ordered'
           , state_updated_at: 0
           })
-          setRawMessage(db, {
+          setRawMessage({
             mq_id: queueId
           , message_id: '3'
           , type: 'type'
@@ -60,7 +58,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           , state: 'waiting'
           , state_updated_at: 0
           })
-          setRawStats(db, {
+          setRawStats({
             mq_id: queueId
           , drafting: 0
           , waiting: 1
@@ -70,8 +68,8 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           })
 
           const result = DAO.orderMessage(queueId, concurrency, Infinity, Infinity)!
-          const message = getRawMessage(db, queueId, result)
-          const stats = getRawStats(db, queueId)
+          const message = getRawMessage(queueId, result)
+          const stats = getRawStats(queueId)
 
           expect(result).toBe('3')
           expect(message).toMatchObject({
@@ -90,10 +88,9 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
 
       describe('over concurrency', () => {
         it('return null', () => {
-          const db = getDatabase()
           const queueId = 'queue-id'
           const concurrency = 2
-          setRawMessage(db, {
+          setRawMessage({
             mq_id: queueId
           , message_id: '1'
           , type: 'type'
@@ -103,7 +100,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           , state: 'active'
           , state_updated_at: 0
           })
-          setRawMessage(db, {
+          setRawMessage({
             mq_id: queueId
           , message_id: '2'
           , type: 'type'
@@ -113,7 +110,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           , state: 'ordered'
           , state_updated_at: 0
           })
-          setRawMessage(db, {
+          setRawMessage({
             mq_id: queueId
           , message_id: '3'
           , type: 'type'
@@ -123,7 +120,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           , state: 'waiting'
           , state_updated_at: 0
           })
-          setRawStats(db, {
+          setRawStats({
             mq_id: queueId
           , drafting: 0
           , waiting: 1
@@ -133,8 +130,8 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           })
 
           const result = DAO.orderMessage(queueId, concurrency, Infinity, Infinity)!
-          const message = getRawMessage(db, queueId, '3')
-          const stats = getRawStats(db, queueId)
+          const message = getRawMessage(queueId, '3')
+          const stats = getRawStats(queueId)
 
           expect(result).toBeNull()
           expect(message).toMatchObject({
@@ -156,11 +153,10 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
       describe('not over limit', () => {
         describe('same priority, diff state_updated_at', () => {
           it('return a message id and convert state to ordered', () => {
-            const db = getDatabase()
             const queueId = 'queue-id'
             const duration = 100
             const limit = 1
-            setRawMessage(db, {
+            setRawMessage({
               mq_id: queueId
             , message_id: '1'
             , type: 'type'
@@ -170,7 +166,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , state: 'waiting'
             , state_updated_at: 0
             })
-            setRawMessage(db, {
+            setRawMessage({
               mq_id: queueId
             , message_id: '2'
             , type: 'type'
@@ -180,7 +176,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , state: 'waiting'
             , state_updated_at: 1
             })
-            setRawMessage(db, {
+            setRawMessage({
               mq_id: queueId
             , message_id: '3'
             , type: 'type'
@@ -190,7 +186,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , state: 'waiting'
             , state_updated_at: 2
             })
-            setRawStats(db, {
+            setRawStats({
               mq_id: queueId
             , drafting: 0
             , waiting: 3
@@ -200,8 +196,8 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             })
 
             const result = DAO.orderMessage(queueId, Infinity, duration, limit)!
-            const message = getRawMessage(db, queueId, result)
-            const stats = getRawStats(db, queueId)
+            const message = getRawMessage(queueId, result)
+            const stats = getRawStats(queueId)
 
             expect(result).toBe('1')
             expect(message).toMatchObject({
@@ -220,11 +216,10 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
 
         describe('same state_updated_at, diff priority', () => {
           it('return a message id and convert state to ordered', () => {
-            const db = getDatabase()
             const queueId = 'queue-id'
             const duration = 100
             const limit = 1
-            setRawMessage(db, {
+            setRawMessage({
               mq_id: queueId
             , message_id: '1'
             , type: 'type'
@@ -234,7 +229,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , state: 'waiting'
             , state_updated_at: 0
             })
-            setRawMessage(db, {
+            setRawMessage({
               mq_id: queueId
             , message_id: '2'
             , type: 'type'
@@ -244,7 +239,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , state: 'waiting'
             , state_updated_at: 0
             })
-            setRawMessage(db, {
+            setRawMessage({
               mq_id: queueId
             , message_id: '3'
             , type: 'type'
@@ -254,7 +249,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , state: 'waiting'
             , state_updated_at: 0
             })
-            setRawStats(db, {
+            setRawStats({
               mq_id: queueId
             , drafting: 0
             , waiting: 3
@@ -264,8 +259,8 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             })
 
             const result = DAO.orderMessage(queueId, Infinity, duration, limit)!
-            const message = getRawMessage(db, queueId, result)
-            const stats = getRawStats(db, queueId)
+            const message = getRawMessage(queueId, result)
+            const stats = getRawStats(queueId)
 
             expect(result).toBe('2')
             expect(message).toMatchObject({
@@ -286,11 +281,10 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
       describe('over limit', () => {
         describe('new cycle', () => {
           it('return a message id and convert state to ordered', () => {
-            const db = getDatabase()
             const queueId = 'queue-id'
             const duration = 100
             const limit = 1
-            setRawMessage(db, {
+            setRawMessage({
               mq_id: queueId
             , message_id: '1'
             , type: 'type'
@@ -300,7 +294,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , state: 'ordered'
             , state_updated_at: 0
             })
-            setRawMessage(db, {
+            setRawMessage({
               mq_id: queueId
             , message_id: '2'
             , type: 'type'
@@ -310,7 +304,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , state: 'waiting'
             , state_updated_at: 0
             })
-            setRawStats(db, {
+            setRawStats({
               mq_id: queueId
             , drafting: 0
             , waiting: 1
@@ -318,16 +312,16 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , active: 0
             , completed: 0
             })
-            setRawThrottle(db, {
+            setRawThrottle({
               mq_id: queueId
             , cycle_start_time: 0
             , count: 1
             })
 
             const result = DAO.orderMessage(queueId, Infinity, duration, limit)!
-            const message = getRawMessage(db, queueId, result)
-            const stats = getRawStats(db, queueId)
-            const throttle = getRawThrottle(db, queueId)
+            const message = getRawMessage(queueId, result)
+            const stats = getRawStats(queueId)
+            const throttle = getRawThrottle(queueId)
 
             expect(result).toBe('2')
             expect(message).toMatchObject({
@@ -350,11 +344,10 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
 
         describe('same cycle', () => {
           it('return null', () => {
-            const db = getDatabase()
             const queueId = 'queue-id'
             const duration = 100
             const limit = 1
-            setRawMessage(db, {
+            setRawMessage({
               mq_id: queueId
             , message_id: '1'
             , type: 'type'
@@ -364,7 +357,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , state: 'ordered'
             , state_updated_at: 0
             })
-            setRawMessage(db, {
+            setRawMessage({
               mq_id: queueId
             , message_id: '2'
             , type: 'type'
@@ -374,7 +367,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , state: 'waiting'
             , state_updated_at: 0
             })
-            setRawStats(db, {
+            setRawStats({
               mq_id: queueId
             , drafting: 0
             , waiting: 1
@@ -382,7 +375,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , active: 0
             , completed: 0
             })
-            setRawThrottle(db, {
+            setRawThrottle({
               mq_id: queueId
             , cycle_start_time: timestamp
             , count: 1

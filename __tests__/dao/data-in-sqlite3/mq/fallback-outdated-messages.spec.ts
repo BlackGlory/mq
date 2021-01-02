@@ -1,5 +1,4 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/fallback-outdated-messages'
-import { getDatabase } from '@dao/data-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import { setRawMessage, setRawStats, getRawStats, hasRawMessage, getRawMessage } from './utils'
 import 'jest-extended'
@@ -21,9 +20,8 @@ beforeEach(async () => {
 
 describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): void', () => {
   it('return undefined', () => {
-    const db = getDatabase()
     const queueId = 'queue-id'
-    setRawMessage(db, {
+    setRawMessage({
       mq_id: queueId
     , message_id: '1'
     , hash: null
@@ -33,7 +31,7 @@ describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
     , state_updated_at: 0
     , type: null
     })
-    setRawMessage(db, {
+    setRawMessage({
       mq_id: queueId
     , message_id: '2'
     , hash: null
@@ -43,7 +41,7 @@ describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
     , state_updated_at: 1
     , type: null
     })
-    setRawStats(db, {
+    setRawStats({
       mq_id: queueId
     , drafting: 2
     , waiting: 0
@@ -53,9 +51,9 @@ describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
     })
 
     const result = DAO.fallbackOutdatedDraftingMessages(queueId, 1)
-    const message1Exists = hasRawMessage(db, queueId, '1')
-    const message2Exists = hasRawMessage(db, queueId, '2')
-    const stats = getRawStats(db, queueId)
+    const message1Exists = hasRawMessage(queueId, '1')
+    const message2Exists = hasRawMessage(queueId, '2')
+    const stats = getRawStats(queueId)
 
     expect(result).toBeUndefined()
     expect(message1Exists).toBeFalse()
@@ -72,9 +70,8 @@ describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
 
 describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): void', () => {
   it('return undefined', () => {
-    const db = getDatabase()
     const queueId = 'queue-id'
-    setRawMessage(db, {
+    setRawMessage({
       mq_id: queueId
     , message_id: '1'
     , hash: null
@@ -84,7 +81,7 @@ describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
     , state_updated_at: 0
     , type: null
     })
-    setRawMessage(db, {
+    setRawMessage({
       mq_id: queueId
     , message_id: '2'
     , hash: null
@@ -94,7 +91,7 @@ describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
     , state_updated_at: 1
     , type: null
     })
-    setRawStats(db, {
+    setRawStats({
       mq_id: queueId
     , drafting: 0
     , waiting: 0
@@ -104,9 +101,9 @@ describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
     })
 
     const result = DAO.fallbackOutdatedOrderedMessages(queueId, 1)
-    const message1 = getRawMessage(db, queueId, '1')
-    const message2 = getRawMessage(db, queueId, '2')
-    const stats = getRawStats(db, queueId)
+    const message1 = getRawMessage(queueId, '1')
+    const message2 = getRawMessage(queueId, '2')
+    const stats = getRawStats(queueId)
 
     expect(result).toBeUndefined()
     expect(message1).toMatchObject({
@@ -130,9 +127,8 @@ describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
 
 describe('fallbackOutdatedActiveMessages(queueId: string, timestamp: number): void', () => {
   it('return undefined', () => {
-    const db = getDatabase()
     const queueId = 'queue-id'
-    setRawMessage(db, {
+    setRawMessage({
       mq_id: queueId
     , message_id: '1'
     , hash: null
@@ -142,7 +138,7 @@ describe('fallbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
     , state_updated_at: 0
     , type: null
     })
-    setRawMessage(db, {
+    setRawMessage({
       mq_id: queueId
     , message_id: '2'
     , hash: null
@@ -152,7 +148,7 @@ describe('fallbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
     , state_updated_at: 1
     , type: null
     })
-    setRawStats(db, {
+    setRawStats({
       mq_id: queueId
     , drafting: 0
     , waiting: 0
@@ -162,9 +158,9 @@ describe('fallbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
     })
 
     const result = DAO.fallbackOutdatedActiveMessages(queueId, 1)
-    const message1 = getRawMessage(db, queueId, '1')
-    const message2 = getRawMessage(db, queueId, '2')
-    const stats = getRawStats(db, queueId)
+    const message1 = getRawMessage(queueId, '1')
+    const message2 = getRawMessage(queueId, '2')
+    const stats = getRawStats(queueId)
 
     expect(result).toBeUndefined()
     expect(message1).toMatchObject({

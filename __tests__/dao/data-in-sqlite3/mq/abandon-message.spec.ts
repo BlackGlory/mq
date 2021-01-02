@@ -1,5 +1,4 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/abandon-message'
-import { getDatabase } from '@dao/data-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import { setRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
 import 'jest-extended'
@@ -22,10 +21,9 @@ beforeEach(async () => {
 describe('abandonMessage(queueId: string, messageId: string): void', () => {
   describe('state: drafting', () => {
     it('delete message', () => {
-      const db = getDatabase()
       const queueId = 'queue-id'
       const messageId = 'message-id'
-      setRawMessage(db, {
+      setRawMessage({
         mq_id: queueId
       , message_id: messageId
       , hash: 'hash'
@@ -35,7 +33,7 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
       , state_updated_at: 0
       , type: 'type'
       })
-      setRawStats(db, {
+      setRawStats({
         mq_id: queueId
       , drafting: 1
       , waiting: 0
@@ -45,8 +43,8 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
       })
 
       const result = DAO.abandonMessage(queueId, messageId)
-      const exists = hasRawMessage(db, queueId, messageId)
-      const stats = getRawStats(db, queueId)
+      const exists = hasRawMessage(queueId, messageId)
+      const stats = getRawStats(queueId)
 
       expect(result).toBeUndefined()
       expect(exists).toBeFalse()
@@ -62,10 +60,9 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
 
   describe('state: waiting', () => {
     it('delete message', () => {
-      const db = getDatabase()
       const queueId = 'queue-id'
       const messageId = 'message-id'
-      setRawMessage(db, {
+      setRawMessage({
         mq_id: queueId
       , message_id: messageId
       , hash: 'hash'
@@ -75,7 +72,7 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
       , state_updated_at: 0
       , type: 'type'
       })
-      setRawStats(db, {
+      setRawStats({
         mq_id: queueId
       , drafting: 0
       , waiting: 1
@@ -85,8 +82,8 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
       })
 
       const result = DAO.abandonMessage(queueId, messageId)
-      const exists = hasRawMessage(db, queueId, messageId)
-      const stats = getRawStats(db, queueId)
+      const exists = hasRawMessage(queueId, messageId)
+      const stats = getRawStats(queueId)
 
       expect(result).toBeUndefined()
       expect(exists).toBeFalse()
@@ -102,10 +99,9 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
 
   describe('state: ordered', () => {
     it('delete message', () => {
-      const db = getDatabase()
       const queueId = 'queue-id'
       const messageId = 'message-id'
-      setRawMessage(db, {
+      setRawMessage({
         mq_id: queueId
       , message_id: messageId
       , hash: 'hash'
@@ -115,7 +111,7 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
       , state_updated_at: 0
       , type: 'type'
       })
-      setRawStats(db, {
+      setRawStats({
         mq_id: queueId
       , drafting: 0
       , waiting: 0
@@ -125,8 +121,8 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
       })
 
       const result = DAO.abandonMessage(queueId, messageId)
-      const exists = hasRawMessage(db, queueId, messageId)
-      const stats = getRawStats(db, queueId)
+      const exists = hasRawMessage(queueId, messageId)
+      const stats = getRawStats(queueId)
 
       expect(result).toBeUndefined()
       expect(exists).toBeFalse()
@@ -142,10 +138,9 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
 
   describe('state: active', () => {
     it('delete message', () => {
-      const db = getDatabase()
       const queueId = 'queue-id'
       const messageId = 'message-id'
-      setRawMessage(db, {
+      setRawMessage({
         mq_id: queueId
       , message_id: messageId
       , hash: 'hash'
@@ -155,7 +150,7 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
       , state_updated_at: 0
       , type: 'type'
       })
-      setRawStats(db, {
+      setRawStats({
         mq_id: queueId
       , drafting: 0
       , waiting: 0
@@ -165,8 +160,8 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
       })
 
       const result = DAO.abandonMessage(queueId, messageId)
-      const exists = hasRawMessage(db, queueId, messageId)
-      const stats = getRawStats(db, queueId)
+      const exists = hasRawMessage(queueId, messageId)
+      const stats = getRawStats(queueId)
 
       expect(result).toBeUndefined()
       expect(exists).toBeFalse()

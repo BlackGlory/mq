@@ -1,5 +1,4 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/clear'
-import { getDatabase } from '@dao/data-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import {
   setRawThrottle, setRawMessage, setRawStats
@@ -17,10 +16,9 @@ beforeEach(async () => {
 
 describe('clear(queueId: string): void', () => {
   it('return undefined', () => {
-    const db = getDatabase()
     const queueId = 'queue-id'
     const messageId = 'message-id'
-    setRawMessage(db, {
+    setRawMessage({
       mq_id: queueId
     , message_id: messageId
     , hash: 'hash'
@@ -30,7 +28,7 @@ describe('clear(queueId: string): void', () => {
     , state_updated_at: 0
     , type: 'type'
     })
-    setRawStats(db, {
+    setRawStats({
       mq_id: queueId
     , drafting: 0
     , waiting: 1
@@ -38,16 +36,16 @@ describe('clear(queueId: string): void', () => {
     , active: 0
     , completed: 0
     })
-    setRawThrottle(db, {
+    setRawThrottle({
       mq_id: queueId
     , cycle_start_time: 0
     , count: 1
     })
 
     const result = DAO.clear(queueId)
-    const isMessageExists = hasRawMessage(db, queueId, messageId)
-    const isStatsExists = hasRawStats(db, queueId)
-    const isThrottleExists = hasRawThrottle(db, queueId)
+    const isMessageExists = hasRawMessage(queueId, messageId)
+    const isStatsExists = hasRawStats(queueId)
+    const isThrottleExists = hasRawThrottle(queueId)
 
     expect(result).toBeUndefined()
     expect(isMessageExists).toBeFalse()

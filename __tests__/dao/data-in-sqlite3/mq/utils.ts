@@ -1,4 +1,4 @@
-import { Database } from 'better-sqlite3'
+import { getDatabase } from '@dao/data-in-sqlite3/database'
 
 type IState = 'drafting' | 'waiting' | 'ordered' | 'active' | 'completed'
 
@@ -28,23 +28,23 @@ interface IRawThrottle {
   count: number
 }
 
-export function setRawThrottle(db: Database, props: IRawThrottle): void {
-  db.prepare(`
+export function setRawThrottle(props: IRawThrottle): void {
+  getDatabase().prepare(`
     INSERT INTO mq_throttle (mq_id, cycle_start_time, count)
     VALUES ($mq_id, $cycle_start_time, $count)
   `).run(props)
 }
 
-export function hasRawThrottle(db: Database, queueId: string): boolean {
-  return !!selectThrottle(db, queueId)
+export function hasRawThrottle(queueId: string): boolean {
+  return !!selectThrottle(queueId)
 }
 
-export function getRawThrottle(db: Database, queueId: string): IRawThrottle {
-  return selectThrottle(db, queueId)
+export function getRawThrottle(queueId: string): IRawThrottle {
+  return selectThrottle(queueId)
 }
 
-export function setRawMessage(db: Database, props: IRawMessage): void {
-  db.prepare(`
+export function setRawMessage(props: IRawMessage): void {
+  getDatabase().prepare(`
     INSERT INTO mq_message (
       mq_id
     , message_id
@@ -68,16 +68,16 @@ export function setRawMessage(db: Database, props: IRawMessage): void {
   `).run(props)
 }
 
-export function hasRawMessage(db: Database, queueId: string, messageId: string): boolean {
-  return !!selectMessage(db, queueId, messageId)
+export function hasRawMessage(queueId: string, messageId: string): boolean {
+  return !!selectMessage(queueId, messageId)
 }
 
-export function getRawMessage(db: Database, queueId: string, messageId: string): IRawMessage {
-  return selectMessage(db, queueId, messageId)
+export function getRawMessage(queueId: string, messageId: string): IRawMessage {
+  return selectMessage(queueId, messageId)
 }
 
-export function setRawStats(db: Database, props: IRawStats) {
-  return db.prepare(`
+export function setRawStats(props: IRawStats) {
+  return getDatabase().prepare(`
     INSERT INTO mq_stats (
       mq_id
     , drafting
@@ -97,32 +97,32 @@ export function setRawStats(db: Database, props: IRawStats) {
   `).run(props)
 }
 
-export function hasRawStats(db: Database, queueId: string): boolean {
-  return !!selectStats(db, queueId)
+export function hasRawStats(queueId: string): boolean {
+  return !!selectStats(queueId)
 }
 
-export function getRawStats(db: Database, queueId: string): IRawStats {
-  return selectStats(db, queueId)
+export function getRawStats(queueId: string): IRawStats {
+  return selectStats(queueId)
 }
 
-function selectThrottle(db: Database, queueId: string) {
-  return db.prepare(`
+function selectThrottle(queueId: string) {
+  return getDatabase().prepare(`
     SELECT *
       FROM mq_throttle
      WHERE mq_id = $queueId;
   `).get({ queueId })
 }
 
-function selectMessage(db: Database, queueId: string, messageId: string) {
-  return db.prepare(`
+function selectMessage(queueId: string, messageId: string) {
+  return getDatabase().prepare(`
     SELECT * FROM mq_message
      WHERE mq_id = $queueId
        AND message_id = $messageId;
   `).get({ queueId, messageId })
 }
 
-function selectStats(db: Database, queueId: string) {
-  return db.prepare(`
+function selectStats(queueId: string) {
+  return getDatabase().prepare(`
     SELECT *
       FROM mq_stats
      WHERE mq_id = $queueId;

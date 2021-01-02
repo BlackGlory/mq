@@ -1,6 +1,5 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/complete-message'
 import { BadMessageState } from '@dao/data-in-sqlite3/mq/error'
-import { getDatabase } from '@dao/data-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import { setRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
 import { getError } from 'return-style'
@@ -24,10 +23,9 @@ beforeEach(async () => {
 describe('completeMessage(queueId: string, messageId: string): void', () => {
   describe('state: active', () => {
     it('delete message, completed++', () => {
-      const db = getDatabase()
       const queueId = 'queue-id'
       const messageId = 'message-id'
-      setRawMessage(db, {
+      setRawMessage({
         mq_id: queueId
       , message_id: messageId
       , hash: 'hash'
@@ -37,7 +35,7 @@ describe('completeMessage(queueId: string, messageId: string): void', () => {
       , state_updated_at: 0
       , type: 'type'
       })
-      setRawStats(db, {
+      setRawStats({
         mq_id: queueId
       , drafting: 0
       , waiting: 0
@@ -47,8 +45,8 @@ describe('completeMessage(queueId: string, messageId: string): void', () => {
       })
 
       const result = DAO.completeMessage(queueId, messageId)
-      const exists = hasRawMessage(db, queueId, messageId)
-      const stats = getRawStats(db, queueId)
+      const exists = hasRawMessage(queueId, messageId)
+      const stats = getRawStats(queueId)
 
       expect(result).toBeUndefined()
       expect(exists).toBeFalse()
