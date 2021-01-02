@@ -1,33 +1,27 @@
-import * as path from 'path'
-import { path as appRoot } from 'app-root-path'
-import { readMigrations } from 'migrations-file'
-import { migrate } from '@blackglory/better-sqlite3-migrations'
 import Database = require('better-sqlite3')
 import type { Database as IDatabase } from 'better-sqlite3'
+import { vaccum, enableAutoVacuum, migrateDatabase, enableForeignKeys } from '../utils'
+import { strict as assert } from 'assert'
 
 let db: IDatabase
 
-export function getDatabase() {
+export function getDatabase(): IDatabase {
+  assert(db)
   return db
 }
 
-export function closeDatabase() {
+export function closeDatabase(): void {
   if (db) db.close()
 }
 
-export async function prepareDatabase() {
-  db = connectDatabase()
+export async function prepareDatabase(): Promise<void> {
+  assert(db)
   await migrateDatabase(db)
+  vaccum(db)
 }
 
-function connectDatabase(): IDatabase {
-  const db = new Database(':memory:')
-  db.exec('PRAGMA foreign_keys = ON;')
-  return db
-}
-
-async function migrateDatabase(db: IDatabase) {
-  const migrationsPath = path.join(appRoot, 'migrations/data-in-sqlite3')
-  const migrations = await readMigrations(migrationsPath)
-  migrate(db, migrations)
+export function connectDatabase(): void {
+  db = new Database(':memory:')
+  enableForeignKeys(db)
+  enableAutoVacuum(db)
 }

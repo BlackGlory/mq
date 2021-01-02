@@ -3,38 +3,35 @@ import type { Database as IDatabase } from 'better-sqlite3'
 import { path as appRoot } from 'app-root-path'
 import * as path from 'path'
 import * as fs from 'fs-extra'
-import { readMigrations } from 'migrations-file'
-import { migrate } from '@blackglory/better-sqlite3-migrations'
 import { NODE_ENV, NodeEnv } from '@env'
 import { strict as assert } from 'assert'
+import { enableAutoVacuum, vaccum, enableForeignKeys, migrateDatabase } from './utils'
 assert(NODE_ENV() !== NodeEnv.Test)
 
 let db: IDatabase
 
-export function getDatabase() {
+export function getDatabase(): IDatabase {
+  assert(db)
   return db
 }
 
-export function closeDatabase() {
+export function closeDatabase(): void {
   if (db) db.close()
 }
 
-export async function prepareDatabase() {
-  db = connectDatabase()
+export async function prepareDatabase(): Promise<void> {
+  assert(db)
   await migrateDatabase(db)
+  vaccum(db)
 }
 
-function connectDatabase() {
+export function connectDatabase(): IDatabase {
   const dataPath = path.join(appRoot, 'data')
   const dataFilename = path.join(dataPath, 'data.db')
   fs.ensureDirSync(dataPath)
-  const db = new Database(dataFilename)
-  db.exec('PRAGMA foreign_keys = ON;')
-  return db
-}
 
-async function migrateDatabase(db: IDatabase) {
-  const migrationsPath = path.join(appRoot, 'migrations/data-in-sqlite3')
-  const migrations = await readMigrations(migrationsPath)
-  migrate(db, migrations)
+  db = new Database(dataFilename)
+  enableForeignKeys(db)
+  enableAutoVacuum(db)
+  return db
 }
