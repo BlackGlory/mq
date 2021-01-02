@@ -9,13 +9,13 @@ export async function resetDatabases() {
 
 export async function resetConfigInSqlite3Database() {
   ConfigInSqlite3.closeDatabase()
-  ConfigInSqlite3.connectDatabase()
+  ConfigInSqlite3.openDatabase()
   await ConfigInSqlite3.prepareDatabase()
 }
 
 export async function resetDataInSqlite3Database() {
   await DataInSqlite3.closeDatabase()
-  DataInSqlite3.connectDatabase()
+  DataInSqlite3.openDatabase()
   await DataInSqlite3.prepareDatabase()
 }
 

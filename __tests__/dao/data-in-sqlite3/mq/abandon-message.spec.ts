@@ -21,8 +21,8 @@ beforeEach(async () => {
 
 describe('abandonMessage(queueId: string, messageId: string): void', () => {
   describe('state: drafting', () => {
-    it('delete message', async () => {
-      const db = await getDatabase()
+    it('delete message', () => {
+      const db = getDatabase()
       const queueId = 'queue-id'
       const messageId = 'message-id'
       setRawMessage(db, {
@@ -61,8 +61,8 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
   })
 
   describe('state: waiting', () => {
-    it('delete message', async () => {
-      const db = await getDatabase()
+    it('delete message', () => {
+      const db = getDatabase()
       const queueId = 'queue-id'
       const messageId = 'message-id'
       setRawMessage(db, {
@@ -101,8 +101,8 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
   })
 
   describe('state: ordered', () => {
-    it('delete message', async () => {
-      const db = await getDatabase()
+    it('delete message', () => {
+      const db = getDatabase()
       const queueId = 'queue-id'
       const messageId = 'message-id'
       setRawMessage(db, {
@@ -141,8 +141,8 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
   })
 
   describe('state: active', () => {
-    it('delete message', async () => {
-      const db = await getDatabase()
+    it('delete message', () => {
+      const db = getDatabase()
       const queueId = 'queue-id'
       const messageId = 'message-id'
       setRawMessage(db, {

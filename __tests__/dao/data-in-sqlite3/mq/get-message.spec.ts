@@ -24,8 +24,8 @@ beforeEach(async () => {
 describe('getMessage(queueId: string, messageId: string): IMessage', () => {
   describe('exist', () => {
     describe('state: ordered', () => {
-      it('convert state to active and return IMessage', async () => {
-        const db = await getDatabase()
+      it('convert state to active and return IMessage', () => {
+        const db = getDatabase()
         const queueId = 'queue-id'
         const messageId = 'message-id'
         setRawMessage(db, {
@@ -70,8 +70,8 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
     })
 
     describe('state: drafting', () => {
-      it('throw BadMessageState', async () => {
-        const db = await getDatabase()
+      it('throw BadMessageState', () => {
+        const db = getDatabase()
         const queueId = 'queue-id'
         const messageId = 'message-id'
         setRawMessage(db, {
@@ -100,8 +100,8 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
     })
 
     describe('other states', () => {
-      it('return IMessage', async () => {
-        const db = await getDatabase()
+      it('return IMessage', () => {
+        const db = getDatabase()
         const queueId = 'queue-id'
         const messageId = 'message-id'
         setRawMessage(db, {

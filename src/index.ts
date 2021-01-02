@@ -19,10 +19,10 @@ process.on('SIGINT', () => process.exit(128 + 2))
 process.on('SIGTERM', () => process.exit(128 + 15))
 
 ;(async () => {
-  ConfigInSqlite3.connectDatabase()
+  ConfigInSqlite3.openDatabase()
   await ConfigInSqlite3.prepareDatabase()
 
-  DataInSqlite3.connectDatabase()
+  DataInSqlite3.openDatabase()
   await DataInSqlite3.prepareDatabase()
 
   autoMaintain(autoMaintainController.signal)

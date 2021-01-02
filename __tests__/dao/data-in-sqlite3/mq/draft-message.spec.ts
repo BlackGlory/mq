@@ -20,8 +20,8 @@ beforeEach(async () => {
 })
 
 describe('draftMessage(queueId: string, messageId: string, priority?: number): void', () => {
-  it('insert a drafting message', async () => {
-    const db = await getDatabase()
+  it('insert a drafting message', () => {
+    const db = getDatabase()
     const queueId = 'queue-id'
     const messageId = 'message-id'
 

@@ -26,8 +26,8 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
   describe('exist', () => {
     describe('concurrency', () => {
       describe('not over concurrency', () => {
-        it('return a message id and convert state to ordered', async () => {
-          const db = await getDatabase()
+        it('return a message id and convert state to ordered', () => {
+          const db = getDatabase()
           const queueId = 'queue-id'
           const concurrency = 3
           setRawMessage(db, {
@@ -89,8 +89,8 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
       })
 
       describe('over concurrency', () => {
-        it('return null', async () => {
-          const db = await getDatabase()
+        it('return null', () => {
+          const db = getDatabase()
           const queueId = 'queue-id'
           const concurrency = 2
           setRawMessage(db, {
@@ -155,8 +155,8 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
     describe('throttle', () => {
       describe('not over limit', () => {
         describe('same priority, diff state_updated_at', () => {
-          it('return a message id and convert state to ordered', async () => {
-            const db = await getDatabase()
+          it('return a message id and convert state to ordered', () => {
+            const db = getDatabase()
             const queueId = 'queue-id'
             const duration = 100
             const limit = 1
@@ -219,8 +219,8 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
         })
 
         describe('same state_updated_at, diff priority', () => {
-          it('return a message id and convert state to ordered', async () => {
-            const db = await getDatabase()
+          it('return a message id and convert state to ordered', () => {
+            const db = getDatabase()
             const queueId = 'queue-id'
             const duration = 100
             const limit = 1
@@ -398,7 +398,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
   })
 
   describe('not exist', () => {
-    it('return null', async () => {
+    it('return null', () => {
       const queueId = 'queue-id'
       const duration = 100
       const limit = 1

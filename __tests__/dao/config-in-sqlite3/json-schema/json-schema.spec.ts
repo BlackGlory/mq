@@ -14,8 +14,8 @@ beforeEach(async () => {
 
 describe('JSON Schema', () => {
   describe('getAllIdsWithJsonSchema(): string[]', () => {
-    it('return string[]', async () => {
-      const db = await getDatabase()
+    it('return string[]', () => {
+      const db = getDatabase()
       const id = 'id-1'
       const schema = createSchema()
       insert(db, { id, schema })
@@ -29,8 +29,8 @@ describe('JSON Schema', () => {
 
   describe('getJsonSchema(id: string): string | null', () => {
     describe('exist', () => {
-      it('return schema', async () => {
-        const db = await getDatabase()
+      it('return schema', () => {
+        const db = getDatabase()
         const id = 'id-1'
         const schema = createSchema()
         insert(db, { id, schema })
@@ -42,7 +42,7 @@ describe('JSON Schema', () => {
     })
 
     describe('not exist', () => {
-      it('return null', async () => {
+      it('return null', () => {
         const id = 'id-1'
 
         const result = DAO.getJsonSchema(id)
@@ -54,8 +54,8 @@ describe('JSON Schema', () => {
 
   describe('setJsonSchema({ id: string; schema: string })', () => {
     describe('exist', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id-1'
         const schema = createSchema()
         insert(db, { id, schema })
@@ -68,8 +68,8 @@ describe('JSON Schema', () => {
     })
 
     describe('not exist', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id-1'
         const schema = createSchema()
 
@@ -83,8 +83,8 @@ describe('JSON Schema', () => {
 
   describe('removeJsonSchema(id: string)', () => {
     describe('exist', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id-1'
         const schema = createSchema()
         insert(db, { id, schema })
@@ -97,8 +97,8 @@ describe('JSON Schema', () => {
     })
 
     describe('not exist', () => {
-      it('return undefined', async () => {
-        const db = await getDatabase()
+      it('return undefined', () => {
+        const db = getDatabase()
         const id = 'id-1'
 
         const result = DAO.removeJsonSchema(id)

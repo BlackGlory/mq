@@ -25,8 +25,8 @@ beforeEach(async () => {
 describe('setMessage(queueId: string, messageId: string, type: string, payload: string, unique?: boolean): void', () => {
   describe('unique', () => {
     describe('duplicate', () => {
-      it('throw DuplicatePayload', async () => {
-        const db = await getDatabase()
+      it('throw DuplicatePayload', () => {
+        const db = getDatabase()
         const queueId = 'queue-id'
         const messageId = 'message-id'
         const type = 'text/plain'
@@ -84,8 +84,8 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
     })
 
     describe('not duplicate', () => {
-      it('update message and convert state to waiting', async () => {
-        const db = await getDatabase()
+      it('update message and convert state to waiting', () => {
+        const db = getDatabase()
         const queueId = 'queue-id'
         const messageId = 'message-id'
         const type = 'text/plain'
@@ -144,8 +144,8 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
   })
 
   describe('state: drafting', () => {
-    it('update message and convert state to waiting', async () => {
-      const db = await getDatabase()
+    it('update message and convert state to waiting', () => {
+      const db = getDatabase()
       const queueId = 'queue-id'
       const messageId = 'message-id'
       const type = 'text/plain'
@@ -193,8 +193,8 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
   })
 
   describe('state: waiting', () => {
-    it('update message', async () => {
-      const db = await getDatabase()
+    it('update message', () => {
+      const db = getDatabase()
       const queueId = 'queue-id'
       const messageId = 'message-id'
       const type = 'text/plain'
@@ -244,8 +244,8 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
   })
 
   describe('other states', () => {
-    it('throw BadMessageState', async () => {
-      const db = await getDatabase()
+    it('throw BadMessageState', () => {
+      const db = getDatabase()
       const queueId = 'queue-id'
       const messageId = 'message-id'
       const type = 'text/plain'

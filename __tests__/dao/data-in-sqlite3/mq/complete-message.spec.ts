@@ -23,8 +23,8 @@ beforeEach(async () => {
 
 describe('completeMessage(queueId: string, messageId: string): void', () => {
   describe('state: active', () => {
-    it('delete message, completed++', async () => {
-      const db = await getDatabase()
+    it('delete message, completed++', () => {
+      const db = getDatabase()
       const queueId = 'queue-id'
       const messageId = 'message-id'
       setRawMessage(db, {

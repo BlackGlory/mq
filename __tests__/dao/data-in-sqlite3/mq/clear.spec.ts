@@ -16,8 +16,8 @@ beforeEach(async () => {
 })
 
 describe('clear(queueId: string): void', () => {
-  it('return undefined', async () => {
-    const db = await getDatabase()
+  it('return undefined', () => {
+    const db = getDatabase()
     const queueId = 'queue-id'
     const messageId = 'message-id'
     setRawMessage(db, {

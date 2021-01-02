@@ -5,13 +5,10 @@ import { strict as assert } from 'assert'
 
 let db: IDatabase
 
-export function getDatabase(): IDatabase {
-  assert(db)
-  return db
-}
-
-export function closeDatabase(): void {
-  if (db) db.close()
+export function openDatabase(): void {
+  db = new Database(':memory:')
+  enableForeignKeys(db)
+  enableAutoVacuum(db)
 }
 
 export async function prepareDatabase(): Promise<void> {
@@ -19,8 +16,11 @@ export async function prepareDatabase(): Promise<void> {
   await migrateDatabase(db)
 }
 
-export function connectDatabase(): void {
-  db = new Database(':memory:')
-  enableForeignKeys(db)
-  enableAutoVacuum(db)
+export function getDatabase(): IDatabase {
+  assert(db)
+  return db
+}
+
+export function closeDatabase(): void {
+  if (db) db.close()
 }

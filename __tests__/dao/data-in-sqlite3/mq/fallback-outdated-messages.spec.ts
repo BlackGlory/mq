@@ -20,8 +20,8 @@ beforeEach(async () => {
 })
 
 describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): void', () => {
-  it('return undefined', async () => {
-    const db = await getDatabase()
+  it('return undefined', () => {
+    const db = getDatabase()
     const queueId = 'queue-id'
     setRawMessage(db, {
       mq_id: queueId
@@ -71,8 +71,8 @@ describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
 })
 
 describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): void', () => {
-  it('return undefined', async () => {
-    const db = await getDatabase()
+  it('return undefined', () => {
+    const db = getDatabase()
     const queueId = 'queue-id'
     setRawMessage(db, {
       mq_id: queueId
@@ -129,8 +129,8 @@ describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
 })
 
 describe('fallbackOutdatedActiveMessages(queueId: string, timestamp: number): void', () => {
-  it('return undefined', async () => {
-    const db = await getDatabase()
+  it('return undefined', () => {
+    const db = getDatabase()
     const queueId = 'queue-id'
     setRawMessage(db, {
       mq_id: queueId
