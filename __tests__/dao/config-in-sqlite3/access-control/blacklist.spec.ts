@@ -1,6 +1,5 @@
 import * as DAO from '@dao/config-in-sqlite3/access-control/blacklist'
 import { getDatabase } from '@dao/config-in-sqlite3/database'
-import { Database } from 'better-sqlite3'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import 'jest-extended'
 
@@ -15,9 +14,8 @@ beforeEach(async () => {
 describe('blacklist', () => {
   describe('getAllBlacklistItems(): string[]', () => {
     it('return string[]', async () => {
-      const db = getDatabase()
       const id = 'id-1'
-      insert(db, id)
+      insert(id)
 
       const result = DAO.getAllBlacklistItems()
 
@@ -29,9 +27,8 @@ describe('blacklist', () => {
   describe('inBlacklist(id: string): boolean', () => {
     describe('exist', () => {
       it('return true', async () => {
-        const db = getDatabase()
         const id = 'id-1'
-        insert(db, id)
+        insert(id)
 
         const result = DAO.inBlacklist(id)
 
@@ -40,7 +37,7 @@ describe('blacklist', () => {
     })
 
     describe('not exist', () => {
-      it('return false', async () => {
+      it('return false', () => {
         const id = 'id-1'
 
         const result = DAO.inBlacklist(id)
@@ -52,67 +49,63 @@ describe('blacklist', () => {
 
   describe('addBlacklistItem', () => {
     describe('exist', () => {
-      it('return undefined', async () => {
-        const db = getDatabase()
+      it('return undefined', () => {
         const id = 'id-1'
-        insert(db, id)
+        insert(id)
 
         const result = DAO.addBlacklistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeTrue()
+        expect(exist(id)).toBeTrue()
       })
     })
 
     describe('not exist', () => {
-      it('return undefined', async () => {
-        const db = getDatabase()
+      it('return undefined', () => {
         const id = 'id-1'
 
         const result = DAO.addBlacklistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeTrue()
+        expect(exist(id)).toBeTrue()
       })
     })
   })
 
   describe('removeBlacklistItem', () => {
     describe('exist', () => {
-      it('return undefined', async () => {
-        const db = getDatabase()
+      it('return undefined', () => {
         const id = 'id-1'
-        insert(db, id)
+        insert(id)
 
         const result = DAO.removeBlacklistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeFalse()
+        expect(exist(id)).toBeFalse()
       })
     })
 
     describe('not exist', () => {
-      it('return undefined', async () => {
-        const db = getDatabase()
+      it('return undefined', () => {
         const id = 'id-1'
 
         const result = DAO.removeBlacklistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeFalse()
+        expect(exist(id)).toBeFalse()
       })
     })
   })
 })
 
-function exist(db: Database, id: string) {
-  return !!select(db, id)
+function exist(id: string): boolean {
+  return !!select(id)
 }
 
-function insert(db: Database, id: string) {
-  db.prepare('INSERT INTO mq_blacklist (mq_id) VALUES ($id);').run({ id });
+function insert(id: string): void {
+  getDatabase().prepare('INSERT INTO mq_blacklist (mq_id) VALUES ($id);').run({ id });
 }
 
-function select(db: Database, id: string) {
-  return db.prepare('SELECT * FROM mq_blacklist WHERE mq_id = $id;').get({ id })
+function select(id: string) {
+  return getDatabase().prepare('SELECT * FROM mq_blacklist WHERE mq_id = $id;').get({ id })
 }

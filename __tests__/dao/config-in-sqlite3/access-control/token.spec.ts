@@ -14,17 +14,16 @@ beforeEach(async () => {
 
 describe('token-based access control', () => {
   describe('getAllIdsWithTokens(): string[]', () => {
-    it('return string[]', async () => {
-      const db = getDatabase()
+    it('return string[]', () => {
       const id1 = 'id-1'
       const token1 = 'token-1'
       const id2 = 'id-2'
       const token2 = 'token-2'
       const id3 = 'id-3'
       const token3 = 'token-3'
-      insert(db, { token: token1, id: id1, consume: true })
-      insert(db, { token: token2, id: id2, produce: true })
-      insert(db, { token: token3, id: id3, clear: true })
+      insert({ token: token1, id: id1, consume: true })
+      insert({ token: token2, id: id2, produce: true })
+      insert({ token: token3, id: id3, clear: true })
 
       const result = DAO.getAllIdsWithTokens()
 
@@ -34,15 +33,14 @@ describe('token-based access control', () => {
   })
 
   describe('getAllTokens(id: string): TokenInfo[]', () => {
-    it('return TokenInfo[]', async () => {
-      const db = getDatabase()
+    it('return TokenInfo[]', () => {
       const id = 'id-1'
       const token1 = 'token-1'
       const token2 = 'token-2'
       const token3 = 'token-3'
-      insert(db, { token: token1, id, consume: true })
-      insert(db, { token: token2, id, produce: true })
-      insert(db, { token: token3, id, clear: true })
+      insert({ token: token1, id, consume: true })
+      insert({ token: token2, id, produce: true })
+      insert({ token: token3, id, clear: true })
 
       const result = DAO.getAllTokens(id)
 
@@ -58,11 +56,10 @@ describe('token-based access control', () => {
   describe('ProduceToken', () => {
     describe('hasProduceTokens(id: string): boolean', () => {
       describe('tokens exist', () => {
-        it('return true', async () => {
-          const db = getDatabase()
+        it('return true', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, consume: false, produce: true })
+          insert({ token, id, consume: false, produce: true })
 
           const result = DAO.hasProduceTokens(id)
 
@@ -71,11 +68,10 @@ describe('token-based access control', () => {
       })
 
       describe('tokens do not exist', () => {
-        it('return false', async () => {
-          const db = getDatabase()
+        it('return false', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, consume: true, produce: false })
+          insert({ token, id, consume: true, produce: false })
 
           const result = DAO.hasProduceTokens(id)
 
@@ -86,11 +82,11 @@ describe('token-based access control', () => {
 
     describe('matchProduceToken({ token: string; id: string }): boolean', () => {
       describe('token exist', () => {
-        it('return true', async () => {
+        it('return true', () => {
           const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, consume: false, produce: true })
+          insert({ token, id, consume: false, produce: true })
 
           const result = DAO.matchProduceToken({ token, id })
 
@@ -99,11 +95,10 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('return false', async () => {
-          const db = getDatabase()
+        it('return false', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, consume: true, produce: false })
+          insert({ token, id, consume: true, produce: false })
 
           const result = DAO.matchProduceToken({ token, id })
 
@@ -114,14 +109,13 @@ describe('token-based access control', () => {
 
     describe('setProduceToken({ token: string; id: string })', () => {
       describe('token exists', () => {
-        it('update row', async () => {
-          const db = getDatabase()
+        it('update row', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, consume: true, produce: false })
+          insert({ token, id, consume: true, produce: false })
 
           const result = DAO.setProduceToken({ token, id })
-          const row = select(db, { token, id })
+          const row = select({ token, id })
 
           expect(result).toBeUndefined()
           expect(row['produce_permission']).toBe(1)
@@ -129,13 +123,12 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('insert row', async () => {
-          const db = getDatabase()
+        it('insert row', () => {
           const token = 'token-1'
           const id = 'id-1'
 
           const result = DAO.setProduceToken({ token, id })
-          const row = select(db, { token, id })
+          const row = select({ token, id })
 
           expect(result).toBeUndefined()
           expect(row['produce_permission']).toBe(1)
@@ -145,14 +138,13 @@ describe('token-based access control', () => {
 
     describe('unsetProduceToken({ token: string; id: string })', () => {
       describe('token exists', () => {
-        it('return undefined', async () => {
-          const db = getDatabase()
+        it('return undefined', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, consume: true, produce: true })
+          insert({ token, id, consume: true, produce: true })
 
           const result = DAO.unsetProduceToken({ token, id })
-          const row = select(db, { token, id })
+          const row = select({ token, id })
 
           expect(result).toBeUndefined()
           expect(row['produce_permission']).toBe(0)
@@ -160,15 +152,14 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('return undefined', async () => {
-          const db = getDatabase()
+        it('return undefined', () => {
           const token = 'token-1'
           const id = 'id-1'
 
           const result = DAO.unsetProduceToken({ token, id })
 
           expect(result).toBeUndefined()
-          expect(exist(db, { token, id })).toBeFalse()
+          expect(exist({ token, id })).toBeFalse()
         })
       })
     })
@@ -177,11 +168,10 @@ describe('token-based access control', () => {
   describe('ConsumeToken', () => {
     describe('hasConsumeTokens(id: string): boolean', () => {
       describe('tokens exist', () => {
-        it('return true', async () => {
-          const db = getDatabase()
+        it('return true', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, consume: true, produce: false })
+          insert({ token, id, consume: true, produce: false })
 
           const result = DAO.hasConsumeTokens(id)
 
@@ -190,11 +180,10 @@ describe('token-based access control', () => {
       })
 
       describe('tokens do not exist', () => {
-        it('return false', async () => {
-          const db = getDatabase()
+        it('return false', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, consume: false, produce: true })
+          insert({ token, id, consume: false, produce: true })
 
           const result = DAO.hasConsumeTokens(id)
 
@@ -205,11 +194,10 @@ describe('token-based access control', () => {
 
     describe('matchConsumeToken({ token: string; id: string }): boolean', () => {
       describe('tokens exist', () => {
-        it('return true', async () => {
-          const db = getDatabase()
+        it('return true', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, consume: true, produce: false })
+          insert({ token, id, consume: true, produce: false })
 
           const result = DAO.matchConsumeToken({ token, id })
 
@@ -218,11 +206,10 @@ describe('token-based access control', () => {
       })
 
       describe('tokens do not exist', () => {
-        it('return false', async () => {
-          const db = getDatabase()
+        it('return false', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, consume: false, produce: true })
+          insert({ token, id, consume: false, produce: true })
 
           const result = DAO.matchConsumeToken({ token, id })
 
@@ -233,14 +220,13 @@ describe('token-based access control', () => {
 
     describe('setConsumeToken(token: string, id: string)', () => {
       describe('token exists', () => {
-        it('update row', async () => {
-          const db = getDatabase()
+        it('update row', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, consume: false, produce: true })
+          insert({ token, id, consume: false, produce: true })
 
           const result = DAO.setConsumeToken({ token, id })
-          const row = select(db, { token, id })
+          const row = select({ token, id })
 
           expect(result).toBeUndefined()
           expect(row['consume_permission']).toBe(1)
@@ -248,13 +234,12 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('insert row', async () => {
-          const db = getDatabase()
+        it('insert row', () => {
           const token = 'token-1'
           const id = 'id-1'
 
           const result = DAO.setConsumeToken({ token, id })
-          const row = select(db, { token, id })
+          const row = select({ token, id })
 
           expect(result).toBeUndefined()
           expect(row['consume_permission']).toBe(1)
@@ -264,14 +249,13 @@ describe('token-based access control', () => {
 
     describe('unsetConsumeToken', () => {
       describe('token exists', () => {
-        it('return undefined', async () => {
-          const db = getDatabase()
+        it('return undefined', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, consume: true, produce: true })
+          insert({ token, id, consume: true, produce: true })
 
           const result = DAO.unsetConsumeToken({ token, id })
-          const row = select(db, { token, id })
+          const row = select({ token, id })
 
           expect(result).toBeUndefined()
           expect(row['consume_permission']).toBe(0)
@@ -279,15 +263,14 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('return undefined', async () => {
-          const db = getDatabase()
+        it('return undefined', () => {
           const token = 'token-1'
           const id = 'id-1'
 
           const result = DAO.unsetConsumeToken({ token, id })
 
           expect(result).toBeUndefined()
-          expect(exist(db, { token, id })).toBeFalse()
+          expect(exist({ token, id })).toBeFalse()
         })
       })
     })
@@ -296,11 +279,10 @@ describe('token-based access control', () => {
   describe('ClearToken', () => {
     describe('matchClearToken({ token: string; id: string }): boolean', () => {
       describe('tokens exist', () => {
-        it('return true', async () => {
-          const db = getDatabase()
+        it('return true', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, clear: true })
+          insert({ token, id, clear: true })
 
           const result = DAO.matchClearToken({ token, id })
 
@@ -309,11 +291,10 @@ describe('token-based access control', () => {
       })
 
       describe('tokens do not exist', () => {
-        it('return false', async () => {
-          const db = getDatabase()
+        it('return false', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, clear: false })
+          insert({ token, id, clear: false })
 
           const result = DAO.matchClearToken({ token, id })
 
@@ -324,14 +305,13 @@ describe('token-based access control', () => {
 
     describe('setClearToken(token: string, id: string)', () => {
       describe('token exists', () => {
-        it('update row', async () => {
-          const db = getDatabase()
+        it('update row', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, clear: false })
+          insert({ token, id, clear: false })
 
           const result = DAO.setClearToken({ token, id })
-          const row = select(db, { token, id })
+          const row = select({ token, id })
 
           expect(result).toBeUndefined()
           expect(row['clear_permission']).toBe(1)
@@ -339,13 +319,12 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('insert row', async () => {
-          const db = getDatabase()
+        it('insert row', () => {
           const token = 'token-1'
           const id = 'id-1'
 
           const result = DAO.setClearToken({ token, id })
-          const row = select(db, { token, id })
+          const row = select({ token, id })
 
           expect(result).toBeUndefined()
           expect(row['clear_permission']).toBe(1)
@@ -355,14 +334,13 @@ describe('token-based access control', () => {
 
     describe('unsetClearToken', () => {
       describe('token exists', () => {
-        it('return undefined', async () => {
-          const db = getDatabase()
+        it('return undefined', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert(db, { token, id, clear: true })
+          insert({ token, id, clear: true })
 
           const result = DAO.unsetClearToken({ token, id })
-          const row = select(db, { token, id })
+          const row = select({ token, id })
 
           expect(result).toBeUndefined()
           expect(row).toBeUndefined()
@@ -370,27 +348,26 @@ describe('token-based access control', () => {
       })
 
       describe('token does not exist', () => {
-        it('return undefined', async () => {
-          const db = getDatabase()
+        it('return undefined', () => {
           const token = 'token-1'
           const id = 'id-1'
 
           const result = DAO.unsetClearToken({ token, id })
 
           expect(result).toBeUndefined()
-          expect(exist(db, { token, id })).toBeFalse()
+          expect(exist({ token, id })).toBeFalse()
         })
       })
     })
   })
 })
 
-function exist(db: Database, { token, id }: { token: string; id: string }) {
-  return !!select(db, { token, id })
+function exist({ token, id }: { token: string; id: string }): boolean {
+  return !!select({ token, id })
 }
 
-function select(db: Database, { token, id }: { token: string; id: string }) {
-  return db.prepare(`
+function select({ token, id }: { token: string; id: string }) {
+  return getDatabase().prepare(`
     SELECT *
       FROM mq_token
      WHERE token = $token AND mq_id = $id;
@@ -398,16 +375,15 @@ function select(db: Database, { token, id }: { token: string; id: string }) {
 }
 
 function insert(
-  db: Database
-, { token, id, consume = false, produce = false, clear = false }: {
+  { token, id, consume = false, produce = false, clear = false }: {
     token: string
     id: string
     consume?: boolean
     produce?: boolean
     clear?: boolean
   }
-) {
-  db.prepare(`
+): void {
+  getDatabase().prepare(`
     INSERT INTO mq_token (
       token
     , mq_id

@@ -1,6 +1,5 @@
 import * as DAO from '@dao/config-in-sqlite3/access-control/whitelist'
 import { getDatabase } from '@dao/config-in-sqlite3/database'
-import { Database } from 'better-sqlite3'
 import { resetEnvironment, resetDatabases } from '@test/utils'
 import 'jest-extended'
 
@@ -14,10 +13,9 @@ beforeEach(async () => {
 
 describe('whitelist', () => {
   describe('getAllWhitelistItems(): string[]', () => {
-    it('return string[]', async () => {
-      const db = getDatabase()
+    it('return string[]', () => {
       const id = 'id-1'
-      insert(db, id)
+      insert(id)
 
       const result = DAO.getAllWhitelistItems()
 
@@ -28,10 +26,9 @@ describe('whitelist', () => {
 
   describe('inWhitelist(id: string): boolean', () => {
     describe('exist', () => {
-      it('return true', async () => {
-        const db = getDatabase()
+      it('return true', () => {
         const id = 'id-1'
-        insert(db, id)
+        insert(id)
 
         const result = DAO.inWhitelist(id)
 
@@ -40,7 +37,7 @@ describe('whitelist', () => {
     })
 
     describe('not exist', () => {
-      it('return false', async () => {
+      it('return false', () => {
         const id = 'id-1'
 
         const result = DAO.inWhitelist(id)
@@ -52,67 +49,63 @@ describe('whitelist', () => {
 
   describe('addWhitelistItem', () => {
     describe('exist', () => {
-      it('return undefined', async () => {
-        const db = getDatabase()
+      it('return undefined', () => {
         const id = 'id-1'
-        insert(db, id)
+        insert(id)
 
         const result = DAO.addWhitelistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeTrue()
+        expect(exist(id)).toBeTrue()
       })
     })
 
     describe('not exist', () => {
-      it('return undefined', async () => {
-        const db = getDatabase()
+      it('return undefined', () => {
         const id = 'id-1'
 
         const result = DAO.addWhitelistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeTrue()
+        expect(exist(id)).toBeTrue()
       })
     })
   })
 
   describe('removeWhitelistItem', () => {
     describe('exist', () => {
-      it('return undefined', async () => {
-        const db = getDatabase()
+      it('return undefined', () => {
         const id = 'id-1'
-        insert(db, id)
+        insert(id)
 
         const result = DAO.removeWhitelistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeFalse()
+        expect(exist(id)).toBeFalse()
       })
     })
 
     describe('not exist', () => {
-      it('return undefined', async () => {
-        const db = getDatabase()
+      it('return undefined', () => {
         const id = 'id-1'
 
         const result = DAO.removeWhitelistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(db, id)).toBeFalse()
+        expect(exist(id)).toBeFalse()
       })
     })
   })
 })
 
-function exist(db: Database, id: string) {
-  return !!select(db, id)
+function exist(id: string): boolean {
+  return !!select(id)
 }
 
-function insert(db: Database, id: string) {
-  db.prepare('INSERT INTO mq_whitelist (mq_id) VALUES ($id);').run({ id });
+function insert(id: string): void {
+  getDatabase().prepare('INSERT INTO mq_whitelist (mq_id) VALUES ($id);').run({ id });
 }
 
-function select(db: Database, id: string) {
-  return db.prepare('SELECT * FROM mq_whitelist WHERE mq_id = $id;').get({ id })
+function select(id: string) {
+  return getDatabase().prepare('SELECT * FROM mq_whitelist WHERE mq_id = $id;').get({ id })
 }
