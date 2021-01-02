@@ -13,7 +13,3 @@ export async function migrateDatabase(db: IDatabase) {
 export function enableAutoVacuum(db: IDatabase): void {
   db.exec('PRAGMA main.auto_vacuum = FULL;')
 }
-
-export function vaccum(db: IDatabase): void {
-  db.prepare('VACUUM;').run()
-}

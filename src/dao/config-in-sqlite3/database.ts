@@ -5,7 +5,7 @@ import * as path from 'path'
 import * as fs from 'fs-extra'
 import { NODE_ENV, NodeEnv } from '@env'
 import { strict as assert } from 'assert'
-import { enableAutoVacuum, vaccum, migrateDatabase } from './utils'
+import { enableAutoVacuum, migrateDatabase } from './utils'
 assert(NODE_ENV() !== NodeEnv.Test)
 
 let db: IDatabase
@@ -22,7 +22,6 @@ export function closeDatabase(): void {
 export async function prepareDatabase(): Promise<void> {
   assert(db)
   await migrateDatabase(db)
-  vaccum(db)
 }
 
 export function connectDatabase(): void {
