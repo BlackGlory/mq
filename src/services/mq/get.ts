@@ -40,6 +40,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         reply
           .status(200)
           .header('Content-Type', result.type)
+          .header('X-MQ-Priority', result.priority)
           .send(result.payload)
       } catch (e) {
         if (e instanceof Core.MQ.NotFound) return reply.status(404).send()

@@ -17,6 +17,7 @@ export function getMessage(queueId: string, messageId: string): IMessage {
       SELECT type
            , payload
            , state
+           , priority
         FROM mq_message
        WHERE mq_id = $queueId
          AND message_id = $messageId;
@@ -33,10 +34,10 @@ export function getMessage(queueId: string, messageId: string): IMessage {
       case State.Ordered:
         db.prepare(`
           UPDATE mq_message
-            SET state = 'active'
-              , state_updated_at = $stateUpdatedAt
-          WHERE mq_id = $queueId
-            AND message_id = $messageId;
+             SET state = 'active'
+               , state_updated_at = $stateUpdatedAt
+           WHERE mq_id = $queueId
+             AND message_id = $messageId;
         `).run({
           queueId
         , messageId
@@ -51,6 +52,7 @@ export function getMessage(queueId: string, messageId: string): IMessage {
     return {
       type: row['type']
     , payload: row['payload']
+    , priority: row['priority']
     }
   })()
 }

@@ -99,7 +99,7 @@ volumes:
 }
 #+END_SRC
 
-一个处于drafting状态的消息会在设定的超时时间后被删除, 因此需要生产者调用[[set]].
+一个处于drafting状态的消息会在设定的超时时间后被删除, 需要生产者手动调用[[set]]以避免超时.
 
 ******* Example
 ******** curl
@@ -153,8 +153,8 @@ await fetch(`http://localhost:8080/mq/$mqId/messages/$msgId`, {
 如果没有可用的消息, 则会阻塞直到有可用的消息返回.
 
 该操作会使消息从waiting状态转为ordered状态.
-一个处于ordered状态的消息会在设定的超时时间后以waiting状态在队列末端重新入列,
-因此需要消费者调用[[get]].
+一个处于ordered状态的消息会在设定的超时时间后以waiting状态重新入列, 优先级不会改变.
+需要消费者手动调用[[get]]以避免超时.
 
 ******* Example
 ******** curl
@@ -171,10 +171,12 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages`).then(res => res.text())
 =GET /mq/<mq-id>/messages/<msg-id>=
 
 获取特定队列的指定消息, 当消息的状态为ordered时, 消息会从ordered状态转为active状态.
-一个处于active状态的消息会在设定的超时时间后以waiting状态在队列末端重新入列,
-因此需要消费者调用[[complete]]或[[abandon]].
+一个处于active状态的消息会在设定的超时时间后以waiting状态重新入列, 优先级不会改变.
+需要消费者手动调用[[complete]]或[[abandon]]以避免超时.
 
 此操作是幂等的, 可以在消息完成前反复使用.
+
+响应头 =X-MQ-Priority= 显示该消息的优先级, 可用于在手动重新入列时使用.
 
 ******* Example
 ******** curl

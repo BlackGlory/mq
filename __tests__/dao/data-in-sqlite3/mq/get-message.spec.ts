@@ -52,6 +52,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         expect(result).toEqual({
           type: 'type'
         , payload: 'payload'
+        , priority: null
         })
         expect(message).toMatchObject({
           state: 'active'
@@ -126,6 +127,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         expect(result).toEqual({
           type: 'type'
         , payload: 'payload'
+        , priority: null
         })
         expect(message).toMatchObject({
           state: 'waiting'

@@ -5,6 +5,7 @@ type CustomError = import('@blackglory/errors').CustomError
 interface IMessage {
   type: string
   payload: string
+  priority: number
 }
 
 interface IStats {
