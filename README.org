@@ -6,7 +6,7 @@
 
 ** Quickstart
 #+BEGIN_SRC sh
-docker run --detach --log 8080:8080 blackglory/mq
+docker run --detach --publish 8080:8080 blackglory/mq
 
 curl http://localhost:8080/mq/queue-id/messages/message-id \
 #+END_SRC
