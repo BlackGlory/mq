@@ -1,5 +1,5 @@
 import { isAdmin } from './admin'
-import { stats } from './stats'
+import { metrics } from './metrics'
 import * as Blacklist from './blacklist'
 import * as Whitelist from './whitelist'
 import * as JsonSchema from './json-schema'
@@ -9,7 +9,7 @@ import * as Configuration from './configuration'
 
 export const Core: ICore = {
   isAdmin
-, stats
+, metrics
 , MQ
 , Configuration
 , Blacklist
