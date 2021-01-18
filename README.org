@@ -296,7 +296,7 @@ curl 'http://localhost:8080/mq'
 await fetch('http://localhost:8080/mq').then(res => res.json())
 #+END_SRC
 
-**** 统计信息
+**** metrics
 =GET /metrics=
 
 输出JSON:
