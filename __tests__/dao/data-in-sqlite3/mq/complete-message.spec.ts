@@ -64,6 +64,24 @@ describe('completeMessage(queueId: string, messageId: string): void', () => {
     it('throw BadMessageState', async () => {
       const queueId = 'queue-id'
       const messageId = 'message-id'
+      setRawMessage({
+        mq_id: queueId
+      , message_id: messageId
+      , hash: 'hash'
+      , payload: 'payload'
+      , priority: null
+      , state: 'waiting'
+      , state_updated_at: 0
+      , type: 'type'
+      })
+      setRawStats({
+        mq_id: queueId
+      , drafting: 0
+      , waiting: 1
+      , ordered: 0
+      , active: 0
+      , completed: 0
+      })
 
       const err = getError(() => DAO.completeMessage(queueId, messageId))
 

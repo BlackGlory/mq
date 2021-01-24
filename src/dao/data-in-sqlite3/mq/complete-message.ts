@@ -15,6 +15,7 @@ export function completeMessage(queueId: string, messageId: string): void {
                  FROM mq_message
                 WHERE mq_id = $queueId
                   AND message_id = $messageId
+                  AND state = 'active'
              ) AS matched;
     `).get({ queueId, messageId })
     if (!result['matched']) throw new BadMessageState('active')
