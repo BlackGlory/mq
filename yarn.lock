@@ -3174,10 +3174,10 @@ fastify-bearer-auth@^5.0.2:
   dependencies:
     fastify-plugin "^2.0.0"
 
-fastify-cors@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/fastify-cors/-/fastify-cors-5.1.0.tgz#f34b11ed0b84fdc212edc2ad38c92ff85f163b8e"
-  integrity sha512-PTq4wSBFljXmbFKmp5eKW9gg0m488nXBl+OSTb/vnWXXLvVn7HFk7WKgt7uQVfd9UuksveCGTXipVlus3qhmrw==
+fastify-cors@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/fastify-cors/-/fastify-cors-5.2.0.tgz#a92af64d9b7df1cd736c90ecd894a7b23c0cd75a"
+  integrity sha512-Lde71qT23M3Ip3pmny3uN6q6lQ4J5J0/YWoqe2stL4sMT99R5LEtTJ2La2zijFOR5OFhxvxqGgR7BIc2x3amPg==
   dependencies:
     fastify-plugin "^3.0.0"
     vary "^1.1.2"
@@ -3204,10 +3204,10 @@ fastify-warning@^0.2.0:
   resolved "https://registry.yarnpkg.com/fastify-warning/-/fastify-warning-0.2.0.tgz#e717776026a4493dc9a2befa44db6d17f618008f"
   integrity sha512-s1EQguBw/9qtc1p/WTY4eq9WMRIACkj+HTcOIK1in4MV5aFaQC9ZCIt0dJ7pr5bIf4lPpHvAtP2ywpTNgs7hqw==
 
-fastify@^3.10.1:
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-3.10.1.tgz#9a17b395e162e90c2dded93353bf2e04410884ff"
-  integrity sha512-ChjHCXbCFzftVzQ1sDD8f8Ou1uDObkcVXBJmDkzVoZSNTxDrIapg63HIy3tPwScTNyMdmikA+QbP6zkGP+cFzw==
+fastify@^3.11.0:
+  version "3.11.0"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-3.11.0.tgz#2464c9a715603e6941308f55572d08a27ea7f2a6"
+  integrity sha512-xc0mTG3cZhBrpsHh5M+xujA/xAIfBCn6DLOWPqCbIBkt0TtfeDaXpBEtlejWp13eM8SZbyXnHcR6PJaOajbY/A==
   dependencies:
     abstract-logging "^2.0.0"
     ajv "^6.12.2"
