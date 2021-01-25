@@ -169,7 +169,7 @@ export const ORDERED_TIMEOUT: Getter<number> =
 export const ACTIVE_TIMEOUT: Getter<number> =
   env('MQ_ACTIVE_TIMEOUT')
     .convert(toInteger)
-    .default(Infinity)
+    .default(300_000)
     .assert(shouldBePositive)
     .memoize(getCache)
     .get()

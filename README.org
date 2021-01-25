@@ -338,8 +338,8 @@ await fetch('http://localhost:8080/metrics').then(res => res.json())
 可用以下环境变量作为全局设置:
 =MQ_UNIQUE=, 默认为 =false=
 =MQ_DRAFTING_TIMEOUT=, 默认为60秒.
-=MQ_ORDERED_TIMEOUT=, 默认为60m秒.
-=MQ_ACTIVE_TIMEOUT=, 默认为无限.
+=MQ_ORDERED_TIMEOUT=, 默认为60秒.
+=MQ_ACTIVE_TIMEOUT=, 默认为300秒.
 =MQ_CONCURRENCY=, 默认为无限.
 =MQ_THROTTLE=, 需满足JSON语法, 默认为无限制.
 
