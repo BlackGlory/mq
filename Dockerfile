@@ -17,8 +17,8 @@ RUN yarn build \
  && mkdir /data \
  && ln -s /data data
 
-ENV STORE_HOST=0.0.0.0
-ENV STORE_PORT=8080
+ENV MQ_HOST=0.0.0.0
+ENV MQ_PORT=8080
 EXPOSE 8080
 ENTRYPOINT ["yarn"]
 CMD ["--silent", "start"]
