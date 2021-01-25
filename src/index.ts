@@ -29,7 +29,7 @@ process.on('SIGTERM', () => process.exit(128 + 15))
 
   const server = await buildServer()
   await server.listen(PORT(), HOST())
-  if (CI()) await server.close()
+  if (CI()) await process.kill(process.pid, 'SIGINT')
 
   process.send?.('ready')
 })()
