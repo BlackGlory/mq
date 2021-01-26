@@ -1,7 +1,6 @@
 import * as DAO from '@dao/config-in-sqlite3/access-control/token'
-import { getDatabase } from '@dao/config-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
-import { Database } from 'better-sqlite3'
+import { getRawToken, hasRawToken, setRawToken } from './utils'
 import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
@@ -21,13 +20,30 @@ describe('token-based access control', () => {
       const token2 = 'token-2'
       const id3 = 'id-3'
       const token3 = 'token-3'
-      insert({ token: token1, id: id1, consume: true })
-      insert({ token: token2, id: id2, produce: true })
-      insert({ token: token3, id: id3, clear: true })
+      setRawToken({
+        token: token1
+      , mq_id: id1
+      , consume_permission: 1
+      , produce_permission: 0
+      , clear_permission: 0
+      })
+      setRawToken({
+        token: token2
+      , mq_id: id2
+      , consume_permission: 0
+      , produce_permission: 1
+      , clear_permission: 0
+      })
+      setRawToken({
+        token: token3
+      , mq_id: id3
+      , consume_permission: 0
+      , produce_permission: 0
+      , clear_permission: 1
+      })
 
       const result = DAO.getAllIdsWithTokens()
 
-      // expect.toStrictEqual is broken, I have no idea
       expect(result).toEqual([id1, id2, id3])
     })
   })
@@ -38,13 +54,30 @@ describe('token-based access control', () => {
       const token1 = 'token-1'
       const token2 = 'token-2'
       const token3 = 'token-3'
-      insert({ token: token1, id, consume: true })
-      insert({ token: token2, id, produce: true })
-      insert({ token: token3, id, clear: true })
+      setRawToken({
+        token: token1
+      , mq_id: id
+      , consume_permission: 1
+      , produce_permission: 0
+      , clear_permission: 0
+      })
+      setRawToken({
+        token: token2
+      , mq_id: id
+      , consume_permission: 0
+      , produce_permission: 1
+      , clear_permission: 0
+      })
+      setRawToken({
+        token: token3
+      , mq_id: id
+      , consume_permission: 0
+      , produce_permission: 0
+      , clear_permission: 1
+      })
 
       const result = DAO.getAllTokens(id)
 
-      // expect.toStrictEqual is broken, I have no idea
       expect(result).toEqual([
         { token: token1, consume: true, produce: false, clear: false }
       , { token: token2, consume: false, produce: true, clear: false }
@@ -59,7 +92,13 @@ describe('token-based access control', () => {
         it('return true', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, consume: false, produce: true })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 0
+          , produce_permission: 1
+          , clear_permission: 0
+          })
 
           const result = DAO.hasProduceTokens(id)
 
@@ -71,7 +110,13 @@ describe('token-based access control', () => {
         it('return false', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, consume: true, produce: false })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 1
+          , produce_permission: 0
+          , clear_permission: 0
+          })
 
           const result = DAO.hasProduceTokens(id)
 
@@ -83,10 +128,15 @@ describe('token-based access control', () => {
     describe('matchProduceToken({ token: string; id: string }): boolean', () => {
       describe('token exist', () => {
         it('return true', () => {
-          const db = getDatabase()
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, consume: false, produce: true })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 0
+          , produce_permission: 1
+          , clear_permission: 0
+          })
 
           const result = DAO.matchProduceToken({ token, id })
 
@@ -98,7 +148,13 @@ describe('token-based access control', () => {
         it('return false', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, consume: true, produce: false })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 1
+          , produce_permission: 0
+          , clear_permission: 0
+          })
 
           const result = DAO.matchProduceToken({ token, id })
 
@@ -112,13 +168,20 @@ describe('token-based access control', () => {
         it('update row', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, consume: true, produce: false })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 1
+          , produce_permission: 0
+          , clear_permission: 0
+          })
 
           const result = DAO.setProduceToken({ token, id })
-          const row = select({ token, id })
+          const row = getRawToken(token, id)
 
           expect(result).toBeUndefined()
-          expect(row['produce_permission']).toBe(1)
+          expect(row).not.toBeNull()
+          expect(row!['produce_permission']).toBe(1)
         })
       })
 
@@ -128,10 +191,11 @@ describe('token-based access control', () => {
           const id = 'id-1'
 
           const result = DAO.setProduceToken({ token, id })
-          const row = select({ token, id })
+          const row = getRawToken(token, id)
 
           expect(result).toBeUndefined()
-          expect(row['produce_permission']).toBe(1)
+          expect(row).not.toBeNull()
+          expect(row!['produce_permission']).toBe(1)
         })
       })
     })
@@ -141,13 +205,20 @@ describe('token-based access control', () => {
         it('return undefined', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, consume: true, produce: true })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 1
+          , produce_permission: 1
+          , clear_permission: 0
+          })
 
           const result = DAO.unsetProduceToken({ token, id })
-          const row = select({ token, id })
+          const row = getRawToken(token, id)
 
           expect(result).toBeUndefined()
-          expect(row['produce_permission']).toBe(0)
+          expect(row).not.toBeNull()
+          expect(row!['produce_permission']).toBe(0)
         })
       })
 
@@ -159,7 +230,7 @@ describe('token-based access control', () => {
           const result = DAO.unsetProduceToken({ token, id })
 
           expect(result).toBeUndefined()
-          expect(exist({ token, id })).toBeFalse()
+          expect(hasRawToken(token, id)).toBeFalse()
         })
       })
     })
@@ -171,7 +242,13 @@ describe('token-based access control', () => {
         it('return true', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, consume: true, produce: false })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 1
+          , produce_permission: 0
+          , clear_permission: 0
+          })
 
           const result = DAO.hasConsumeTokens(id)
 
@@ -183,7 +260,13 @@ describe('token-based access control', () => {
         it('return false', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, consume: false, produce: true })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 0
+          , produce_permission: 1
+          , clear_permission: 0
+          })
 
           const result = DAO.hasConsumeTokens(id)
 
@@ -197,7 +280,13 @@ describe('token-based access control', () => {
         it('return true', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, consume: true, produce: false })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 1
+          , produce_permission: 0
+          , clear_permission: 0
+          })
 
           const result = DAO.matchConsumeToken({ token, id })
 
@@ -209,7 +298,13 @@ describe('token-based access control', () => {
         it('return false', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, consume: false, produce: true })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 0
+          , produce_permission: 1
+          , clear_permission: 0
+          })
 
           const result = DAO.matchConsumeToken({ token, id })
 
@@ -223,13 +318,20 @@ describe('token-based access control', () => {
         it('update row', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, consume: false, produce: true })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 0
+          , produce_permission: 1
+          , clear_permission: 0
+          })
 
           const result = DAO.setConsumeToken({ token, id })
-          const row = select({ token, id })
+          const row = getRawToken(token, id)
 
           expect(result).toBeUndefined()
-          expect(row['consume_permission']).toBe(1)
+          expect(row).not.toBeNull()
+          expect(row!['consume_permission']).toBe(1)
         })
       })
 
@@ -239,10 +341,11 @@ describe('token-based access control', () => {
           const id = 'id-1'
 
           const result = DAO.setConsumeToken({ token, id })
-          const row = select({ token, id })
+          const row = getRawToken(token, id)
 
           expect(result).toBeUndefined()
-          expect(row['consume_permission']).toBe(1)
+          expect(row).not.toBeNull()
+          expect(row!['consume_permission']).toBe(1)
         })
       })
     })
@@ -252,13 +355,20 @@ describe('token-based access control', () => {
         it('return undefined', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, consume: true, produce: true })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 1
+          , produce_permission: 1
+          , clear_permission: 0
+          })
 
           const result = DAO.unsetConsumeToken({ token, id })
-          const row = select({ token, id })
+          const row = getRawToken(token, id)
 
           expect(result).toBeUndefined()
-          expect(row['consume_permission']).toBe(0)
+          expect(row).not.toBeNull()
+          expect(row!['consume_permission']).toBe(0)
         })
       })
 
@@ -270,7 +380,7 @@ describe('token-based access control', () => {
           const result = DAO.unsetConsumeToken({ token, id })
 
           expect(result).toBeUndefined()
-          expect(exist({ token, id })).toBeFalse()
+          expect(hasRawToken(token, id)).toBeFalse()
         })
       })
     })
@@ -282,7 +392,13 @@ describe('token-based access control', () => {
         it('return true', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, clear: true })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 0
+          , produce_permission: 0
+          , clear_permission: 1
+          })
 
           const result = DAO.matchClearToken({ token, id })
 
@@ -294,7 +410,13 @@ describe('token-based access control', () => {
         it('return false', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, clear: false })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 0
+          , produce_permission: 0
+          , clear_permission: 0
+          })
 
           const result = DAO.matchClearToken({ token, id })
 
@@ -308,13 +430,20 @@ describe('token-based access control', () => {
         it('update row', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, clear: false })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 0
+          , produce_permission: 0
+          , clear_permission: 0
+          })
 
           const result = DAO.setClearToken({ token, id })
-          const row = select({ token, id })
+          const row = getRawToken(token, id)
 
           expect(result).toBeUndefined()
-          expect(row['clear_permission']).toBe(1)
+          expect(row).not.toBeNull()
+          expect(row!['clear_permission']).toBe(1)
         })
       })
 
@@ -324,10 +453,11 @@ describe('token-based access control', () => {
           const id = 'id-1'
 
           const result = DAO.setClearToken({ token, id })
-          const row = select({ token, id })
+          const row = getRawToken(token, id)
 
           expect(result).toBeUndefined()
-          expect(row['clear_permission']).toBe(1)
+          expect(row).not.toBeNull()
+          expect(row!['clear_permission']).toBe(1)
         })
       })
     })
@@ -337,10 +467,16 @@ describe('token-based access control', () => {
         it('return undefined', () => {
           const token = 'token-1'
           const id = 'id-1'
-          insert({ token, id, clear: true })
+          setRawToken({
+            token
+          , mq_id: id
+          , consume_permission: 0
+          , produce_permission: 0
+          , clear_permission: 1
+          })
 
           const result = DAO.unsetClearToken({ token, id })
-          const row = select({ token, id })
+          const row = getRawToken(token, id)
 
           expect(result).toBeUndefined()
           expect(row).toBeUndefined()
@@ -355,48 +491,9 @@ describe('token-based access control', () => {
           const result = DAO.unsetClearToken({ token, id })
 
           expect(result).toBeUndefined()
-          expect(exist({ token, id })).toBeFalse()
+          expect(hasRawToken(token, id)).toBeFalse()
         })
       })
     })
   })
 })
-
-function exist({ token, id }: { token: string; id: string }): boolean {
-  return !!select({ token, id })
-}
-
-function select({ token, id }: { token: string; id: string }) {
-  return getDatabase().prepare(`
-    SELECT *
-      FROM mq_token
-     WHERE token = $token AND mq_id = $id;
-  `).get({ token, id })
-}
-
-function insert(
-  { token, id, consume = false, produce = false, clear = false }: {
-    token: string
-    id: string
-    consume?: boolean
-    produce?: boolean
-    clear?: boolean
-  }
-): void {
-  getDatabase().prepare(`
-    INSERT INTO mq_token (
-      token
-    , mq_id
-    , produce_permission
-    , consume_permission
-    , clear_permission
-    )
-    VALUES ($token, $id, $produce, $consume, $clear);
-  `).run({
-    token
-  , id
-  , produce: produce ? 1 : 0
-  , consume: consume ? 1 : 0
-  , clear: clear ? 1 : 0
-  })
-}

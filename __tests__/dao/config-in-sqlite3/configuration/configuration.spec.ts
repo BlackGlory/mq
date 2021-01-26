@@ -1,6 +1,6 @@
 import * as DAO from '@dao/config-in-sqlite3/configuration/configuration'
-import { getDatabase } from '@dao/config-in-sqlite3/database'
 import { resetEnvironment, resetDatabases } from '@test/utils'
+import { getRawConfiguration, hasRawConfiguration, setRawConfiguration } from './utils'
 import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
@@ -15,13 +15,15 @@ describe('Configuration', () => {
   describe('getAllIdsWithConfigurations(): string[]', () => {
     it('return string[]', () => {
       const id = 'id'
-      insert(id, {
-        unique: true
-      , draftingTimeout: null
-      , orderedTimeout: null
-      , activeTimeout: null
+      setRawConfiguration({
+        mq_id: id
+      , uniq: 1
+      , drafting_timeout: null
+      , ordered_timeout: null
+      , active_timeout: null
       , concurrency: null
-      , throttle: null
+      , throttle_duration: null
+      , throttle_limit: null
       })
 
       const result = DAO.getAllIdsWithConfigurations()
@@ -34,13 +36,15 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return', () => {
         const id = 'id'
-        insert(id, {
-          unique: true
-        , draftingTimeout: null
-        , orderedTimeout: null
-        , activeTimeout: null
+        setRawConfiguration({
+          mq_id: id
+        , uniq: 1
+        , drafting_timeout: null
+        , ordered_timeout: null
+        , active_timeout: null
         , concurrency: null
-        , throttle: null
+        , throttle_duration: null
+        , throttle_limit: null
         })
 
         const result = DAO.getConfigurations(id)
@@ -79,10 +83,11 @@ describe('Configuration', () => {
       const id = 'id'
 
       const result = DAO.setUnique(id, true)
-      const row = select(id)
+      const row = getRawConfiguration(id)
 
       expect(result).toBeUndefined()
-      expect(row['uniq']).toBe(1)
+      expect(row).not.toBeNull()
+      expect(row!['uniq']).toBe(1)
     })
   })
 
@@ -90,20 +95,23 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return undefined', () => {
         const id = 'id'
-        insert(id, {
-          unique: null
-        , draftingTimeout: 100
-        , orderedTimeout: null
-        , activeTimeout: null
+        setRawConfiguration({
+          mq_id: id
+        , uniq: null
+        , drafting_timeout: 100
+        , ordered_timeout: null
+        , active_timeout: null
         , concurrency: null
-        , throttle: null
+        , throttle_duration: null
+        , throttle_limit: null
         })
 
         const result = DAO.unsetUnique(id)
-        const row = select(id)
+        const row = getRawConfiguration(id)
 
         expect(result).toBeUndefined()
-        expect(row['uniq']).toBeNull()
+        expect(row).not.toBeNull()
+        expect(row!['uniq']).toBeNull()
       })
     })
 
@@ -114,7 +122,7 @@ describe('Configuration', () => {
         const result = DAO.unsetUnique(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeFalse()
+        expect(hasRawConfiguration(id)).toBeFalse()
       })
     })
   })
@@ -124,10 +132,11 @@ describe('Configuration', () => {
       const id = 'id'
 
       const result = DAO.setDraftingTimeout(id, 100)
-      const row = select(id)
+      const row = getRawConfiguration(id)
 
       expect(result).toBeUndefined()
-      expect(row['drafting_timeout']).toBe(100)
+      expect(row).not.toBeNull()
+      expect(row!['drafting_timeout']).toBe(100)
     })
   })
 
@@ -135,20 +144,23 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return undefined', () => {
         const id = 'id'
-        insert(id, {
-          unique: null
-        , draftingTimeout: 100
-        , orderedTimeout: null
-        , activeTimeout: null
+        setRawConfiguration({
+          mq_id: id
+        , uniq: null
+        , drafting_timeout: 100
+        , ordered_timeout: null
+        , active_timeout: null
         , concurrency: null
-        , throttle: null
+        , throttle_duration: null
+        , throttle_limit: null
         })
 
         const result = DAO.unsetDraftingTimeout(id)
-        const row = select(id)
+        const row = getRawConfiguration(id)
 
         expect(result).toBeUndefined()
-        expect(row['drafting_timeout']).toBeNull()
+        expect(row).not.toBeNull()
+        expect(row!['drafting_timeout']).toBeNull()
       })
     })
 
@@ -159,7 +171,7 @@ describe('Configuration', () => {
         const result = DAO.unsetDraftingTimeout(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeFalse()
+        expect(hasRawConfiguration(id)).toBeFalse()
       })
     })
   })
@@ -169,10 +181,11 @@ describe('Configuration', () => {
       const id = 'id'
 
       const result = DAO.setOrderedTimeout(id, 100)
-      const row = select(id)
+      const row = getRawConfiguration(id)
 
       expect(result).toBeUndefined()
-      expect(row['ordered_timeout']).toBe(100)
+      expect(row).not.toBeNull()
+      expect(row!['ordered_timeout']).toBe(100)
     })
   })
 
@@ -180,20 +193,23 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return undefined', () => {
         const id = 'id'
-        insert(id, {
-          unique: null
-        , draftingTimeout: null
-        , orderedTimeout: 100
-        , activeTimeout: null
+        setRawConfiguration({
+          mq_id: id
+        , uniq: null
+        , drafting_timeout: null
+        , ordered_timeout: 100
+        , active_timeout: null
         , concurrency: null
-        , throttle: null
+        , throttle_duration: null
+        , throttle_limit: null
         })
 
         const result = DAO.unsetOrderedTimeout(id)
-        const row = select(id)
+        const row = getRawConfiguration(id)
 
         expect(result).toBeUndefined()
-        expect(row['ordered_timeout']).toBeNull()
+        expect(row).not.toBeNull()
+        expect(row!['ordered_timeout']).toBeNull()
       })
     })
 
@@ -204,7 +220,7 @@ describe('Configuration', () => {
         const result = DAO.unsetOrderedTimeout(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeFalse()
+        expect(hasRawConfiguration(id)).toBeFalse()
       })
     })
   })
@@ -214,10 +230,11 @@ describe('Configuration', () => {
       const id = 'id'
 
       const result = DAO.setActiveTimeout(id, 100)
-      const row = select(id)
+      const row = getRawConfiguration(id)
 
       expect(result).toBeUndefined()
-      expect(row['active_timeout']).toBe(100)
+      expect(row).not.toBeNull()
+      expect(row!['active_timeout']).toBe(100)
     })
   })
 
@@ -225,20 +242,23 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return undefined', () => {
         const id = 'id'
-        insert(id, {
-          unique: null
-        , draftingTimeout: null
-        , orderedTimeout: null
-        , activeTimeout: 100
+        setRawConfiguration({
+          mq_id: id
+        , uniq: null
+        , drafting_timeout: null
+        , ordered_timeout: null
+        , active_timeout: 100
         , concurrency: null
-        , throttle: null
+        , throttle_duration: null
+        , throttle_limit: null
         })
 
         const result = DAO.unsetActiveTimeout(id)
-        const row = select(id)
+        const row = getRawConfiguration(id)
 
         expect(result).toBeUndefined()
-        expect(row['active_timeout']).toBeNull()
+        expect(row).not.toBeNull()
+        expect(row!['active_timeout']).toBeNull()
       })
     })
 
@@ -249,7 +269,7 @@ describe('Configuration', () => {
         const result = DAO.unsetActiveTimeout(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeFalse()
+        expect(hasRawConfiguration(id)).toBeFalse()
       })
     })
   })
@@ -259,10 +279,11 @@ describe('Configuration', () => {
       const id = 'id'
 
       const result = DAO.setConcurrency(id, 100)
-      const row = select(id)
+      const row = getRawConfiguration(id)
 
       expect(result).toBeUndefined()
-      expect(row['concurrency']).toBe(100)
+      expect(row).not.toBeNull()
+      expect(row!['concurrency']).toBe(100)
     })
   })
 
@@ -270,20 +291,23 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return undefined', () => {
         const id = 'id'
-        insert(id, {
-          unique: null
-        , draftingTimeout: null
-        , orderedTimeout: null
-        , activeTimeout: 100
+        setRawConfiguration({
+          mq_id: id
+        , uniq: null
+        , drafting_timeout: null
+        , ordered_timeout: null
+        , active_timeout: 100
         , concurrency: null
-        , throttle: null
+        , throttle_duration: null
+        , throttle_limit: null
         })
 
         const result = DAO.unsetConcurrency(id)
-        const row = select(id)
+        const row = getRawConfiguration(id)
 
         expect(result).toBeUndefined()
-        expect(row['concurrency']).toBeNull()
+        expect(row).not.toBeNull()
+        expect(row!['concurrency']).toBeNull()
       })
     })
 
@@ -294,7 +318,7 @@ describe('Configuration', () => {
         const result = DAO.unsetConcurrency(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeFalse()
+        expect(hasRawConfiguration(id)).toBeFalse()
       })
     })
   })
@@ -307,11 +331,12 @@ describe('Configuration', () => {
         duration: 100
       , limit: 200
       })
-      const row = select(id)
+      const row = getRawConfiguration(id)
 
       expect(result).toBeUndefined()
-      expect(row['throttle_duration']).toBe(100)
-      expect(row['throttle_limit']).toBe(200)
+      expect(row).not.toBeNull()
+      expect(row!['throttle_duration']).toBe(100)
+      expect(row!['throttle_limit']).toBe(200)
     })
   })
 
@@ -319,24 +344,24 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return undefined', () => {
         const id = 'id'
-        insert(id, {
-          unique: null
-        , draftingTimeout: null
-        , orderedTimeout: null
-        , activeTimeout: null
+        setRawConfiguration({
+          mq_id: id
+        , uniq: null
+        , drafting_timeout: null
+        , ordered_timeout: null
+        , active_timeout: null
         , concurrency: null
-        , throttle: {
-            duration: 100
-          , limit: 200
-          }
+        , throttle_duration: 100
+        , throttle_limit: 200
         })
 
         const result = DAO.unsetThrottle(id)
-        const row = select(id)
+        const row = getRawConfiguration(id)
 
         expect(result).toBeUndefined()
-        expect(row['throttle_duration']).toBeNull()
-        expect(row['throttle_limit']).toBeNull()
+        expect(row).not.toBeNull()
+        expect(row!['throttle_duration']).toBeNull()
+        expect(row!['throttle_limit']).toBeNull()
       })
     })
 
@@ -347,73 +372,8 @@ describe('Configuration', () => {
         const result = DAO.unsetThrottle(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeFalse()
+        expect(hasRawConfiguration(id)).toBeFalse()
       })
     })
   })
 })
-
-
-function exist(id: string): boolean {
-  return !!select(id)
-}
-
-function select(id: string) {
-  return getDatabase().prepare(`
-    SELECT *
-      FROM mq_configuration
-     WHERE mq_id = $id;
-  `).get({ id })
-}
-
-function insert(
-  id: string
-, {
-    unique
-  , draftingTimeout
-  , orderedTimeout
-  , activeTimeout
-  , concurrency
-  , throttle
-  }: Configurations
-): void {
-  getDatabase().prepare(`
-    INSERT INTO mq_configuration (
-      mq_id
-    , uniq
-    , drafting_timeout
-    , ordered_timeout
-    , active_timeout
-    , concurrency
-    , throttle_duration
-    , throttle_limit
-    )
-    VALUES (
-      $id
-    , $unique
-    , $draftingTimeout
-    , $orderedTimeout
-    , $activeTimeout
-    , $concurrency
-    , $throttleDuration
-    , $throttleLimit
-    );
-  `).run({
-    id
-  , unique: unique === null ? null : booleanToNumber(unique)
-  , draftingTimeout
-  , orderedTimeout
-  , activeTimeout
-  , concurrency
-  , throttleDuration: throttle?.duration ?? null
-  , throttleLimit: throttle?.limit ?? null
-  })
-}
-
-function booleanToNumber(val: boolean): number {
-  if (val) {
-    return 1
-  } else {
-    return 0
-  }
-}

@@ -338,7 +338,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             expect(throttle).toMatchObject({
               count: 1
             })
-            expect(Math.abs(timestamp - throttle.cycle_start_time)).toBeLessThanOrEqual(duration)
+            expect(Math.abs(timestamp - throttle!.cycle_start_time)).toBeLessThanOrEqual(duration)
           })
         })
 

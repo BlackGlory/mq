@@ -1,6 +1,6 @@
 import * as DAO from '@dao/config-in-sqlite3/json-schema/json-schema'
-import { getDatabase } from '@dao/config-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
+import { hasRawJsonSchema, setRawJsonSchema } from './utils'
 import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
@@ -16,11 +16,13 @@ describe('JSON Schema', () => {
     it('return string[]', () => {
       const id = 'id-1'
       const schema = createSchema()
-      insert({ id, schema })
+      setRawJsonSchema({
+        mq_id: id
+      , json_schema: schema
+      })
 
       const result = DAO.getAllIdsWithJsonSchema()
 
-      // expect.toStrictEqual is broken, I have no idea
       expect(result).toEqual([id])
     })
   })
@@ -30,7 +32,10 @@ describe('JSON Schema', () => {
       it('return schema', () => {
         const id = 'id-1'
         const schema = createSchema()
-        insert({ id, schema })
+        setRawJsonSchema({
+          mq_id: id
+        , json_schema: schema
+        })
 
         const result = DAO.getJsonSchema(id)
 
@@ -54,12 +59,15 @@ describe('JSON Schema', () => {
       it('return undefined', () => {
         const id = 'id-1'
         const schema = createSchema()
-        insert({ id, schema })
+        setRawJsonSchema({
+          mq_id: id
+        , json_schema: schema
+        })
 
         const result = DAO.setJsonSchema({ id, schema })
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeTrue()
+        expect(hasRawJsonSchema(id)).toBeTrue()
       })
     })
 
@@ -71,7 +79,7 @@ describe('JSON Schema', () => {
         const result = DAO.setJsonSchema({ id, schema })
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeTrue()
+        expect(hasRawJsonSchema(id)).toBeTrue()
       })
     })
   })
@@ -81,12 +89,15 @@ describe('JSON Schema', () => {
       it('return undefined', () => {
         const id = 'id-1'
         const schema = createSchema()
-        insert({ id, schema })
+        setRawJsonSchema({
+          mq_id: id
+        , json_schema: schema
+        })
 
         const result = DAO.removeJsonSchema(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeFalse()
+        expect(hasRawJsonSchema(id)).toBeFalse()
       })
     })
 
@@ -97,7 +108,7 @@ describe('JSON Schema', () => {
         const result = DAO.removeJsonSchema(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeFalse()
+        expect(hasRawJsonSchema(id)).toBeFalse()
       })
     })
   })
@@ -105,16 +116,4 @@ describe('JSON Schema', () => {
 
 function createSchema() {
   return JSON.stringify({ type: 'number' })
-}
-
-function exist(id: string): boolean {
-  return !!select(id)
-}
-
-function insert({ id, schema }:{ id: string; schema: string }): void {
-  getDatabase().prepare('INSERT INTO mq_json_schema (mq_id, json_schema) VALUES ($id, $schema);').run({ id, schema })
-}
-
-function select(id: string) {
-  return getDatabase().prepare('SELECT * FROM mq_json_schema WHERE mq_id = $id;').get({ id })
 }

@@ -1,6 +1,6 @@
 import * as DAO from '@dao/config-in-sqlite3/access-control/whitelist'
-import { getDatabase } from '@dao/config-in-sqlite3/database'
 import { resetEnvironment, resetDatabases } from '@test/utils'
+import { hasRawWhitelist, getRawWhitelist, setRawWhitelist } from './utils'
 import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
@@ -15,11 +15,10 @@ describe('whitelist', () => {
   describe('getAllWhitelistItems(): string[]', () => {
     it('return string[]', () => {
       const id = 'id-1'
-      insert(id)
+      setRawWhitelist({ mq_id: id })
 
       const result = DAO.getAllWhitelistItems()
 
-      // expect.toStrictEqual is broken, I have no idea
       expect(result).toEqual([id])
     })
   })
@@ -28,7 +27,7 @@ describe('whitelist', () => {
     describe('exist', () => {
       it('return true', () => {
         const id = 'id-1'
-        insert(id)
+        setRawWhitelist({ mq_id: id })
 
         const result = DAO.inWhitelist(id)
 
@@ -51,12 +50,12 @@ describe('whitelist', () => {
     describe('exist', () => {
       it('return undefined', () => {
         const id = 'id-1'
-        insert(id)
+        setRawWhitelist({ mq_id: id })
 
         const result = DAO.addWhitelistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeTrue()
+        expect(hasRawWhitelist(id)).toBeTrue()
       })
     })
 
@@ -67,7 +66,7 @@ describe('whitelist', () => {
         const result = DAO.addWhitelistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeTrue()
+        expect(hasRawWhitelist(id)).toBeTrue()
       })
     })
   })
@@ -76,12 +75,12 @@ describe('whitelist', () => {
     describe('exist', () => {
       it('return undefined', () => {
         const id = 'id-1'
-        insert(id)
+        setRawWhitelist({ mq_id: id })
 
         const result = DAO.removeWhitelistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeFalse()
+        expect(hasRawWhitelist(id)).toBeFalse()
       })
     })
 
@@ -92,20 +91,8 @@ describe('whitelist', () => {
         const result = DAO.removeWhitelistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeFalse()
+        expect(hasRawWhitelist(id)).toBeFalse()
       })
     })
   })
 })
-
-function exist(id: string): boolean {
-  return !!select(id)
-}
-
-function insert(id: string): void {
-  getDatabase().prepare('INSERT INTO mq_whitelist (mq_id) VALUES ($id);').run({ id });
-}
-
-function select(id: string) {
-  return getDatabase().prepare('SELECT * FROM mq_whitelist WHERE mq_id = $id;').get({ id })
-}

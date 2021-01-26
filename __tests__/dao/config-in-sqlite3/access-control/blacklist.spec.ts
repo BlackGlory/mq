@@ -1,6 +1,6 @@
 import * as DAO from '@dao/config-in-sqlite3/access-control/blacklist'
-import { getDatabase } from '@dao/config-in-sqlite3/database'
 import { resetDatabases, resetEnvironment } from '@test/utils'
+import { getRawBlacklist, hasRawBlacklist, setRawBlacklist } from './utils'
 import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
@@ -15,11 +15,10 @@ describe('blacklist', () => {
   describe('getAllBlacklistItems(): string[]', () => {
     it('return string[]', async () => {
       const id = 'id-1'
-      insert(id)
+      setRawBlacklist({ mq_id: id })
 
       const result = DAO.getAllBlacklistItems()
 
-      // expect.toStrictEqual is broken, I have no idea
       expect(result).toEqual([id])
     })
   })
@@ -28,7 +27,7 @@ describe('blacklist', () => {
     describe('exist', () => {
       it('return true', async () => {
         const id = 'id-1'
-        insert(id)
+        setRawBlacklist({ mq_id: id })
 
         const result = DAO.inBlacklist(id)
 
@@ -51,12 +50,12 @@ describe('blacklist', () => {
     describe('exist', () => {
       it('return undefined', () => {
         const id = 'id-1'
-        insert(id)
+        setRawBlacklist({ mq_id: id })
 
         const result = DAO.addBlacklistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeTrue()
+        expect(hasRawBlacklist(id)).toBeTrue()
       })
     })
 
@@ -67,7 +66,7 @@ describe('blacklist', () => {
         const result = DAO.addBlacklistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeTrue()
+        expect(hasRawBlacklist(id)).toBeTrue()
       })
     })
   })
@@ -76,12 +75,12 @@ describe('blacklist', () => {
     describe('exist', () => {
       it('return undefined', () => {
         const id = 'id-1'
-        insert(id)
+        setRawBlacklist({ mq_id: id })
 
         const result = DAO.removeBlacklistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeFalse()
+        expect(hasRawBlacklist(id)).toBeFalse()
       })
     })
 
@@ -92,20 +91,8 @@ describe('blacklist', () => {
         const result = DAO.removeBlacklistItem(id)
 
         expect(result).toBeUndefined()
-        expect(exist(id)).toBeFalse()
+        expect(hasRawBlacklist(id)).toBeFalse()
       })
     })
   })
 })
-
-function exist(id: string): boolean {
-  return !!select(id)
-}
-
-function insert(id: string): void {
-  getDatabase().prepare('INSERT INTO mq_blacklist (mq_id) VALUES ($id);').run({ id });
-}
-
-function select(id: string) {
-  return getDatabase().prepare('SELECT * FROM mq_blacklist WHERE mq_id = $id;').get({ id })
-}

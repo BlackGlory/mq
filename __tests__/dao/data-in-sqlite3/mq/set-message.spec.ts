@@ -226,8 +226,8 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
       , state: 'waiting'
       , state_updated_at: 0
       })
-      expect(message.hash).toBeString()
-      expect(message.hash).not.toBe(oldHash)
+      expect(message!.hash).toBeString()
+      expect(message!.hash).not.toBe(oldHash)
       expect(stats).toMatchObject({
         drafting: 0
       , waiting: 1

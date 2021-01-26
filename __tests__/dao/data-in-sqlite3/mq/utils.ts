@@ -39,7 +39,7 @@ export function hasRawThrottle(queueId: string): boolean {
   return !!getRawThrottle(queueId)
 }
 
-export function getRawThrottle(queueId: string): IRawThrottle {
+export function getRawThrottle(queueId: string): IRawThrottle | null {
   return getDatabase().prepare(`
     SELECT *
       FROM mq_throttle
@@ -76,7 +76,7 @@ export function hasRawMessage(queueId: string, messageId: string): boolean {
   return !!getRawMessage(queueId, messageId)
 }
 
-export function getRawMessage(queueId: string, messageId: string): IRawMessage {
+export function getRawMessage(queueId: string, messageId: string): IRawMessage | null {
   return getDatabase().prepare(`
     SELECT * FROM mq_message
      WHERE mq_id = $queueId
@@ -109,7 +109,7 @@ export function hasRawStats(queueId: string): boolean {
   return !!getRawStats(queueId)
 }
 
-export function getRawStats(queueId: string): IRawStats {
+export function getRawStats(queueId: string): IRawStats | null {
   return getDatabase().prepare(`
     SELECT *
       FROM mq_stats
