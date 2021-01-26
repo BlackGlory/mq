@@ -1,6 +1,6 @@
 import * as DAO from '@dao/config-in-sqlite3/access-control/blacklist'
 import { resetDatabases, resetEnvironment } from '@test/utils'
-import { getRawBlacklist, hasRawBlacklist, setRawBlacklist } from './utils'
+import { hasRawBlacklist, setRawBlacklist } from './utils'
 import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
