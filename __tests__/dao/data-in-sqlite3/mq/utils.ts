@@ -36,11 +36,15 @@ export function setRawThrottle(props: IRawThrottle): void {
 }
 
 export function hasRawThrottle(queueId: string): boolean {
-  return !!selectThrottle(queueId)
+  return !!getRawThrottle(queueId)
 }
 
 export function getRawThrottle(queueId: string): IRawThrottle {
-  return selectThrottle(queueId)
+  return getDatabase().prepare(`
+    SELECT *
+      FROM mq_throttle
+     WHERE mq_id = $queueId;
+  `).get({ queueId })
 }
 
 export function setRawMessage(props: IRawMessage): void {
@@ -69,11 +73,15 @@ export function setRawMessage(props: IRawMessage): void {
 }
 
 export function hasRawMessage(queueId: string, messageId: string): boolean {
-  return !!selectMessage(queueId, messageId)
+  return !!getRawMessage(queueId, messageId)
 }
 
 export function getRawMessage(queueId: string, messageId: string): IRawMessage {
-  return selectMessage(queueId, messageId)
+  return getDatabase().prepare(`
+    SELECT * FROM mq_message
+     WHERE mq_id = $queueId
+       AND message_id = $messageId;
+  `).get({ queueId, messageId })
 }
 
 export function setRawStats(props: IRawStats) {
@@ -98,30 +106,10 @@ export function setRawStats(props: IRawStats) {
 }
 
 export function hasRawStats(queueId: string): boolean {
-  return !!selectStats(queueId)
+  return !!getRawStats(queueId)
 }
 
 export function getRawStats(queueId: string): IRawStats {
-  return selectStats(queueId)
-}
-
-function selectThrottle(queueId: string) {
-  return getDatabase().prepare(`
-    SELECT *
-      FROM mq_throttle
-     WHERE mq_id = $queueId;
-  `).get({ queueId })
-}
-
-function selectMessage(queueId: string, messageId: string) {
-  return getDatabase().prepare(`
-    SELECT * FROM mq_message
-     WHERE mq_id = $queueId
-       AND message_id = $messageId;
-  `).get({ queueId, messageId })
-}
-
-function selectStats(queueId: string) {
   return getDatabase().prepare(`
     SELECT *
       FROM mq_stats
