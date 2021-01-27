@@ -30,19 +30,19 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       , response: {
           200: {
             produceTokenRequired: {
-              oneOf: [
+              anyOf: [
                 { type: 'boolean' }
               , { type: 'null' }
               ]
             }
           , consumeTokenRequired: {
-              oneOf: [
+              anyOf: [
                 { type: 'boolean' }
               , { type: 'null' }
               ]
             }
           , clearTokenRequired: {
-              oneOf: [
+              anyOf: [
                 { type: 'boolean' }
               , { type: 'null' }
               ]

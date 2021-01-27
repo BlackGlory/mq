@@ -30,37 +30,37 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       , response: {
           200: {
             unique: {
-              oneOf: [
+              anyOf: [
                 { type: 'boolean' }
               , { type: 'null' }
               ]
             }
           , draftingTimeout: {
-              oneOf: [
+              anyOf: [
                 { type: 'number' }
               , { type: 'null' }
               ]
             }
           , orderedTimeout: {
-              oneOf: [
+              anyOf: [
                 { type: 'number' }
               , { type: 'null' }
               ]
             }
           , activeTimeout: {
-              oneOf: [
+              anyOf: [
                 { type: 'number' }
               , { type: 'null' }
               ]
             }
           , concurrency: {
-              oneOf: [
+              anyOf: [
                 { type: 'number' }
               , { type: 'null' }
               ]
             }
           , throttle: {
-              oneOf: [
+              anyOf: [
                 {
                   type: 'object'
                 , properties: {

@@ -14,7 +14,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       , querystring: { token: tokenSchema }
       , body: {
           priority: {
-            oneOf: [
+            anyOf: [
               {
                 type: 'integer'
               , minimum: 0
