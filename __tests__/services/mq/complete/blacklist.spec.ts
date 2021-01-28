@@ -25,8 +25,8 @@ describe('blacklist', () => {
         await AccessControlDAO.addBlacklistItem(mqId)
 
         const res = await server.inject({
-          method: 'POST'
-        , url: `/mq/${mqId}/messages/${messageId}`
+          method: 'PATCH'
+        , url: `/mq/${mqId}/messages/${messageId}/complete`
         })
 
         expect(res.statusCode).toBe(403)
@@ -42,8 +42,8 @@ describe('blacklist', () => {
         await prepareActiveMessage(mqId, messageId, 'text/plain', 'payload')
 
         const res = await server.inject({
-          method: 'POST'
-        , url: `/mq/${mqId}/messages/${messageId}`
+          method: 'PATCH'
+        , url: `/mq/${mqId}/messages/${messageId}/complete`
         })
 
         expect(res.statusCode).toBe(204)
@@ -61,8 +61,8 @@ describe('blacklist', () => {
         await AccessControlDAO.addBlacklistItem(mqId)
 
         const res = await server.inject({
-          method: 'POST'
-        , url: `/mq/${mqId}/messages/${messageId}`
+          method: 'PATCH'
+        , url: `/mq/${mqId}/messages/${messageId}/complete`
         })
 
         expect(res.statusCode).toBe(204)

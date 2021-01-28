@@ -51,6 +51,7 @@ describe('token-based access control', () => {
           const res = await server.inject({
             method: 'GET'
           , url: `/mq/${mqId}/messages/${messageId}`
+          , query: { token: 'bad' }
           })
 
           expect(res.statusCode).toBe(401)

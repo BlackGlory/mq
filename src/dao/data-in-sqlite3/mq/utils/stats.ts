@@ -76,3 +76,20 @@ export function increaseCompleted(queueId: string, num: number = 1): void {
         DO UPDATE SET completed = completed + $num
   `).run({ queueId, num })
 }
+
+export function increaseFailed(queueId: string, num: number = 1): void {
+  getDatabase().prepare(`
+    INSERT INTO mq_stats (mq_id, failed)
+    VALUES ($queueId, $num)
+        ON CONFLICT (mq_id)
+        DO UPDATE SET failed = failed + $num
+  `).run({ queueId, num })
+}
+
+export function downcreaseFailed(queueId: string, num: number = 1): void {
+  getDatabase().prepare(`
+    UPDATE mq_stats
+       SET failed = failed - $num
+     WHERE mq_id = $queueId;
+  `).run({ queueId, num })
+}

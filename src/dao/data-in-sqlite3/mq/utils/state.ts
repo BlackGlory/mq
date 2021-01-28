@@ -3,4 +3,5 @@ export enum State {
 , Waiting = 'waiting'
 , Ordered = 'ordered'
 , Active = 'active'
+, Failed = 'failed'
 }

@@ -1,6 +1,6 @@
 import { getDatabase } from '@dao/data-in-sqlite3/database'
 
-type IState = 'drafting' | 'waiting' | 'ordered' | 'active' | 'completed'
+type IState = 'drafting' | 'waiting' | 'ordered' | 'active' | 'completed' | 'failed'
 
 interface IRawMessage {
   mq_id: string
@@ -20,6 +20,7 @@ interface IRawStats {
   ordered: number
   active: number
   completed: number
+  failed: number
 }
 
 interface IRawThrottle {
@@ -93,6 +94,7 @@ export function setRawStats(props: IRawStats) {
     , ordered
     , active
     , completed
+    , failed
     )
     VALUES (
       $mq_id
@@ -101,6 +103,7 @@ export function setRawStats(props: IRawStats) {
     , $ordered
     , $active
     , $completed
+    , $failed
     );
   `).run(props)
 }

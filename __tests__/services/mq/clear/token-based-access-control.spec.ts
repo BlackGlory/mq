@@ -46,6 +46,7 @@ describe('token-based access control', () => {
           const res = await server.inject({
             method: 'DELETE'
           , url: `/mq/${mqId}`
+          , query: { token: 'bad' }
           })
 
           expect(res.statusCode).toBe(401)

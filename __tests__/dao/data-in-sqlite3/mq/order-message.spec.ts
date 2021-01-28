@@ -65,6 +65,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           , ordered: 1
           , active: 1
           , completed: 0
+          , failed: 0
           })
 
           const result = DAO.orderMessage(queueId, concurrency, Infinity, Infinity)!
@@ -82,6 +83,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           , ordered: 2
           , active: 1
           , completed: 0
+          , failed: 0
           })
         })
       })
@@ -127,6 +129,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           , ordered: 1
           , active: 1
           , completed: 0
+          , failed: 0
           })
 
           const result = DAO.orderMessage(queueId, concurrency, Infinity, Infinity)!
@@ -144,6 +147,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           , ordered: 1
           , active: 1
           , completed: 0
+          , failed: 0
           })
         })
       })
@@ -193,6 +197,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , ordered: 0
             , active: 0
             , completed: 0
+            , failed: 0
             })
 
             const result = DAO.orderMessage(queueId, Infinity, duration, limit)!
@@ -210,6 +215,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , ordered: 1
             , active: 0
             , completed: 0
+            , failed: 0
             })
           })
         })
@@ -256,6 +262,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , ordered: 0
             , active: 0
             , completed: 0
+            , failed: 0
             })
 
             const result = DAO.orderMessage(queueId, Infinity, duration, limit)!
@@ -273,6 +280,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , ordered: 1
             , active: 0
             , completed: 0
+            , failed: 0
             })
           })
         })
@@ -311,6 +319,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , ordered: 1
             , active: 0
             , completed: 0
+            , failed: 0
             })
             setRawThrottle({
               mq_id: queueId
@@ -334,6 +343,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , ordered: 2
             , active: 0
             , completed: 0
+            , failed: 0
             })
             expect(throttle).toMatchObject({
               count: 1
@@ -374,6 +384,7 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , ordered: 1
             , active: 0
             , completed: 0
+            , failed: 0
             })
             setRawThrottle({
               mq_id: queueId

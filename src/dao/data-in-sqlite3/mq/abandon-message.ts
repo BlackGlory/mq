@@ -5,6 +5,7 @@ import {
 , downcreaseWaiting
 , downcreaseOrdered
 , downcreaseActive
+, downcreaseFailed
 } from './utils/stats'
 import { State } from './utils/state'
 
@@ -21,7 +22,7 @@ export function abandonMessage(queueId: string, messageId: string): void {
        WHERE mq_id = $queueId
          AND message_id = $messageId;
     `).get({ queueId, messageId })
-    if (!row) throw new BadMessageState('drafting', 'waiting', 'ordered', 'active')
+    if (!row) throw new BadMessageState('drafting', 'waiting', 'ordered', 'active', 'failed')
     const state = row['state'] as State
 
     db.prepare(`
@@ -35,6 +36,7 @@ export function abandonMessage(queueId: string, messageId: string): void {
       case State.Waiting: downcreaseWaiting(queueId); break
       case State.Ordered: downcreaseOrdered(queueId); break
       case State.Active: downcreaseActive(queueId); break
+      case State.Failed: downcreaseFailed(queueId); break
     }
   })()
 }

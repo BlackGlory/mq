@@ -42,6 +42,7 @@ describe('draftMessage(queueId: string, messageId: string, priority?: number): v
     , ordered: 0
     , active: 0
     , completed: 0
+    , failed: 0
     })
   })
 })

@@ -86,6 +86,7 @@
     "fastify-cors": "^5.2.0",
     "fastify-plugin": "^3.0.0",
     "fs-extra": "^9.1.0",
+    "iterable-operator": "^0.12.11",
     "migrations-file": "^0.1.1",
     "nanoid": "^3.1.20",
     "value-getter": "^0.1.7"

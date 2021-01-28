@@ -87,8 +87,7 @@ volumes:
 
 *** Public
 **** producer
-***** enqueue
-****** draft
+***** draft
 =POST /mq/<mq-id>/messages=
 
 申请往特定消息队列放入消息, id用于标识消息队列.
@@ -103,8 +102,8 @@ volumes:
 
 一个处于drafting状态的消息会在设定的超时时间后被删除, 需要生产者手动调用[[set]]以避免超时.
 
-******* Example
-******** curl
+****** Example
+******* curl
 #+BEGIN_SRC sh
 curl \
   --request POST
@@ -113,7 +112,7 @@ curl \
   "http://localhost:8080/mq/$mqId"
 #+END_SRC
 
-******** JavaScript
+******* JavaScript
 #+BEGIN_SRC js
 await fetch(`http://localhost:8080/mq/${mqId}`).then({
   method: 'POST'
@@ -122,14 +121,14 @@ await fetch(`http://localhost:8080/mq/${mqId}`).then({
 }).then(res => res.text())
 #+END_SRC
 
-****** <<set>>
+***** <<set>>
 =PUT /mq/<mq-id>/messages/<msg-id>=
 
 发送消息正文并确认入列, 当消息的状态是drafting时, 转为waiting状态.
 若消息的状态是waiting, 可以再次调用此操作对消息内容进行更新.
 
-******* Example
-******** curl
+****** Example
+******* curl
 #+BEGIN_SRC sh
 curl \
   --request PUT
@@ -137,7 +136,7 @@ curl \
   "http://localhost:8080/mq/$mqId/messages/$msgId"
 #+END_SRC
 
-******** JavaScript
+******* JavaScript
 #+BEGIN_SRC js
 await fetch(`http://localhost:8080/mq/$mqId/messages/$msgId`, {
   method: 'PUT'
@@ -146,8 +145,7 @@ await fetch(`http://localhost:8080/mq/$mqId/messages/$msgId`, {
 #+END_SRC
 
 **** consumer
-***** dequeue
-****** order
+***** order
 =GET /mq/<mq-id>/messages=
 
 从特定消息队列取出消息, 优先级最高且最早的消息会先被取出.
@@ -158,63 +156,46 @@ await fetch(`http://localhost:8080/mq/$mqId/messages/$msgId`, {
 一个处于ordered状态的消息会在设定的超时时间后以waiting状态重新入列, 优先级不会改变.
 需要消费者手动调用[[get]]以避免超时.
 
-******* Example
-******** curl
+****** Example
+******* curl
 #+BEGIN_SRC sh
 curl "http://localhost:8080/mq/$mqId/messages"
 #+END_SRC
 
-******** JavaScript
+******* JavaScript
 #+BEGIN_SRC js
 await fetch(`http://localhost:8080/mq/${mqId}/messages`).then(res => res.text())
 #+END_SRC
 
-****** <<get>>
+***** <<get>>
 =GET /mq/<mq-id>/messages/<msg-id>=
 
-获取特定队列的指定消息, 当消息的状态为ordered时, 消息会从ordered状态转为active状态.
+获取特定队列的指定消息, 仅当消息的状态为ordered时, 消息会从ordered状态转为active状态.
 一个处于active状态的消息会在设定的超时时间后以waiting状态重新入列, 优先级不会改变.
-需要消费者手动调用[[complete]]或[[abandon]]以避免超时.
+需要消费者手动调用[[complete]], [[fail]]或[[abandon]]以避免超时.
 
-此操作是幂等的, 可以在消息完成前反复使用.
+此操作是幂等的, 可以多次调用.
 
 响应头 =X-MQ-Priority= 显示该消息的优先级, 可用于在手动重新入列时使用.
-
-******* Example
-******** curl
-#+BEGIN_SRC sh
-curl "http://localhost:8080/mq/$mqId/messages/$msgId"
-#+END_SRC
-
-******** JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`).then(res => res.text())
-#+END_SRC
-
-***** <<complete>>
-=POST /mq/<mq-id>/messages/<msg-id>=
-
-仅当消息处于active状态时可用, 表示消息被消耗完毕, 消息作为已完成的消息纳入统计.
+响应头 =X-MQ-State= 显示该消息在此请求响应后的状态, 可能为drafting, waiting, active, failed中的一个.
 
 ****** Example
 ******* curl
 #+BEGIN_SRC sh
-curl \
-  --request POST
-  "http://localhost:8080/mq/$mqId/messages/$msgId"
+curl "http://localhost:8080/mq/$mqId/messages/$msgId"
 #+END_SRC
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`, {
-  method: 'POST'
-})
+await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`).then(res => res.text())
 #+END_SRC
 
 ***** <<abandon>>
 =DELETE /mq/<mq-id>/messages/<msg-id>=
 
-废弃此消息, 消息将在不纳入统计的情况下被删除.
+废弃此消息, 消息将不会纳入统计结果.
+
+此操作是幂等的, 若遇到网络错误, 可以再次调用.
 
 ****** Example
 ******* curl
@@ -231,7 +212,131 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`, {
 })
 #+END_SRC
 
-**** clear
+***** <<complete>>
+=PATCH /mq/<mq-id>/messages/<msg-id>/complete=
+
+当消息处于active状态时表示消息被消耗完毕, 消息将被统计为已完成的消息(completed).
+
+此操作是幂等的, 若遇到网络错误, 可以再次调用.
+
+****** Example
+******* curl
+#+BEGIN_SRC sh
+curl \
+  --request PATCH
+  "http://localhost:8080/mq/$mqId/messages/$msgId/complete"
+#+END_SRC
+
+******* JavaScript
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/complete`, {
+  method: 'PATCH'
+})
+#+END_SRC
+
+***** <<fail>>
+=PATCH /mq/<mq_id>/messages/<msg-id>/fail=
+
+当消息处于active状态时表示消息在消耗过程中失败,
+消息将从active状态转为failed状态, 同时被统计为已失败的消息(failed).
+
+此操作是幂等的, 若遇到网络错误, 可以再次调用.
+
+****** Example
+******* curl
+#+BEGIN_SRC sh
+curl \
+  --request PATCH
+  "http://localhost:8080/mq/$mqId/messages/$msgId/fail"
+#+END_SRC
+
+******* JavaScript
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/fail`, {
+  method: 'PATCH'
+})
+#+END_SRC
+
+***** renew
+=PATCH /mq/<mq_id>/messages/<msg-id>/renew=
+
+当消息处于failed状态时表示将消息重新入列, 消息将从failed状态转为waiting状态.
+
+此操作是幂等的, 若遇到网络错误, 可以再次调用.
+
+****** Example
+******* curl
+#+BEGIN_SRC sh
+curl \
+  --request PATCH
+  "http://localhost:8080/mq/$mqId/messages/$msgId/renew"
+#+END_SRC
+
+******* JavaScript
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/renew`, {
+  method: 'PATCH'
+})
+#+END_SRC
+
+***** get all failed message ids
+=GET /mq/<mq_id>/failed-messages=
+
+列出所有处于failed状态的消息id.
+返回 =Array<string>=.
+
+****** Example
+******* curl
+#+BEGIN_SRC sh
+curl "http://localhost:8080/mq/$mqId/failed-messages"
+#+END_SRC
+
+******* JavaScript
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/mq/${mqId}/failed-messages`).then(res => res.json())
+#+END_SRC
+
+***** abandon all failed messages
+=DELETE /mq/<mq_id>/failed-messages=
+
+将所有failed状态的消息废弃.
+
+****** Example
+******* curl
+#+BEGIN_SRC sh
+curl \
+  --request DELETE
+  "http://localhost:8080/mq/$mqId/failed-messages"
+#+END_SRC
+
+******* JavaScript
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/mq/${mqId}/failed-messages`, {
+  method: 'POST'
+})
+#+END_SRC
+
+***** renew all failed messages
+=PATCH /mq/<mq_id>/failed-messages/renew=
+
+将所有failed状态的消息以FIFO的顺序转为waiting状态.
+
+****** Example
+******* curl
+#+BEGIN_SRC sh
+curl \
+  --request POST
+  "http://localhost:8080/mq/$mqId/failed-messages/renew"
+#+END_SRC
+
+******* JavaScript
+#+BEGIN_SRC js
+await fetch(`http://localhost:8080/mq/${mqId}/failed-messages/renew`, {
+  method: 'POST'
+})
+#+END_SRC
+
+**** <<clear>>
 =DELETE /mq/<id>=
 
 清空队列内的所有消息和统计信息.
@@ -254,7 +359,9 @@ await fetch(`http://localhost:8080/mq/$id`, {
 **** stats
 =GET /mq/<id>/stats=
 
-获取统计信息, 查看队列中有多少消息, 已经消耗了多少消息.
+获取统计信息, 查看当前队列中对应状态的消息个数.
+由于completed状态的消息不会保留, 因此completed的值是由计数器统计的.
+除非调用[[clear]], 否则completed的数值将只会增长不会减少.
 
 #+BEGIN_SRC ts
 {
@@ -264,6 +371,7 @@ await fetch(`http://localhost:8080/mq/$id`, {
   ordered: number
   active: number
   completed: number
+  failed: number
 }
 #+END_SRC
 
@@ -278,7 +386,7 @@ curl "http://localhost:8080/mq/$id/stats"
 await fetch(`http://localhost:8080/mq/${id}/stats`).then(res => res.json())
 #+END_SRC
 
-**** list
+**** get all queue ids
 =GET /mq=
 
 获取所有有统计信息的队列id.

@@ -25,8 +25,8 @@ describe('whitelist', () => {
         await AccessControlDAO.addWhitelistItem(mqId)
 
         const res = await server.inject({
-          method: 'POST'
-        , url: `/mq/${mqId}/messages/${messageId}`
+          method: 'PATCH'
+        , url: `/mq/${mqId}/messages/${messageId}/complete`
         })
 
         expect(res.statusCode).toBe(204)
@@ -42,8 +42,8 @@ describe('whitelist', () => {
         await prepareActiveMessage(mqId, messageId, 'text/plain', 'payload')
 
         const res = await server.inject({
-          method: 'POST'
-        , url: `/mq/${mqId}/messages/${messageId}`
+          method: 'PATCH'
+        , url: `/mq/${mqId}/messages/${messageId}/complete`
         })
 
         expect(res.statusCode).toBe(403)
@@ -60,8 +60,8 @@ describe('whitelist', () => {
         await prepareActiveMessage(mqId, messageId, 'text/plain', 'payload')
 
         const res = await server.inject({
-          method: 'POST'
-        , url: `/mq/${mqId}/messages/${messageId}`
+          method: 'PATCH'
+        , url: `/mq/${mqId}/messages/${messageId}/complete`
         })
 
         expect(res.statusCode).toBe(204)

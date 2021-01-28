@@ -13,8 +13,8 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         }
       }
     }
-  , async (req, reply) => {
-      const result = await Core.MQ.list()
+  , (req, reply) => {
+      const result = Core.MQ.getAllQueueIds()
       reply.status(200).send(result)
     }
   )

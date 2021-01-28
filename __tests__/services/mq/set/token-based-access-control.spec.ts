@@ -56,6 +56,7 @@ describe('token-based access control', () => {
             method: 'PUT'
           , url: `/mq/${mqId}/messages/${messageId}`
           , headers: createJsonHeaders()
+          , query: { token: 'bad' }
           , payload: JSON.stringify(payload)
           })
 

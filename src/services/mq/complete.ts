@@ -2,11 +2,11 @@ import { FastifyPluginAsync } from 'fastify'
 import { idSchema, tokenSchema } from '@src/schema'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
-  server.post<{
+  server.patch<{
     Params: { queueId: string; messageId: string }
     Querystring: { token?: string }
   }>(
-    '/mq/:queueId/messages/:messageId'
+    '/mq/:queueId/messages/:messageId/complete'
   , {
       schema: {
         params: {
@@ -35,8 +35,12 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      await Core.MQ.complete(queueId, messageId)
-      reply.status(204).send()
+      try {
+        await Core.MQ.complete(queueId, messageId)
+      } catch (e) {
+        if (!(e instanceof Core.MQ.BadMessageState)) throw e
+      }
+      return reply.status(204).send()
     }
   )
 }

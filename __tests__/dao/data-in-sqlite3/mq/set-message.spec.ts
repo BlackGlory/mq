@@ -36,6 +36,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         , ordered: 0
         , active: 0
         , completed: 0
+        , failed: 0
         })
         setRawMessage({
           mq_id: queueId
@@ -77,6 +78,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         , ordered: 0
         , active: 0
         , completed: 0
+        , failed: 0
         })
       })
     })
@@ -94,6 +96,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         , ordered: 0
         , active: 0
         , completed: 0
+        , failed: 0
         })
         setRawMessage({
           mq_id: queueId
@@ -135,6 +138,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         , ordered: 0
         , active: 0
         , completed: 0
+        , failed: 0
         })
       })
     })
@@ -153,6 +157,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
       , ordered: 0
       , active: 0
       , completed: 0
+      , failed: 0
       })
       setRawMessage({
         mq_id: queueId
@@ -184,6 +189,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
       , ordered: 0
       , active: 0
       , completed: 0
+      , failed: 0
       })
     })
   })
@@ -202,6 +208,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
       , ordered: 0
       , active: 0
       , completed: 0
+      , failed: 0
       })
       setRawMessage({
         mq_id: queueId
@@ -234,6 +241,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
       , ordered: 0
       , active: 0
       , completed: 0
+      , failed: 0
       })
     })
   })
@@ -251,6 +259,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
       , ordered: 0
       , active: 1
       , completed: 0
+      , failed: 0
       })
       setRawMessage({
         mq_id: queueId
@@ -282,6 +291,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
       , ordered: 0
       , active: 1
       , completed: 0
+      , failed: 0
       })
     })
   })

@@ -51,6 +51,7 @@ describe('token-based access control', () => {
           const res = await server.inject({
             method: 'POST'
           , url: `/mq/${mqId}/messages`
+          , query: { token: 'bad' }
           , headers: createJsonHeaders()
           , payload: JSON.stringify(payload)
           })

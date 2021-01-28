@@ -21,6 +21,7 @@ describe('stats(queueId: string): IStats', () => {
       , ordered: 3
       , active: 4
       , completed: 5
+      , failed: 6
       })
 
       const result = DAO.stats(queueId)
@@ -32,6 +33,7 @@ describe('stats(queueId: string): IStats', () => {
       , ordered: 3
       , active: 4
       , completed: 5
+      , failed: 6
       })
     })
   })
@@ -49,6 +51,7 @@ describe('stats(queueId: string): IStats', () => {
       , ordered: 0
       , active: 0
       , completed: 0
+      , failed: 0
       })
     })
   })

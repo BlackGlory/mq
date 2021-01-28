@@ -48,6 +48,7 @@ describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
     , ordered: 0
     , active: 0
     , completed: 0
+    , failed: 0
     })
 
     const result = DAO.fallbackOutdatedDraftingMessages(queueId, 1)
@@ -64,6 +65,7 @@ describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
     , ordered: 0
     , active: 0
     , completed: 0
+    , failed: 0
     })
   })
 })
@@ -98,6 +100,7 @@ describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
     , ordered: 2
     , active: 0
     , completed: 0
+    , failed: 0
     })
 
     const result = DAO.fallbackOutdatedOrderedMessages(queueId, 1)
@@ -121,6 +124,7 @@ describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
     , ordered: 1
     , active: 0
     , completed: 0
+    , failed: 0
     })
   })
 })
@@ -155,6 +159,7 @@ describe('fallbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
     , ordered: 0
     , active: 2
     , completed: 0
+    , failed: 0
     })
 
     const result = DAO.fallbackOutdatedActiveMessages(queueId, 1)
@@ -177,6 +182,7 @@ describe('fallbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
     , ordered: 0
     , active: 1
     , completed: 0
+    , failed: 0
     })
   })
 })

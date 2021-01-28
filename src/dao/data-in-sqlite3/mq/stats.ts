@@ -7,6 +7,7 @@ export function stats(id: string): IStats {
          , ordered
          , active
          , completed
+         , failed
       FROM mq_stats
      WHERE mq_id = $id;
   `).get({ id })
@@ -19,6 +20,7 @@ export function stats(id: string): IStats {
     , ordered: row['ordered']
     , active: row['active']
     , completed: row['completed']
+    , failed: row['failed']
     }
   } else {
     return {
@@ -28,6 +30,7 @@ export function stats(id: string): IStats {
     , ordered: 0
     , active: 0
     , completed: 0
+    , failed: 0
     }
   }
 }

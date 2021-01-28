@@ -42,6 +42,7 @@ describe('completeMessage(queueId: string, messageId: string): void', () => {
       , ordered: 0
       , active: 1
       , completed: 0
+      , failed: 0
       })
 
       const result = DAO.completeMessage(queueId, messageId)
@@ -56,6 +57,7 @@ describe('completeMessage(queueId: string, messageId: string): void', () => {
       , ordered: 0
       , active: 0
       , completed: 1
+      , failed: 0
       })
     })
   })
@@ -81,6 +83,7 @@ describe('completeMessage(queueId: string, messageId: string): void', () => {
       , ordered: 0
       , active: 0
       , completed: 0
+      , failed: 0
       })
 
       const err = getError(() => DAO.completeMessage(queueId, messageId))

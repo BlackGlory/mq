@@ -10,11 +10,12 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       , response: {
           200: {
             id: { type: 'string' }
-          , drafting: { type: 'number', minimum: 0 }
-          , waiting: { type: 'number', minimum: 0 }
-          , ordered: { type: 'number', minimum: 0 }
-          , active: { type: 'number', minimum: 0 }
-          , completed: { type: 'number', minimum: 0 }
+          , drafting: { type: 'integer', minimum: 0 }
+          , waiting: { type: 'integer', minimum: 0 }
+          , ordered: { type: 'integer', minimum: 0 }
+          , active: { type: 'integer', minimum: 0 }
+          , completed: { type: 'integer', minimum: 0 }
+          , failed: { type: 'integer', mminimum: 0 }
           }
         }
       }

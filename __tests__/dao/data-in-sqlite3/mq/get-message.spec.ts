@@ -43,6 +43,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , ordered: 1
         , active: 0
         , completed: 0
+        , failed: 0
         })
 
         const result = DAO.getMessage(queueId, messageId)
@@ -64,6 +65,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , ordered: 0
         , active: 1
         , completed: 0
+        , failed: 0
         })
       })
     })
@@ -89,6 +91,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , ordered: 1
         , active: 0
         , completed: 0
+        , failed: 0
         })
 
         const err = getError(() => DAO.getMessage(queueId, messageId))
@@ -118,6 +121,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , ordered: 0
         , active: 0
         , completed: 0
+        , failed: 0
         })
 
         const result = DAO.getMessage(queueId, messageId)
@@ -139,6 +143,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , ordered: 0
         , active: 0
         , completed: 0
+        , failed: 0
         })
       })
     })

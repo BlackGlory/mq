@@ -35,6 +35,7 @@ describe('clear(queueId: string): void', () => {
     , ordered: 0
     , active: 0
     , completed: 0
+    , failed: 0
     })
     setRawThrottle({
       mq_id: queueId

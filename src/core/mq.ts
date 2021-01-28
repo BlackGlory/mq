@@ -76,6 +76,20 @@ export async function get(queueId: string, messageId: string): Promise<IMessage>
 /**
  * @throws {BadMessageState}
  */
+export async function abandon(queueId: string, messageId: string): Promise<void> {
+  await maintain(queueId)
+
+  try {
+    await MQDAO.abandonMessage(queueId, messageId)
+  } catch (e) {
+    if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)
+    throw e
+  }
+}
+
+/**
+ * @throws {BadMessageState}
+ */
 export async function complete(queueId: string, messageId: string): Promise<void> {
   await maintain(queueId)
 
@@ -90,15 +104,41 @@ export async function complete(queueId: string, messageId: string): Promise<void
 /**
  * @throws {BadMessageState}
  */
-export async function abandon(queueId: string, messageId: string): Promise<void> {
+export async function fail(queueId: string, messageId: string): Promise<void> {
   await maintain(queueId)
 
   try {
-    await MQDAO.abandonMessage(queueId, messageId)
+    await MQDAO.failMessage(queueId, messageId)
   } catch (e) {
     if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)
     throw e
   }
+}
+
+/**
+ * @throws {BadMessageState}
+ */
+export async function renew(queueId: string, messageId: string): Promise<void> {
+  await maintain(queueId)
+
+  try {
+    await MQDAO.renewMessage(queueId, messageId)
+  } catch (e) {
+    if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)
+    throw e
+  }
+}
+
+export async function abandonAllFailedMessages(queueId: string): Promise<void> {
+  await maintain(queueId)
+
+  await MQDAO.abandonAllFailedMessages(queueId)
+}
+
+export async function renewAllFailedMessages(queueId: string): Promise<void> {
+  await maintain(queueId)
+
+  await MQDAO.renewAllFailedMessages(queueId)
 }
 
 export async function clear(queueId: string): Promise<void> {
@@ -113,8 +153,14 @@ export async function stats(queueId: string): Promise<IStats> {
   return await MQDAO.stats(queueId)
 }
 
-export async function list(): Promise<string[]> {
-  return await MQDAO.listAllQueueIds()
+export async function* getAllFailedMessageIds(queueId: string): AsyncIterable<string> {
+  await maintain(queueId)
+
+  yield* MQDAO.getAllFailedMessageIds(queueId)
+}
+
+export async function* getAllQueueIds(): AsyncIterable<string> {
+  yield* MQDAO.getAllQueueIds()
 }
 
 async function maintain(queueId: string): Promise<void> {
@@ -144,8 +190,7 @@ async function maintain(queueId: string): Promise<void> {
 }
 
 async function maintainAllQueues() {
-  const ids = await MQDAO.getAllWorkingQueueIds()
-  for (const id of ids) {
+  for await (const id of MQDAO.getAllWorkingQueueIds()) {
     await maintain(id)
   }
 }

@@ -1,7 +1,7 @@
 import { buildServer } from '@src/server'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import { matchers } from 'jest-json-schema'
-import { prepareActiveMessage } from './utils'
+import { prepareFailedMessage } from './utils'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -17,11 +17,11 @@ describe('no access control', () => {
     const mqId = 'mq-id'
     const messageId = 'message-id'
     const server = await buildServer()
-    await prepareActiveMessage(mqId, messageId, 'text/plain', 'payload')
+    await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
 
     const res = await server.inject({
-      method: 'POST'
-    , url: `/mq/${mqId}/messages/${messageId}`
+      method: 'DELETE'
+    , url: `/mq/${mqId}/failed-messages`
     })
 
     expect(res.statusCode).toBe(204)

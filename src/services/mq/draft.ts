@@ -15,10 +15,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       , body: {
           priority: {
             anyOf: [
-              {
-                type: 'integer'
-              , minimum: 0
-              }
+              { type: 'integer', minimum: 0 }
             , { type: 'null' }
             ]
           }

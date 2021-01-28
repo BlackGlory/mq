@@ -2,12 +2,17 @@ import { draftMessage } from './draft-message'
 import { setMessage } from './set-message'
 import { orderMessage } from './order-message'
 import { getMessage } from './get-message'
-import { completeMessage } from './complete-message'
 import { abandonMessage } from './abandon-message'
+import { completeMessage } from './complete-message'
+import { failMessage } from './fail-message'
+import { renewMessage } from './renew-message'
+import { abandonAllFailedMessages } from './abandon-all-failed-messages'
+import { renewAllFailedMessages } from './renew-all-failed-messages'
 import { stats } from './stats'
 import { clear } from './clear'
+import { getAllFailedMessageIds } from './get-all-failed-message-ids'
 import { getAllWorkingQueueIds } from './get-all-working-queue-ids'
-import { listAllQueueIds } from './list-all-queue-ids'
+import { getAllQueueIds } from './get-all-queue-ids'
 import {
   fallbackOutdatedDraftingMessages
 , fallbackOutdatedOrderedMessages
@@ -20,14 +25,21 @@ export const MQDAO: IMQDAO = {
 , setMessage: asyncify(setMessage)
 , orderMessage: asyncify(orderMessage)
 , getMessage: asyncify(getMessage)
-, completeMessage: asyncify(completeMessage)
 , abandonMessage: asyncify(abandonMessage)
+, completeMessage: asyncify(completeMessage)
+, failMessage: asyncify(failMessage)
+, renewMessage: asyncify(renewMessage)
+
+, abandonAllFailedMessages: asyncify(abandonAllFailedMessages)
+, renewAllFailedMessages: asyncify(renewAllFailedMessages)
 
 , clear: asyncify(clear)
 , stats: asyncify(stats)
 
-, getAllWorkingQueueIds: asyncify(getAllWorkingQueueIds)
-, listAllQueueIds: asyncify(listAllQueueIds)
+, getAllFailedMessageIds: asyncifyIterable(getAllFailedMessageIds)
+, getAllWorkingQueueIds: asyncifyIterable(getAllWorkingQueueIds)
+, getAllQueueIds: asyncifyIterable(getAllQueueIds)
+
 , fallbackOutdatedDraftingMessages: asyncify(fallbackOutdatedDraftingMessages)
 , fallbackOutdatedOrderedMessages: asyncify(fallbackOutdatedOrderedMessages)
 , fallbackOutdatedActiveMessages: asyncify(fallbackOutdatedActiveMessages)
@@ -39,5 +51,11 @@ export const MQDAO: IMQDAO = {
 function asyncify<T extends any[], U>(fn: (...args: T) => U): (...args: T) => Promise<U> {
   return async function (this: unknown, ...args: T): Promise<U> {
     return Reflect.apply(fn, this, args)
+  }
+}
+
+function asyncifyIterable<T extends any[], U>(fn: (...args: T) => Iterable<U>): (...args: T) => AsyncIterable<U> {
+  return async function* (this: unknown, ...args: T): AsyncIterable<U> {
+    yield* Reflect.apply(fn, this, args)
   }
 }

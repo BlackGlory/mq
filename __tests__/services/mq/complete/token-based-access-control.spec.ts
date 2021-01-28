@@ -28,8 +28,8 @@ describe('token-based access control', () => {
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
           const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages/${messageId}`
+            method: 'PATCH'
+          , url: `/mq/${mqId}/messages/${messageId}/complete`
           , query: { token }
           })
 
@@ -49,8 +49,9 @@ describe('token-based access control', () => {
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
           const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages/${messageId}`
+            method: 'PATCH'
+          , url: `/mq/${mqId}/messages/${messageId}/complete`
+          , query: { token: 'bad' }
           })
 
           expect(res.statusCode).toBe(401)
@@ -69,8 +70,8 @@ describe('token-based access control', () => {
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
           const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages/${messageId}`
+            method: 'PATCH'
+          , url: `/mq/${mqId}/messages/${messageId}/complete`
           })
 
           expect(res.statusCode).toBe(401)
@@ -89,8 +90,8 @@ describe('token-based access control', () => {
           await prepareActiveMessage(mqId, messageId, 'text/plain', 'payload')
 
           const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages/${messageId}`
+            method: 'PATCH'
+          , url: `/mq/${mqId}/messages/${messageId}/complete`
           })
 
           expect(res.statusCode).toBe(401)
@@ -106,8 +107,8 @@ describe('token-based access control', () => {
           await prepareActiveMessage(mqId, messageId, 'text/plain', 'payload')
 
           const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages/${messageId}`
+            method: 'PATCH'
+          , url: `/mq/${mqId}/messages/${messageId}/complete`
           })
 
           expect(res.statusCode).toBe(204)
@@ -129,8 +130,8 @@ describe('token-based access control', () => {
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
           const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages/${messageId}`
+            method: 'PATCH'
+          , url: `/mq/${mqId}/messages/${messageId}/complete`
           })
 
           expect(res.statusCode).toBe(204)
@@ -151,8 +152,8 @@ describe('token-based access control', () => {
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
           const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages/${messageId}`
+            method: 'PATCH'
+          , url: `/mq/${mqId}/messages/${messageId}/complete`
           })
 
           expect(res.statusCode).toBe(204)

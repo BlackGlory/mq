@@ -15,6 +15,7 @@ interface IStats {
   ordered: number
   active: number
   completed: number
+  failed: number
 }
 
 interface IThrottle {
@@ -51,16 +52,31 @@ interface ICore {
     /**
      * @throws {BadMessageState}
      */
+    abandon(queueId: string, messageId: string): Promise<void>
+
+    /**
+     * @throws {BadMessageState}
+     */
     complete(queueId: string, messageId: string): Promise<void>
 
     /**
      * @throws {BadMessageState}
      */
-    abandon(queueId: string, messageId: string): Promise<void>
+    fail(queueId: string, messageId: string): Promise<void>
+
+    /**
+     * @throws {BadMessageState}
+     */
+    renew(queueId: string, messageId: string): Promise<void>
+
+    abandonAllFailedMessages(queueId: string): Promise<void>
+    renewAllFailedMessages(queueId: string): Promise<void>
+
+    getAllFailedMessageIds(queueId: string): AsyncIterable<string>
+    getAllQueueIds(): AsyncIterable<string>
 
     clear(queueId: string): Promise<void>
-    stats(id: string): Promise<IStats>
-    list(): Promise<string[]>
+    stats(queueId: string): Promise<IStats>
 
     NotFound: CustomErrorConstructor
     BadMessageState: CustomErrorConstructor

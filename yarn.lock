@@ -4369,6 +4369,13 @@ istanbul-reports@^3.0.2:
     html-escaper "^2.0.0"
     istanbul-lib-report "^3.0.0"
 
+iterable-operator@^0.12.11, iterable-operator@^0.12.9:
+  version "0.12.11"
+  resolved "https://registry.yarnpkg.com/iterable-operator/-/iterable-operator-0.12.11.tgz#09e72a17deccbf392afa822fc6123fbe1e453899"
+  integrity sha512-f6g7Ftzxk4JyJNL19/tB1Lt7CnXQC2kcRQ2+SZX0RaSr8+3SuAPLAMzU515dRl5/yfK9YI0JdDvW+hL02+tShQ==
+  dependencies:
+    "@blackglory/types" "^0.2.9"
+
 iterable-operator@^0.12.2:
   version "0.12.2"
   resolved "https://registry.yarnpkg.com/iterable-operator/-/iterable-operator-0.12.2.tgz#757b3fe5f57b219245ed94434b6b799c666adf06"
@@ -4382,13 +4389,6 @@ iterable-operator@^0.12.7:
   integrity sha512-7Ku+aHluJgZdpbJHgfxkFMtdQPvt2aLcsQr+WiwDCx25X/EwT4fYze4R9XYucX6TihlQElesVmQLYzpKpY9fOg==
   dependencies:
     "@blackglory/types" "^0.2.3"
-
-iterable-operator@^0.12.9:
-  version "0.12.11"
-  resolved "https://registry.yarnpkg.com/iterable-operator/-/iterable-operator-0.12.11.tgz#09e72a17deccbf392afa822fc6123fbe1e453899"
-  integrity sha512-f6g7Ftzxk4JyJNL19/tB1Lt7CnXQC2kcRQ2+SZX0RaSr8+3SuAPLAMzU515dRl5/yfK9YI0JdDvW+hL02+tShQ==
-  dependencies:
-    "@blackglory/types" "^0.2.9"
 
 jest-changed-files@^26.6.2:
   version "26.6.2"

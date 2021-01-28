@@ -16,18 +16,33 @@ interface IMQDAO {
   /**
    * @throws {BadMessageState}
    */
+  abandonMessage(queueId: string, messageId: string): Promise<void>
+
+  /**
+   * @throws {BadMessageState}
+   */
   completeMessage(queueId: string, messageId: string): Promise<void>
 
   /**
    * @throws {BadMessageState}
    */
-  abandonMessage(queueId: string, messageId: string): Promise<void>
+  failMessage(queueId: string, messageId: string): Promise<void>
+
+  /**
+   * @throws {BadMessageState}
+   */
+  renewMessage(queueId: string, messageId: string): Promise<void>
+
+  abandonAllFailedMessages(queueId: string): Promise<void>
+  renewAllFailedMessages(queueId: string): Promise<void>
 
   stats(queueId: string): Promise<IStats>
   clear(queueId: string): Promise<void>
 
-  getAllWorkingQueueIds(): Promise<string[]>
-  listAllQueueIds(): Promise<string[]>
+  getAllFailedMessageIds(queueId: string): AsyncIterable<string>
+  getAllWorkingQueueIds(): AsyncIterable<string>
+  getAllQueueIds(): AsyncIterable<string>
+
   fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): Promise<void>
   fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): Promise<void>
   fallbackOutdatedActiveMessages(queueId: string, timestamp: number): Promise<void>

@@ -12,7 +12,6 @@ CREATE INDEX idx_mq_message_mq_id_state_priority_state_updated_at
              , state_updated_at	ASC
              );
 
-
 DROP INDEX idx_mq_message_state;
 DROP INDEX idx_mq_message_hash;
 DROP INDEX idx_mq_message_state_updated_at;
