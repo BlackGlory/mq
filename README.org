@@ -285,6 +285,8 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/renew`, {
 列出所有处于failed状态的消息id.
 返回 =Array<string>=.
 
+此操作支持返回[[https://github.com/ndjson/ndjson-spec][ndjson]]格式的响应, 需要 =Accept: application/x-ndjson= 请求头.
+
 ****** Example
 ******* curl
 #+BEGIN_SRC sh
@@ -392,6 +394,8 @@ await fetch(`http://localhost:8080/mq/${id}/stats`).then(res => res.json())
 获取所有有统计信息的队列id.
 
 返回 =Array<string>=.
+
+此操作支持返回[[https://github.com/ndjson/ndjson-spec][ndjson]]格式的响应, 需要 =Accept: application/x-ndjson= 请求头.
 
 ***** Example
 ****** curl

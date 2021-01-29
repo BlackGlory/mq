@@ -3061,6 +3061,14 @@ extglob@^2.0.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
+extra-generator@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/extra-generator/-/extra-generator-0.1.3.tgz#ed821820c078d02c7513be2c3ff543d2e4656f64"
+  integrity sha512-StbHAF5KGWkwP3bkuodnkX+WuRNSu6VhD42Py+2cLCycsQuPtslP0OsM/Yxxml0QhJz3tGK7QQgWIDbHkiYlUw==
+  dependencies:
+    "@blackglory/types" "^0.2.9"
+    typed-assert "^1.0.7"
+
 extra-promise@^0.13.15:
   version "0.13.15"
   resolved "https://registry.yarnpkg.com/extra-promise/-/extra-promise-0.13.15.tgz#64f0bfa61bae741e5f8921854c2fb4491ac712dc"
@@ -7799,6 +7807,11 @@ type-fest@^0.8.1:
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.8.1.tgz#09e249ebde851d3b1e48d27c105444667f17b83d"
   integrity sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==
+
+typed-assert@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/typed-assert/-/typed-assert-1.0.7.tgz#30bb56ace265736fc3075b07414028077f77a8e2"
+  integrity sha512-TiBedJnGT3nNss19TyQ/JLwXy57pNDYBAja1gC0uLCKN4ps7FF3sSh71oImHDiKk8i5EuQ1G0CEOPeeA+ClWXQ==
 
 typedarray-to-buffer@^3.1.5:
   version "3.1.5"

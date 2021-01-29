@@ -1,7 +1,12 @@
 import { FastifyPluginAsync } from 'fastify'
 import { idSchema, tokenSchema } from '@src/schema'
+import { stringifyJSONStreamAsync, stringifyNDJSONStreamAsync } from 'extra-generator'
+import accepts from 'fastify-accepts'
+import { Readable } from 'stream'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
+  server.register(accepts)
+
   server.get<{
     Params: { queueId: string }
     Querystring: { token?: string }
@@ -11,12 +16,6 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       schema: {
         params: { queueId: idSchema }
       , querystring: { token: tokenSchema }
-      , response: {
-          200: {
-            type: 'array'
-          , items: { type: 'string' }
-          }
-        }
       }
     }
   , async (req, reply) => {
@@ -35,7 +34,19 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
 
       const result = Core.MQ.getAllFailedMessageIds(queueId)
-      return reply.status(200).send(result)
+
+      const accept = req.accepts().type(['application/json', 'application/x-ndjson'])
+      if (accept === 'application/x-ndjson') {
+        reply
+          .status(200)
+          .header('Content-Type', 'application/x-ndjson')
+          .send(Readable.from(stringifyNDJSONStreamAsync(result)))
+      } else {
+        reply
+          .status(200)
+          .header('Content-Type', 'application/json')
+          .send(Readable.from(stringifyJSONStreamAsync(result)))
+      }
     }
   )
 }

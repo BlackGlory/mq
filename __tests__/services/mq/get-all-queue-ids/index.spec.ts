@@ -1,6 +1,7 @@
 import { buildServer } from '@src/server'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import { matchers } from 'jest-json-schema'
+import { prepareQueues } from './utils'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -13,7 +14,9 @@ beforeEach(async () => {
 
 describe('no access control', () => {
   it('200', async () => {
+    const queueIds = ['queue-id']
     const server = await buildServer()
+    await prepareQueues(queueIds)
 
     const res = await server.inject({
       method: 'GET'
@@ -21,6 +24,6 @@ describe('no access control', () => {
     })
 
     expect(res.statusCode).toBe(200)
-    expect(res.json()).toEqual([])
+    expect(res.json()).toStrictEqual(queueIds)
   })
 })
