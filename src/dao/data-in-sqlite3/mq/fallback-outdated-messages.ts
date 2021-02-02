@@ -2,10 +2,10 @@ import { getDatabase } from '../database'
 import { downcreaseDrafting, downcreaseOrdered, downcreaseActive, increaseWaiting } from './utils/stats'
 import { getTimestamp } from './utils/get-timestamp'
 
-export function fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): void {
+export function fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): boolean {
   const db = getDatabase()
 
-  db.transaction(() => {
+  return db.transaction(() => {
     const result = db.prepare(`
       DELETE FROM mq_message
        WHERE mq_id = $queueId
@@ -14,13 +14,15 @@ export function fallbackOutdatedDraftingMessages(queueId: string, timestamp: num
     `).run({ queueId, timestamp })
 
     downcreaseDrafting(queueId, result.changes)
+
+    return result.changes > 0
   })()
 }
 
-export function fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): void {
+export function fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): boolean {
   const db = getDatabase()
 
-  db.transaction(() => {
+  return db.transaction(() => {
     const now = getTimestamp()
     const result = db.prepare(`
       UPDATE mq_message
@@ -33,13 +35,15 @@ export function fallbackOutdatedOrderedMessages(queueId: string, timestamp: numb
 
     downcreaseOrdered(queueId, result.changes)
     increaseWaiting(queueId, result.changes)
+
+    return result.changes > 0
   })()
 }
 
-export function fallbackOutdatedActiveMessages(queueId: string, timestamp: number): void {
+export function fallbackOutdatedActiveMessages(queueId: string, timestamp: number): boolean {
   const db = getDatabase()
 
-  db.transaction(() => {
+  return db.transaction(() => {
     const now = getTimestamp()
     const result = db.prepare(`
       UPDATE mq_message
@@ -52,5 +56,7 @@ export function fallbackOutdatedActiveMessages(queueId: string, timestamp: numbe
 
     downcreaseActive(queueId, result.changes)
     increaseWaiting(queueId, result.changes)
+
+    return result.changes > 0
   })()
 }

@@ -176,14 +176,14 @@ async function maintain(queueId: string): Promise<void> {
 
   const orderedTimeout = configurations.orderedTimeout ?? ORDERED_TIMEOUT()
   if (orderedTimeout !== Infinity) {
-    await MQDAO.fallbackOutdatedOrderedMessages(queueId, timestamp - orderedTimeout)
-    emit = true
+    const changed = await MQDAO.fallbackOutdatedOrderedMessages(queueId, timestamp - orderedTimeout)
+    if (changed) emit = true
   }
 
   const activeTimeout = configurations.activeTimeout ?? ACTIVE_TIMEOUT()
   if (activeTimeout !== Infinity) {
-    await MQDAO.fallbackOutdatedActiveMessages(queueId, timestamp - activeTimeout)
-    emit = true
+    const changed = await MQDAO.fallbackOutdatedActiveMessages(queueId, timestamp - activeTimeout)
+    if (changed) emit =true
   }
 
   if (emit) await SignalDAO.emit(queueId)

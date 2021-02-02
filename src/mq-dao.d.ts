@@ -43,9 +43,9 @@ interface IMQDAO {
   getAllWorkingQueueIds(): AsyncIterable<string>
   getAllQueueIds(): AsyncIterable<string>
 
-  fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): Promise<void>
-  fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): Promise<void>
-  fallbackOutdatedActiveMessages(queueId: string, timestamp: number): Promise<void>
+  fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): Promise<boolean>
+  fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): Promise<boolean>
+  fallbackOutdatedActiveMessages(queueId: string, timestamp: number): Promise<boolean>
 
   NotFound: CustomErrorConstructor
   BadMessageState: new (...states: [string, ...string[]]) => CustomError
