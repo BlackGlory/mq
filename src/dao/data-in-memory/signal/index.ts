@@ -8,6 +8,6 @@ export const SignalDAO: ISignalDAO = {
     emitter.emit(key, null)
   }
 , async wait(key: string): Promise<void> {
-    waitForEventEmitter(emitter, key)
+    await waitForEventEmitter(emitter, key)
   }
 }
