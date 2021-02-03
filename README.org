@@ -4,13 +4,6 @@
 带有基于token和名单的访问控制策略,
 支持JSON Schema.
 
-** Quickstart
-#+BEGIN_SRC sh
-docker run --detach --publish 8080:8080 blackglory/mq
-
-curl http://localhost:8080/mq/queue-id/messages/message-id \
-#+END_SRC
-
 ** Install
 *** 从源代码运行
 可以使用环境变量 =MQ_HOST= 和 =MQ_PORT= 决定服务器监听的地址和端口, 默认值为localhost和8080.
@@ -106,9 +99,9 @@ volumes:
 ******* curl
 #+BEGIN_SRC sh
 curl \
-  --request POST
-  --header 'Content-Type: application/json'
-  --data '{ "priority": null }'
+  --request POST \
+  --header 'Content-Type: application/json' \
+  --data '{ "priority": null }' \
   "http://localhost:8080/mq/$mqId"
 #+END_SRC
 
@@ -130,10 +123,10 @@ await fetch(`http://localhost:8080/mq/${mqId}`).then({
 ****** Example
 ******* curl
 #+BEGIN_SRC sh
-curl \
-  --request PUT
-  --data "$msg"
-  "http://localhost:8080/mq/$mqId/messages/$msgId"
+  curl \
+    --request PUT \
+    --data "$msg" \
+    "http://localhost:8080/mq/$mqId/messages/$msgId"
 #+END_SRC
 
 ******* JavaScript
@@ -201,7 +194,7 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`).then(res => re
 ******* curl
 #+BEGIN_SRC sh
 curl \
-  --request DELETE
+  --request DELETE \
   "http://localhost:8080/mq/$mqId/messages/$msgId"
 #+END_SRC
 
@@ -223,7 +216,7 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`, {
 ******* curl
 #+BEGIN_SRC sh
 curl \
-  --request PATCH
+  --request PATCH \
   "http://localhost:8080/mq/$mqId/messages/$msgId/complete"
 #+END_SRC
 
@@ -246,7 +239,7 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/complete`, {
 ******* curl
 #+BEGIN_SRC sh
 curl \
-  --request PATCH
+  --request PATCH \
   "http://localhost:8080/mq/$mqId/messages/$msgId/fail"
 #+END_SRC
 
@@ -268,7 +261,7 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/fail`, {
 ******* curl
 #+BEGIN_SRC sh
 curl \
-  --request PATCH
+  --request PATCH \
   "http://localhost:8080/mq/$mqId/messages/$msgId/renew"
 #+END_SRC
 
@@ -307,7 +300,7 @@ await fetch(`http://localhost:8080/mq/${mqId}/failed-messages`).then(res => res.
 ******* curl
 #+BEGIN_SRC sh
 curl \
-  --request DELETE
+  --request DELETE \
   "http://localhost:8080/mq/$mqId/failed-messages"
 #+END_SRC
 
@@ -327,7 +320,7 @@ await fetch(`http://localhost:8080/mq/${mqId}/failed-messages`, {
 ******* curl
 #+BEGIN_SRC sh
 curl \
-  --request POST
+  --request PATCH \
   "http://localhost:8080/mq/$mqId/failed-messages/renew"
 #+END_SRC
 
@@ -347,7 +340,7 @@ await fetch(`http://localhost:8080/mq/${mqId}/failed-messages/renew`, {
 ****** curl
 #+BEGIN_SRC sh
 curl \
-  --request DELETE
+  --request DELETE \
   "http://localhost:8080/mq/$id"
 #+END_SRC
 
