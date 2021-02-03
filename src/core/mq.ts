@@ -123,6 +123,7 @@ export async function renew(queueId: string, messageId: string): Promise<void> {
 
   try {
     await MQDAO.renewMessage(queueId, messageId)
+    queueMicrotask(() => SignalDAO.emit(queueId))
   } catch (e) {
     if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)
     throw e
@@ -139,6 +140,7 @@ export async function renewAllFailedMessages(queueId: string): Promise<void> {
   await maintain(queueId)
 
   await MQDAO.renewAllFailedMessages(queueId)
+  queueMicrotask(() => SignalDAO.emit(queueId))
 }
 
 export async function clear(queueId: string): Promise<void> {
