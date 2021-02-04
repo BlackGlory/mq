@@ -90,6 +90,7 @@
     "iterable-operator": "^0.13.0",
     "migrations-file": "^0.1.1",
     "nanoid": "^3.1.20",
+    "return-style": "^0.11.6",
     "value-getter": "^0.1.7"
   }
 }
