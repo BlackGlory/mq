@@ -185,7 +185,7 @@ async function maintain(queueId: string): Promise<void> {
   const activeTimeout = configurations.activeTimeout ?? ACTIVE_TIMEOUT()
   if (activeTimeout !== Infinity) {
     const changed = await MQDAO.fallbackOutdatedActiveMessages(queueId, timestamp - activeTimeout)
-    if (changed) emit =true
+    if (changed) emit = true
   }
 
   if (emit) await SignalDAO.emit(queueId)

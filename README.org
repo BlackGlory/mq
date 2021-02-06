@@ -102,12 +102,12 @@ curl \
   --request POST \
   --header 'Content-Type: application/json' \
   --data '{ "priority": null }' \
-  "http://localhost:8080/mq/$mqId"
+  "http://localhost:8080/mq/$mqId/messages"
 #+END_SRC
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}`).then({
+await fetch(`http://localhost:8080/mq/${mqId}/messages`, {
   method: 'POST'
 , headers: { 'Content-Type': 'application/json' }
 , body: JSON.stringify({ priority: null })
