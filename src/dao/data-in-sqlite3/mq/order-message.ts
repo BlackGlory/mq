@@ -2,6 +2,7 @@ import { getDatabase } from '../database'
 import { getTimestamp } from './utils/get-timestamp'
 import { downcreaseWaiting, increaseOrdered } from './utils/stats'
 import { stats } from './stats'
+import { assert } from '@blackglory/errors'
 
 export function orderMessage(queueId: string, concurrency: number, duration: number, limit: number): string | null {
   const db = getDatabase()
@@ -32,11 +33,13 @@ export function orderMessage(queueId: string, concurrency: number, duration: num
     }
 
     function overLimit(): boolean {
-      return throttle!.count >= limit
+      assert(throttle)
+      return throttle.count >= limit
     }
 
     function inThrottleCycle(): boolean {
-      return now - duration <= throttle!.cycleStartTime
+      assert(throttle)
+      return now - duration <= throttle.cycleStartTime
     }
   })()
 }
@@ -44,7 +47,7 @@ export function orderMessage(queueId: string, concurrency: number, duration: num
 function getThrottle(queueId: string): IThrottle | null {
   const row = getDatabase().prepare(`
     SELECT cycle_start_time
-          , count
+         , count
       FROM mq_throttle
      WHERE mq_id = $queueId;
   `).get({ queueId })
@@ -71,8 +74,8 @@ function order(queueId: string, now: number): string | null {
      LIMIT 1;
   `).get({ queueId })
   if (!row) return null
-  const messageId = row['message_id'] as string
 
+  const messageId = row['message_id'] as string
   db.prepare(`
     UPDATE mq_message
        SET state = 'ordered'

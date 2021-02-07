@@ -284,11 +284,6 @@
   dependencies:
     "@blackglory/types" "^0.1.3"
 
-"@blackglory/errors@^0.1.4":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@blackglory/errors/-/errors-0.1.5.tgz#41362d969c4bd338d43ec5d4fbc866cb639f08d1"
-  integrity sha512-n0pCQ8JKx5Tw9QuNBWsokvOwX0oJn/qnEYWspSNaPzo/QrmZAiHhpIiPWHEhtmt8gLVsHw3dizw7iQbiOwR/ZA==
-
 "@blackglory/errors@^1.1.1", "@blackglory/errors@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@blackglory/errors/-/errors-1.1.2.tgz#0577f01ca13850049efa0dd729e1a26e77e1dc3a"
@@ -3029,10 +3024,10 @@ extra-dom@^0.2.9:
     "@blackglory/types" "^0.2.13"
     iterable-operator "^0.13.2"
 
-extra-generator@^0.1.3:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/extra-generator/-/extra-generator-0.1.4.tgz#d7971037a95c0e80b83efb399ae2bf8fcf0cbf82"
-  integrity sha512-zgcGbkUhe7xJoonjNwBPR0C73S6F7osW2j7yt52YuFBMLdRBigBrcKmRRJULJFwlga5q9MWb8kLzpl/zq80Hww==
+extra-generator@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/extra-generator/-/extra-generator-0.1.5.tgz#40edae6b1d9c744c677eff157a7245791fa50bbb"
+  integrity sha512-uF6mL3Trzy7hNnYR6MVwKA540mV7nOD4Q8vY+k9kASonlTi2ZF4yWCwDUdRK3UQDrTv/NwIDfT6OniB8VRxRfA==
   dependencies:
     "@blackglory/errors" "^1.1.1"
     "@blackglory/types" "^0.2.9"
@@ -6694,6 +6689,11 @@ return-style@^0.11.6:
   version "0.11.6"
   resolved "https://registry.yarnpkg.com/return-style/-/return-style-0.11.6.tgz#317d57180acf4cfec8890f0251466ba88f2b58ac"
   integrity sha512-ABrltlHQT20FC2pLgcNRqXSSk0vGb9U6GXTaRMCzm6858JpWIbNQU+cQUKX7Z1wLpngbBzdvtt5vblgGpB067Q==
+
+return-style@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/return-style/-/return-style-0.12.0.tgz#035a2ce0be552003c3e60cf484a6e58769cf6be1"
+  integrity sha512-ix6R9ZkSkKNjrujlGpd7QVDe7Q/ubi9V1U84AbDXRJAjIolet0mcD0kmJdyVFLFNMx2aFsStC2z/7z2LRkVP9Q==
 
 reusify@^1.0.4:
   version "1.0.4"

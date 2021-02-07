@@ -23,6 +23,7 @@ export function getMessage(queueId: string, messageId: string): IMessage {
          AND message_id = $messageId;
     `).get({ queueId, messageId })
     if (!row) throw new NotFound()
+
     const state = row['state'] as State
     switch(state) {
       case State.Drafting:
@@ -30,6 +31,7 @@ export function getMessage(queueId: string, messageId: string): IMessage {
           State.Active
         , State.Ordered
         , State.Waiting
+        , State.Failed
         )
       case State.Ordered:
         db.prepare(`
