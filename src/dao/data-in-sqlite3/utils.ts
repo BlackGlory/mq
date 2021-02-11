@@ -10,10 +10,6 @@ export async function migrateDatabase(db: IDatabase) {
   migrate(db, migrations)
 }
 
-export function enableAutoVacuum(db: IDatabase): void {
-  db.exec('PRAGMA main.auto_vacuum = FULL;')
-}
-
 export function enableForeignKeys(db: IDatabase): void {
   db.exec('PRAGMA foreign_keys = ON;')
 }
