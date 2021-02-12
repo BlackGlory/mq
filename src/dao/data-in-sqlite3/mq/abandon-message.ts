@@ -1,5 +1,5 @@
 import { getDatabase } from '../database'
-import { BadMessageState } from './error'
+import { NotFound } from './error'
 import {
   downcreaseDrafting
 , downcreaseWaiting
@@ -10,7 +10,7 @@ import {
 import { State } from './utils/state'
 
 /**
- * @throws {BadMessageState}
+ * @throws {NotFound}
  */
 export function abandonMessage(queueId: string, messageId: string): void {
   const db = getDatabase()
@@ -22,7 +22,8 @@ export function abandonMessage(queueId: string, messageId: string): void {
        WHERE mq_id = $queueId
          AND message_id = $messageId;
     `).get({ queueId, messageId })
-    if (!row) throw new BadMessageState('drafting', 'waiting', 'ordered', 'active', 'failed')
+    if (!row) throw new NotFound()
+
     const state = row['state'] as State
 
     db.prepare(`

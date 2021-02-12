@@ -22,7 +22,9 @@ export async function draft(queueId: string, priority?: number): Promise<string>
 }
 
 /**
+ * @throws {NotFound}
  * @throws {BadMessageState}
+ * @throws {DuplicatePayload}
  */
 export async function set(queueId: string, messageId: string, type: string, payload: string): Promise<void> {
   await maintain(queueId)
@@ -34,7 +36,9 @@ export async function set(queueId: string, messageId: string, type: string, payl
     await MQDAO.setMessage(queueId, messageId, type, payload, unique)
     queueMicrotask(() => SignalDAO.emit(queueId))
   } catch (e) {
+    if (e instanceof MQDAO.NotFound) throw new NotFound(e.message)
     if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)
+    if (e instanceof MQDAO.DuplicatePayload) throw new DuplicatePayload(e.message)
     throw e
   }
 }
@@ -74,7 +78,7 @@ export async function get(queueId: string, messageId: string): Promise<IMessage>
 }
 
 /**
- * @throws {BadMessageState}
+ * @throws {NotFound}
  */
 export async function abandon(queueId: string, messageId: string): Promise<void> {
   await maintain(queueId)
@@ -82,12 +86,13 @@ export async function abandon(queueId: string, messageId: string): Promise<void>
   try {
     await MQDAO.abandonMessage(queueId, messageId)
   } catch (e) {
-    if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)
+    if (e instanceof MQDAO.NotFound) throw new NotFound(e.message)
     throw e
   }
 }
 
 /**
+ * @throws {NotFound}
  * @throws {BadMessageState}
  */
 export async function complete(queueId: string, messageId: string): Promise<void> {
@@ -96,12 +101,14 @@ export async function complete(queueId: string, messageId: string): Promise<void
   try {
     await MQDAO.completeMessage(queueId, messageId)
   } catch (e) {
-    if (e instanceof MQDAO.BadMessageState) throw new NotFound(e.message)
+    if (e instanceof MQDAO.NotFound) throw new NotFound(e.message)
+    if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)
     throw e
   }
 }
 
 /**
+ * @throws {NotFound}
  * @throws {BadMessageState}
  */
 export async function fail(queueId: string, messageId: string): Promise<void> {
@@ -110,12 +117,14 @@ export async function fail(queueId: string, messageId: string): Promise<void> {
   try {
     await MQDAO.failMessage(queueId, messageId)
   } catch (e) {
+    if (e instanceof MQDAO.NotFound) throw new NotFound(e.message)
     if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)
     throw e
   }
 }
 
 /**
+ * @throws {NotFound}
  * @throws {BadMessageState}
  */
 export async function renew(queueId: string, messageId: string): Promise<void> {
@@ -125,6 +134,7 @@ export async function renew(queueId: string, messageId: string): Promise<void> {
     await MQDAO.renewMessage(queueId, messageId)
     queueMicrotask(() => SignalDAO.emit(queueId))
   } catch (e) {
+    if (e instanceof MQDAO.NotFound) throw new NotFound(e.message)
     if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)
     throw e
   }
@@ -200,3 +210,5 @@ async function maintainAllQueues() {
 export class BadMessageState extends CustomError {}
 
 export class NotFound extends CustomError {}
+
+export class DuplicatePayload extends CustomError {}

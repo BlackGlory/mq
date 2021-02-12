@@ -22,7 +22,19 @@ beforeEach(async () => {
 })
 
 describe('orderMessage(queueId: string, concurrency: number, duration: number, limit: number): string | null', () => {
-  describe('exist', () => {
+  describe('message does not exist', () => {
+    it('return null', () => {
+      const queueId = 'queue-id'
+      const duration = 100
+      const limit = 1
+
+      const result = DAO.orderMessage(queueId, Infinity, duration, limit)
+
+      expect(result).toBeNull()
+    })
+  })
+
+  describe('message exists', () => {
     describe('concurrency', () => {
       describe('not over concurrency', () => {
         it('return a message id and convert state to ordered', () => {
@@ -398,18 +410,6 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           })
         })
       })
-    })
-  })
-
-  describe('not exist', () => {
-    it('return null', () => {
-      const queueId = 'queue-id'
-      const duration = 100
-      const limit = 1
-
-      const result = DAO.orderMessage(queueId, Infinity, duration, limit)
-
-      expect(result).toBeNull()
     })
   })
 })

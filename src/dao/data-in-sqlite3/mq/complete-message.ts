@@ -1,24 +1,24 @@
 import { getDatabase } from '../database'
-import { BadMessageState } from './error'
+import { BadMessageState, NotFound } from './error'
 import { downcreaseActive, increaseCompleted } from './utils/stats'
+import { State } from './utils/state'
 
 /**
+ * @throws {NotFound}
  * @throws {BadMessageState}
  */
 export function completeMessage(queueId: string, messageId: string): void {
   const db = getDatabase()
 
   db.transaction(() => {
-    const result = db.prepare(`
-      SELECT EXISTS(
-               SELECT *
-                 FROM mq_message
-                WHERE mq_id = $queueId
-                  AND message_id = $messageId
-                  AND state = 'active'
-             ) AS matched;
+    const row = db.prepare(`
+      SELECT state
+        FROM mq_message
+       WHERE mq_id = $queueId
+         AND message_id = $messageId;
     `).get({ queueId, messageId })
-    if (!result['matched']) throw new BadMessageState('active')
+    if (!row) throw new NotFound()
+    if (row.state !== State.Active) throw new BadMessageState(State.Active)
 
     db.prepare(`
       DELETE FROM mq_message

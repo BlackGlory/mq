@@ -28,9 +28,9 @@ export function getMessage(queueId: string, messageId: string): IMessage {
     switch(state) {
       case State.Drafting:
         throw new BadMessageState(
-          State.Active
+          State.Waiting
         , State.Ordered
-        , State.Waiting
+        , State.Active
         , State.Failed
         )
       case State.Ordered:

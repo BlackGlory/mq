@@ -37,7 +37,9 @@ interface ICore {
     draft(queueId: string, priority?: number): Promise<string>
 
     /**
+     * @throws {NotFound}
      * @throws {BadMessageState}
+     * @throws {DuplicatePayload}
      */
     set(queueId: string, messageId: string, type: string, payload: string): Promise<void>
 
@@ -50,21 +52,24 @@ interface ICore {
     get(queueId: string, messageId: string): Promise<IMessage>
 
     /**
-     * @throws {BadMessageState}
+     * @throws {NotFound}
      */
     abandon(queueId: string, messageId: string): Promise<void>
 
     /**
+     * @throws {NotFound}
      * @throws {BadMessageState}
      */
     complete(queueId: string, messageId: string): Promise<void>
 
     /**
+     * @throws {NotFound}
      * @throws {BadMessageState}
      */
     fail(queueId: string, messageId: string): Promise<void>
 
     /**
+     * @throws {NotFound}
      * @throws {BadMessageState}
      */
     renew(queueId: string, messageId: string): Promise<void>
@@ -80,6 +85,7 @@ interface ICore {
 
     NotFound: CustomErrorConstructor
     BadMessageState: CustomErrorConstructor
+    DuplicatePayload: CustomErrorConstructor
   }
 
   Configuration: {

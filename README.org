@@ -120,6 +120,10 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages`, {
 发送消息正文并确认入列, 当消息的状态是drafting时, 转为waiting状态.
 若消息的状态是waiting, 可以再次调用此操作对消息内容进行更新.
 
+当消息不存在时, 会返回404状态码.
+当消息的状态不满足条件时(不是drafting, waiting中的任何一个), 会返回409状态码.
+当消息payload与其他已有消息重复时(需要将配置中的 =unique= 设为 =true=), 会返回409状态码.
+
 ****** Example
 ******* curl
 #+BEGIN_SRC sh
@@ -172,6 +176,9 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages`).then(res => res.text())
 响应头 =X-MQ-Priority= 显示该消息的优先级, 可用于在手动重新入列时使用.
 响应头 =X-MQ-State= 显示该消息在此请求响应后的状态, 可能为drafting, waiting, active, failed中的一个.
 
+当消息不存在时, 会返回404状态码.
+当消息的状态不满足条件时(不是waiting, ordered, active, failed中的任何一个), 会返回409状态码.
+
 ****** Example
 ******* curl
 #+BEGIN_SRC sh
@@ -189,6 +196,8 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`).then(res => re
 废弃此消息, 消息将不会纳入统计结果.
 
 此操作是幂等的, 若遇到网络错误, 可以再次调用.
+
+当消息不存在时, 会返回404.
 
 ****** Example
 ******* curl
@@ -211,6 +220,9 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`, {
 当消息处于active状态时表示消息被消耗完毕, 消息将被统计为已完成的消息(completed).
 
 此操作是幂等的, 若遇到网络错误, 可以再次调用.
+
+当消息不存在时, 将返回404状态码.
+当消息的状态不满足条件时(不是active), 将返回409状态码.
 
 ****** Example
 ******* curl
@@ -235,6 +247,9 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/complete`, {
 
 此操作是幂等的, 若遇到网络错误, 可以再次调用.
 
+当消息不存在时, 将返回404状态码.
+当消息的状态不满足条件时(不是active), 将返回409状态码.
+
 ****** Example
 ******* curl
 #+BEGIN_SRC sh
@@ -256,6 +271,9 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/fail`, {
 当消息处于failed状态时表示将消息重新入列, 消息将从failed状态转为waiting状态.
 
 此操作是幂等的, 若遇到网络错误, 可以再次调用.
+
+当消息不存在时, 将返回404状态码.
+当消息的状态不满足条件时(不是failed), 将返回409状态码.
 
 ****** Example
 ******* curl

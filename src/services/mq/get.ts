@@ -44,6 +44,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
           .send(result.payload)
       } catch (e) {
         if (e instanceof Core.MQ.NotFound) return reply.status(404).send()
+        if (e instanceof Core.MQ.BadMessageState) return reply.status(409).send()
         throw e
       }
     }

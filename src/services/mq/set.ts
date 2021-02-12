@@ -68,8 +68,15 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      await Core.MQ.set(queueId, messageId, type, payload)
-      reply.status(204).send()
+      try {
+        await Core.MQ.set(queueId, messageId, type, payload)
+        reply.status(204).send()
+      } catch (e) {
+        if (e instanceof Core.MQ.NotFound) return reply.status(404).send()
+        if (e instanceof Core.MQ.BadMessageState) return reply.status(409).send()
+        if (e instanceof Core.MQ.DuplicatePayload) return reply.status(409).send()
+        throw e
+      }
 
       function isJSONPayload(): boolean {
         const contentType = req.headers['content-type']

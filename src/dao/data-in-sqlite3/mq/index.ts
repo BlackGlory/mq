@@ -18,7 +18,7 @@ import {
 , fallbackOutdatedOrderedMessages
 , fallbackOutdatedActiveMessages
 } from './fallback-outdated-messages'
-import { BadMessageState, NotFound } from './error'
+import { BadMessageState, NotFound, DuplicatePayload } from './error'
 
 export const MQDAO: IMQDAO = {
   draftMessage: asyncify(draftMessage)
@@ -46,6 +46,7 @@ export const MQDAO: IMQDAO = {
 
 , NotFound
 , BadMessageState
+, DuplicatePayload
 }
 
 function asyncify<T extends any[], U>(fn: (...args: T) => U): (...args: T) => Promise<U> {

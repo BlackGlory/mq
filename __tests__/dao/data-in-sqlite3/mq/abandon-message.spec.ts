@@ -1,6 +1,8 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/abandon-message'
+import { NotFound } from '@dao/data-in-sqlite3/mq/error'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import { setRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
+import { getError } from 'return-style'
 import 'jest-extended'
 
 const timestamp = Date.now()
@@ -19,207 +21,220 @@ beforeEach(async () => {
 })
 
 describe('abandonMessage(queueId: string, messageId: string): void', () => {
-  describe('state: drafting', () => {
-    it('delete message', () => {
+  describe('message does not exist', () => {
+    it('throw NotFound', () => {
       const queueId = 'queue-id'
       const messageId = 'message-id'
-      setRawMessage({
-        mq_id: queueId
-      , message_id: messageId
-      , hash: 'hash'
-      , payload: 'payload'
-      , priority: null
-      , state: 'drafting'
-      , state_updated_at: 0
-      , type: 'type'
-      })
-      setRawStats({
-        mq_id: queueId
-      , drafting: 1
-      , waiting: 0
-      , ordered: 0
-      , active: 0
-      , completed: 0
-      , failed: 0
-      })
 
-      const result = DAO.abandonMessage(queueId, messageId)
-      const exists = hasRawMessage(queueId, messageId)
-      const stats = getRawStats(queueId)
+      const err = getError(() => DAO.abandonMessage(queueId, messageId))
 
-      expect(result).toBeUndefined()
-      expect(exists).toBeFalse()
-      expect(stats).toMatchObject({
-        drafting: 0
-      , waiting: 0
-      , ordered: 0
-      , active: 0
-      , completed: 0
-      , failed: 0
-      })
+      expect(err).toBeInstanceOf(NotFound)
     })
   })
 
-  describe('state: waiting', () => {
-    it('delete message', () => {
-      const queueId = 'queue-id'
-      const messageId = 'message-id'
-      setRawMessage({
-        mq_id: queueId
-      , message_id: messageId
-      , hash: 'hash'
-      , payload: 'payload'
-      , priority: null
-      , state: 'waiting'
-      , state_updated_at: 0
-      , type: 'type'
-      })
-      setRawStats({
-        mq_id: queueId
-      , drafting: 0
-      , waiting: 1
-      , ordered: 0
-      , active: 0
-      , completed: 0
-      , failed: 0
-      })
+  describe('message exists', () => {
+    describe('state: drafting', () => {
+      it('delete message', () => {
+        const queueId = 'queue-id'
+        const messageId = 'message-id'
+        setRawMessage({
+          mq_id: queueId
+        , message_id: messageId
+        , hash: 'hash'
+        , payload: 'payload'
+        , priority: null
+        , state: 'drafting'
+        , state_updated_at: 0
+        , type: 'type'
+        })
+        setRawStats({
+          mq_id: queueId
+        , drafting: 1
+        , waiting: 0
+        , ordered: 0
+        , active: 0
+        , completed: 0
+        , failed: 0
+        })
 
-      const result = DAO.abandonMessage(queueId, messageId)
-      const exists = hasRawMessage(queueId, messageId)
-      const stats = getRawStats(queueId)
+        const result = DAO.abandonMessage(queueId, messageId)
+        const exists = hasRawMessage(queueId, messageId)
+        const stats = getRawStats(queueId)
 
-      expect(result).toBeUndefined()
-      expect(exists).toBeFalse()
-      expect(stats).toMatchObject({
-        drafting: 0
-      , waiting: 0
-      , ordered: 0
-      , active: 0
-      , completed: 0
-      , failed: 0
-      })
-    })
-  })
-
-  describe('state: ordered', () => {
-    it('delete message', () => {
-      const queueId = 'queue-id'
-      const messageId = 'message-id'
-      setRawMessage({
-        mq_id: queueId
-      , message_id: messageId
-      , hash: 'hash'
-      , payload: 'payload'
-      , priority: null
-      , state: 'ordered'
-      , state_updated_at: 0
-      , type: 'type'
-      })
-      setRawStats({
-        mq_id: queueId
-      , drafting: 0
-      , waiting: 0
-      , ordered: 1
-      , active: 0
-      , completed: 0
-      , failed: 0
-      })
-
-      const result = DAO.abandonMessage(queueId, messageId)
-      const exists = hasRawMessage(queueId, messageId)
-      const stats = getRawStats(queueId)
-
-      expect(result).toBeUndefined()
-      expect(exists).toBeFalse()
-      expect(stats).toMatchObject({
-        drafting: 0
-      , waiting: 0
-      , ordered: 0
-      , active: 0
-      , completed: 0
-      , failed: 0
+        expect(result).toBeUndefined()
+        expect(exists).toBeFalse()
+        expect(stats).toMatchObject({
+          drafting: 0
+        , waiting: 0
+        , ordered: 0
+        , active: 0
+        , completed: 0
+        , failed: 0
+        })
       })
     })
-  })
 
-  describe('state: active', () => {
-    it('delete message', () => {
-      const queueId = 'queue-id'
-      const messageId = 'message-id'
-      setRawMessage({
-        mq_id: queueId
-      , message_id: messageId
-      , hash: 'hash'
-      , payload: 'payload'
-      , priority: null
-      , state: 'active'
-      , state_updated_at: 0
-      , type: 'type'
-      })
-      setRawStats({
-        mq_id: queueId
-      , drafting: 0
-      , waiting: 0
-      , ordered: 0
-      , active: 1
-      , completed: 0
-      , failed: 0
-      })
+    describe('state: waiting', () => {
+      it('delete message', () => {
+        const queueId = 'queue-id'
+        const messageId = 'message-id'
+        setRawMessage({
+          mq_id: queueId
+        , message_id: messageId
+        , hash: 'hash'
+        , payload: 'payload'
+        , priority: null
+        , state: 'waiting'
+        , state_updated_at: 0
+        , type: 'type'
+        })
+        setRawStats({
+          mq_id: queueId
+        , drafting: 0
+        , waiting: 1
+        , ordered: 0
+        , active: 0
+        , completed: 0
+        , failed: 0
+        })
 
-      const result = DAO.abandonMessage(queueId, messageId)
-      const exists = hasRawMessage(queueId, messageId)
-      const stats = getRawStats(queueId)
+        const result = DAO.abandonMessage(queueId, messageId)
+        const exists = hasRawMessage(queueId, messageId)
+        const stats = getRawStats(queueId)
 
-      expect(result).toBeUndefined()
-      expect(exists).toBeFalse()
-      expect(stats).toMatchObject({
-        drafting: 0
-      , waiting: 0
-      , ordered: 0
-      , active: 0
-      , completed: 0
-      , failed: 0
+        expect(result).toBeUndefined()
+        expect(exists).toBeFalse()
+        expect(stats).toMatchObject({
+          drafting: 0
+        , waiting: 0
+        , ordered: 0
+        , active: 0
+        , completed: 0
+        , failed: 0
+        })
       })
     })
-  })
 
-  describe('state: failed', () => {
-    it('delete message', () => {
-      const queueId = 'queue-id'
-      const messageId = 'message-id'
-      setRawMessage({
-        mq_id: queueId
-      , message_id: messageId
-      , hash: 'hash'
-      , payload: 'payload'
-      , priority: null
-      , state: 'failed'
-      , state_updated_at: 0
-      , type: 'type'
+    describe('state: ordered', () => {
+      it('delete message', () => {
+        const queueId = 'queue-id'
+        const messageId = 'message-id'
+        setRawMessage({
+          mq_id: queueId
+        , message_id: messageId
+        , hash: 'hash'
+        , payload: 'payload'
+        , priority: null
+        , state: 'ordered'
+        , state_updated_at: 0
+        , type: 'type'
+        })
+        setRawStats({
+          mq_id: queueId
+        , drafting: 0
+        , waiting: 0
+        , ordered: 1
+        , active: 0
+        , completed: 0
+        , failed: 0
+        })
+
+        const result = DAO.abandonMessage(queueId, messageId)
+        const exists = hasRawMessage(queueId, messageId)
+        const stats = getRawStats(queueId)
+
+        expect(result).toBeUndefined()
+        expect(exists).toBeFalse()
+        expect(stats).toMatchObject({
+          drafting: 0
+        , waiting: 0
+        , ordered: 0
+        , active: 0
+        , completed: 0
+        , failed: 0
+        })
       })
-      setRawStats({
-        mq_id: queueId
-      , drafting: 0
-      , waiting: 0
-      , ordered: 0
-      , active: 0
-      , completed: 0
-      , failed: 1
+    })
+
+    describe('state: active', () => {
+      it('delete message', () => {
+        const queueId = 'queue-id'
+        const messageId = 'message-id'
+        setRawMessage({
+          mq_id: queueId
+        , message_id: messageId
+        , hash: 'hash'
+        , payload: 'payload'
+        , priority: null
+        , state: 'active'
+        , state_updated_at: 0
+        , type: 'type'
+        })
+        setRawStats({
+          mq_id: queueId
+        , drafting: 0
+        , waiting: 0
+        , ordered: 0
+        , active: 1
+        , completed: 0
+        , failed: 0
+        })
+
+        const result = DAO.abandonMessage(queueId, messageId)
+        const exists = hasRawMessage(queueId, messageId)
+        const stats = getRawStats(queueId)
+
+        expect(result).toBeUndefined()
+        expect(exists).toBeFalse()
+        expect(stats).toMatchObject({
+          drafting: 0
+        , waiting: 0
+        , ordered: 0
+        , active: 0
+        , completed: 0
+        , failed: 0
+        })
       })
+    })
 
-      const result = DAO.abandonMessage(queueId, messageId)
-      const exists = hasRawMessage(queueId, messageId)
-      const stats = getRawStats(queueId)
+    describe('state: failed', () => {
+      it('delete message', () => {
+        const queueId = 'queue-id'
+        const messageId = 'message-id'
+        setRawMessage({
+          mq_id: queueId
+        , message_id: messageId
+        , hash: 'hash'
+        , payload: 'payload'
+        , priority: null
+        , state: 'failed'
+        , state_updated_at: 0
+        , type: 'type'
+        })
+        setRawStats({
+          mq_id: queueId
+        , drafting: 0
+        , waiting: 0
+        , ordered: 0
+        , active: 0
+        , completed: 0
+        , failed: 1
+        })
 
-      expect(result).toBeUndefined()
-      expect(exists).toBeFalse()
-      expect(stats).toMatchObject({
-        drafting: 0
-      , waiting: 0
-      , ordered: 0
-      , active: 0
-      , completed: 0
-      , failed: 0
+        const result = DAO.abandonMessage(queueId, messageId)
+        const exists = hasRawMessage(queueId, messageId)
+        const stats = getRawStats(queueId)
+
+        expect(result).toBeUndefined()
+        expect(exists).toBeFalse()
+        expect(stats).toMatchObject({
+          drafting: 0
+        , waiting: 0
+        , ordered: 0
+        , active: 0
+        , completed: 0
+        , failed: 0
+        })
       })
     })
   })

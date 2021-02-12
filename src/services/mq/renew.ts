@@ -39,7 +39,8 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         await Core.MQ.renew(queueId, messageId)
         return reply.status(204).send()
       } catch (e) {
-        if (e instanceof Core.MQ.BadMessageState) return reply.status(204).send()
+        if (e instanceof Core.MQ.NotFound) return reply.status(404).send()
+        if (e instanceof Core.MQ.BadMessageState) return reply.status(409).send()
         throw e
       }
     }

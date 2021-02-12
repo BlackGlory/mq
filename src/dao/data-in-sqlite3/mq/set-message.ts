@@ -1,12 +1,14 @@
 import { getDatabase } from '../database'
 import { getTimestamp } from './utils/get-timestamp'
 import { hash } from './utils/hash'
-import { BadMessageState, DuplicatePayload } from './error'
+import { BadMessageState, DuplicatePayload, NotFound } from './error'
 import { downcreaseDrafting, increaseWaiting } from './utils/stats'
 import { State } from './utils/state'
 
 /**
+ * @throws {NotFound}
  * @throws {BadMessageState}
+ * @throws {DuplicatePayload}
  */
 export function setMessage(queueId: string, messageId: string, type: string, payload: string, unique: boolean = false): void {
   const timestamp = getTimestamp()
@@ -17,10 +19,15 @@ export function setMessage(queueId: string, messageId: string, type: string, pay
       SELECT state
         FROM mq_message
        WHERE mq_id = $queueId
-         AND message_id = $messageId
-         AND state IN ('drafting', 'waiting')
+         AND message_id = $messageId;
     `).get({ queueId, messageId })
-    if (!row) throw new BadMessageState('drafting', 'waiting')
+    if (!row) throw new NotFound()
+
+    if (row.state !== State.Drafting
+    &&  row.state !== State.Waiting) {
+      throw new BadMessageState(State.Drafting, State.Waiting)
+    }
+
     const oldState = row['state'] as State.Drafting | State.Waiting
 
     const payloadHash = hash(payload)

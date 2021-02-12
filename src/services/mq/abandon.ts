@@ -35,8 +35,13 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      await Core.MQ.abandon(queueId, messageId)
-      reply.status(204).send()
+      try {
+        await Core.MQ.abandon(queueId, messageId)
+        reply.status(204).send()
+      } catch (e) {
+        if (e instanceof Core.MQ.NotFound) return reply.status(404).send()
+        throw e
+      }
     }
   )
 }

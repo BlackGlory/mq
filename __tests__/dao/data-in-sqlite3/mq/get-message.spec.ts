@@ -21,7 +21,18 @@ beforeEach(async () => {
 })
 
 describe('getMessage(queueId: string, messageId: string): IMessage', () => {
-  describe('exist', () => {
+  describe('message does not exist', () => {
+    it('throw NotFound', () => {
+      const queueId = 'queue-id'
+      const messageId = 'message-id'
+
+      const err = getError(() => DAO.getMessage(queueId, messageId))
+
+      expect(err).toBeInstanceOf(NotFound)
+    })
+  })
+
+  describe('message exists', () => {
     describe('state: ordered', () => {
       it('convert state to active and return IMessage', () => {
         const queueId = 'queue-id'
@@ -146,17 +157,6 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , failed: 0
         })
       })
-    })
-  })
-
-  describe('not exist', () => {
-    it('throw NotFound', () => {
-      const queueId = 'queue-id'
-      const messageId = 'message-id'
-
-      const err = getError(() => DAO.getMessage(queueId, messageId))
-
-      expect(err).toBeInstanceOf(NotFound)
     })
   })
 })
