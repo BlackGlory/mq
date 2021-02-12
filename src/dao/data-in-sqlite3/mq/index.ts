@@ -14,10 +14,10 @@ import { getAllFailedMessageIds } from './get-all-failed-message-ids'
 import { getAllWorkingQueueIds } from './get-all-working-queue-ids'
 import { getAllQueueIds } from './get-all-queue-ids'
 import {
-  fallbackOutdatedDraftingMessages
-, fallbackOutdatedOrderedMessages
-, fallbackOutdatedActiveMessages
-} from './fallback-outdated-messages'
+  rollbackOutdatedDraftingMessages
+, rollbackOutdatedOrderedMessages
+, rollbackOutdatedActiveMessages
+} from './rollback-outdated-messages'
 import { BadMessageState, NotFound, DuplicatePayload } from './error'
 
 export const MQDAO: IMQDAO = {
@@ -40,9 +40,9 @@ export const MQDAO: IMQDAO = {
 , getAllWorkingQueueIds: asyncifyIterable(getAllWorkingQueueIds)
 , getAllQueueIds: asyncifyIterable(getAllQueueIds)
 
-, fallbackOutdatedDraftingMessages: asyncify(fallbackOutdatedDraftingMessages)
-, fallbackOutdatedOrderedMessages: asyncify(fallbackOutdatedOrderedMessages)
-, fallbackOutdatedActiveMessages: asyncify(fallbackOutdatedActiveMessages)
+, rollbackOutdatedDraftingMessages: asyncify(rollbackOutdatedDraftingMessages)
+, rollbackOutdatedOrderedMessages: asyncify(rollbackOutdatedOrderedMessages)
+, rollbackOutdatedActiveMessages: asyncify(rollbackOutdatedActiveMessages)
 
 , NotFound
 , BadMessageState

@@ -1,4 +1,4 @@
-import * as DAO from '@dao/data-in-sqlite3/mq/fallback-outdated-messages'
+import * as DAO from '@dao/data-in-sqlite3/mq/rollback-outdated-messages'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import { setRawMessage, setRawStats, getRawStats, hasRawMessage, getRawMessage } from './utils'
 import 'jest-extended'
@@ -18,7 +18,7 @@ beforeEach(async () => {
   await resetDatabases()
 })
 
-describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): void', () => {
+describe('rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): void', () => {
   describe('no changes', () => {
     it('return false', () => {
       const queueId = 'queue-id'
@@ -42,7 +42,7 @@ describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
       , failed: 0
       })
 
-      const result = DAO.fallbackOutdatedDraftingMessages(queueId, 1)
+      const result = DAO.rollbackOutdatedDraftingMessages(queueId, 1)
       const messageExists = hasRawMessage(queueId, '1')
       const stats = getRawStats(queueId)
 
@@ -92,7 +92,7 @@ describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
       , failed: 0
       })
 
-      const result = DAO.fallbackOutdatedDraftingMessages(queueId, 1)
+      const result = DAO.rollbackOutdatedDraftingMessages(queueId, 1)
       const message1Exists = hasRawMessage(queueId, '1')
       const message2Exists = hasRawMessage(queueId, '2')
       const stats = getRawStats(queueId)
@@ -112,7 +112,7 @@ describe('fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
   })
 })
 
-describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): void', () => {
+describe('rollbackOutdatedOrderedMessages(queueId: string, timestamp: number): void', () => {
   describe('no changes', () => {
     it('return false', () => {
       const queueId = 'queue-id'
@@ -136,7 +136,7 @@ describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
       , failed: 0
       })
 
-      const result = DAO.fallbackOutdatedOrderedMessages(queueId, 1)
+      const result = DAO.rollbackOutdatedOrderedMessages(queueId, 1)
       const message = getRawMessage(queueId, '1')
       const stats = getRawStats(queueId)
 
@@ -190,7 +190,7 @@ describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
       , failed: 0
       })
 
-      const result = DAO.fallbackOutdatedOrderedMessages(queueId, 1)
+      const result = DAO.rollbackOutdatedOrderedMessages(queueId, 1)
       const message1 = getRawMessage(queueId, '1')
       const message2 = getRawMessage(queueId, '2')
       const stats = getRawStats(queueId)
@@ -217,7 +217,7 @@ describe('fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
   })
 })
 
-describe('fallbackOutdatedActiveMessages(queueId: string, timestamp: number): void', () => {
+describe('rollbackOutdatedActiveMessages(queueId: string, timestamp: number): void', () => {
   describe('no changes', () => {
     it('return false', () => {
       const queueId = 'queue-id'
@@ -241,7 +241,7 @@ describe('fallbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
       , failed: 0
       })
 
-      const result = DAO.fallbackOutdatedActiveMessages(queueId, 1)
+      const result = DAO.rollbackOutdatedActiveMessages(queueId, 1)
       const message = getRawMessage(queueId, '1')
       const stats = getRawStats(queueId)
 
@@ -294,7 +294,7 @@ describe('fallbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
       , failed: 0
       })
 
-      const result = DAO.fallbackOutdatedActiveMessages(queueId, 1)
+      const result = DAO.rollbackOutdatedActiveMessages(queueId, 1)
       const message1 = getRawMessage(queueId, '1')
       const message2 = getRawMessage(queueId, '2')
       const stats = getRawStats(queueId)

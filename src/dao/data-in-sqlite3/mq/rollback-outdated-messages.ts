@@ -2,7 +2,7 @@ import { getDatabase } from '../database'
 import { downcreaseDrafting, downcreaseOrdered, downcreaseActive, increaseWaiting } from './utils/stats'
 import { getTimestamp } from './utils/get-timestamp'
 
-export function fallbackOutdatedDraftingMessages(queueId: string, timestamp: number): boolean {
+export function rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): boolean {
   const db = getDatabase()
 
   return db.transaction(() => {
@@ -19,7 +19,7 @@ export function fallbackOutdatedDraftingMessages(queueId: string, timestamp: num
   })()
 }
 
-export function fallbackOutdatedOrderedMessages(queueId: string, timestamp: number): boolean {
+export function rollbackOutdatedOrderedMessages(queueId: string, timestamp: number): boolean {
   const db = getDatabase()
 
   return db.transaction(() => {
@@ -40,7 +40,7 @@ export function fallbackOutdatedOrderedMessages(queueId: string, timestamp: numb
   })()
 }
 
-export function fallbackOutdatedActiveMessages(queueId: string, timestamp: number): boolean {
+export function rollbackOutdatedActiveMessages(queueId: string, timestamp: number): boolean {
   const db = getDatabase()
 
   return db.transaction(() => {
