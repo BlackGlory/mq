@@ -10,7 +10,7 @@
 
 #+BEGIN_SRC sh
 git clone https://github.com/BlackGlory/mq
-cd log
+cd mq
 yarn install
 yarn build
 yarn --silent start
