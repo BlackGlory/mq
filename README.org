@@ -1027,12 +1027,12 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens`, {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/tokens/$token/log"
+  "http://localhost:8080/api/mq/$id/tokens/$token/produce"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/tokens/$token/log`, {
+await fetch(`http://localhost:8080/api/mq/${id}/tokens/$token/produce`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -1043,7 +1043,7 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens/$token/log`, {
 ****** 取消特定mq的token的produce权限
 =DELETE /api/mq/<id>/tokens/<token>/produce=
 
-取消token的consume权限.
+取消token的produce权限.
 
 ******* Example
 ******** curl
