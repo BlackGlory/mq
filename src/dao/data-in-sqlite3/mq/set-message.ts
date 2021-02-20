@@ -85,5 +85,6 @@ function hasDuplicatePayload(queueId: string, messageId: string, hash: string): 
                 AND hash = $hash
            ) AS matched;
   `).get({ queueId, messageId, hash })
+
   return !!result['matched']
 }

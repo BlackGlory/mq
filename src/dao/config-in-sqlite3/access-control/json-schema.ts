@@ -2,18 +2,21 @@ import { getDatabase } from '../database'
 
 export function getAllIdsWithJsonSchema(): string[] {
   const result = getDatabase().prepare(`
-    SELECT mq_id FROM mq_json_schema
+    SELECT mq_id
+      FROM mq_json_schema
   `).all()
+
   return result.map(x => x['mq_id'])
 }
 
 export function getJsonSchema(id: string): string | null {
   const result = getDatabase().prepare(`
-    SELECT json_schema FROM mq_json_schema
+    SELECT json_schema
+      FROM mq_json_schema
      WHERE mq_id = $id;
   `).get({ id })
-  if (result) return result['json_schema']
-  else return null
+
+  return result ? result['json_schema'] : null
 }
 
 export function setJsonSchema({ id, schema }: { id: string; schema: string }): void {

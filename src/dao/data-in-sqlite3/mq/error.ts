@@ -6,8 +6,8 @@ export class BadMessageState extends CustomError {
       super(`The state of message must be "${requiredStates[0]}"`)
     } else {
       const text = requiredStates
-        .map(x => `"${x}"`)
-        .join(', ')
+                     .map(x => `"${x}"`)
+                     .join(', ')
       super(`The state of message must be one of ${text}`)
     }
   }

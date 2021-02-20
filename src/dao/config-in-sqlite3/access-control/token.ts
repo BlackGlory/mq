@@ -22,6 +22,7 @@ export function getAllTokens(id: string): Array<ITokenInfo> {
       FROM mq_token
      WHERE mq_id = $id;
   `).all({ id })
+
   return result.map(x => ({
     token: x['token']
   , produce: x['produce_permission'] === 1
@@ -39,6 +40,7 @@ export function hasProduceTokens(id: string): boolean {
                 AND produce_permission = 1
            ) AS produce_tokens_exist;
   `).get({ id })
+
   return result['produce_tokens_exist'] === 1
 }
 
@@ -52,6 +54,7 @@ export function matchProduceToken(params: { token: string; id: string }): boolea
                 AND produce_permission = 1
            ) AS matched;
   `).get(params)
+
   return result['matched'] === 1
 }
 
@@ -73,6 +76,7 @@ export function unsetProduceToken(params: { token: string; id: string }) {
        WHERE token = $token
          AND mq_id = $id;
     `).run(params)
+
     clearNoPermissionToken(params)
   })()
 }
@@ -86,6 +90,7 @@ export function hasConsumeTokens(id: string): boolean {
                 AND consume_permission = 1
            ) AS consume_tokens_exist
   `).get({ id })
+
   return result['consume_tokens_exist'] === 1
 }
 
@@ -99,6 +104,7 @@ export function matchConsumeToken(params: { token: string; id: string }): boolea
                 AND consume_permission = 1
            ) AS matched
   `).get(params)
+
   return result['matched'] === 1
 }
 
@@ -120,6 +126,7 @@ export function unsetConsumeToken(params: { token: string; id: string }) {
        WHERE token = $token
          AND mq_id = $id;
     `).run(params)
+
     clearNoPermissionToken(params)
   })()
 }
@@ -134,6 +141,7 @@ export function matchClearToken(params: { token: string; id: string }): boolean 
                 AND clear_permission = 1
            ) AS matched
   `).get(params)
+
   return result['matched'] === 1
 }
 
@@ -155,6 +163,7 @@ export function unsetClearToken(params: { token: string; id: string }) {
        WHERE token = $token
          AND mq_id = $id;
     `).run(params)
+
     clearNoPermissionToken(params)
   })()
 }

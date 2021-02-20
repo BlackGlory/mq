@@ -25,18 +25,15 @@ export function getTokenPolicies(id: string): ITokenPolicy {
     const consumeTokenRequired = row['consume_token_required']
     const clearTokenRequired = row['clear_token_required']
     return {
-      produceTokenRequired:
-        produceTokenRequired === null
-        ? null
-        : numberToBoolean(produceTokenRequired)
-    , consumeTokenRequired:
-        consumeTokenRequired === null
-        ? null
-        : numberToBoolean(consumeTokenRequired)
-    , clearTokenRequired:
-        clearTokenRequired === null
-        ? null
-        : numberToBoolean(clearTokenRequired)
+      produceTokenRequired: produceTokenRequired === null
+                            ? null
+                            : numberToBoolean(produceTokenRequired)
+    , consumeTokenRequired: consumeTokenRequired === null
+                            ? null
+                            : numberToBoolean(consumeTokenRequired)
+    , clearTokenRequired: clearTokenRequired === null
+                          ? null
+                          : numberToBoolean(clearTokenRequired)
     }
   } else {
     return {
@@ -64,6 +61,7 @@ export function unsetProduceTokenRequired(id: string): void {
          SET produce_token_required = NULL
        WHERE mq_id = $id;
     `).run({ id })
+
     clearNoPoliciesRow(id)
   })()
 }
@@ -85,6 +83,7 @@ export function unsetConsumeTokenRequired(id: string): void {
          SET consume_token_required = NULL
        WHERE mq_id = $id;
     `).run({ id })
+
     clearNoPoliciesRow(id)
   })()
 }
@@ -106,6 +105,7 @@ export function unsetClearTokenRequired(id: string): void {
          SET clear_token_required = NULL
        WHERE mq_id = $id;
     `).run({ id })
+
     clearNoPoliciesRow(id)
   })()
 }

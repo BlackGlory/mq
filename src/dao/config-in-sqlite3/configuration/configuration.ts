@@ -39,12 +39,12 @@ export function getConfigurations(id: string): Configurations {
     , orderedTimeout: row['ordered_timeout']
     , activeTimeout: row['active_timeout']
     , concurrency: row['concurrency']
-    , throttle: row['throttle_duration'] && row['throttle_limit']
-              ? {
-                  duration: row['throttle_duration']
-                , limit: row['throttle_limit']
-                }
-              : null
+    , throttle: (row['throttle_duration'] && row['throttle_limit'])
+                ? {
+                    duration: row['throttle_duration']
+                  , limit: row['throttle_limit']
+                  }
+                : null
     }
   } else {
     return {
@@ -75,6 +75,7 @@ export function unsetUnique(id: string): void {
          SET uniq = NULL
        WHERE mq_id = $id;
     `).run({ id })
+
     deleteNoConfigurationsRow(id)
   })()
 }
@@ -96,6 +97,7 @@ export function unsetDraftingTimeout(id: string): void {
          SET drafting_timeout = NULL
        WHERE mq_id = $id;
     `).run({ id })
+
     deleteNoConfigurationsRow(id)
   })()
 }
@@ -117,6 +119,7 @@ export function unsetOrderedTimeout(id: string): void {
          SET ordered_timeout = NULL
        WHERE mq_id = $id;
     `).run({ id })
+
     deleteNoConfigurationsRow(id)
   })()
 }
@@ -138,6 +141,7 @@ export function unsetActiveTimeout(id: string): void {
          SET active_timeout = NULL
        WHERE mq_id = $id;
     `).run({ id })
+
     deleteNoConfigurationsRow(id)
   })()
 }
@@ -159,6 +163,7 @@ export function unsetConcurrency(id: string): void {
          SET concurrency = NULL
        WHERE mq_id = $id;
     `).run({ id })
+
     deleteNoConfigurationsRow(id)
   })()
 }
@@ -186,6 +191,7 @@ export function unsetThrottle(id: string): void {
            , throttle_limit = NULL
        WHERE mq_id = $id;
     `).run({ id })
+
     deleteNoConfigurationsRow(id)
   })()
 }

@@ -51,13 +51,11 @@ function getThrottle(queueId: string): IThrottle | null {
       FROM mq_throttle
      WHERE mq_id = $queueId;
   `).get({ queueId })
-  if (row) {
-    return {
-      cycleStartTime: row['cycle_start_time']
-    , count: row['count']
-    }
-  } else {
-    return null
+  if (!row) return null
+
+  return {
+    cycleStartTime: row['cycle_start_time']
+  , count: row['count']
   }
 }
 
