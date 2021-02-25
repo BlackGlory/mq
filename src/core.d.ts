@@ -33,7 +33,6 @@ interface ICore {
   }
 
   MQ: {
-    autoMaintain(abortSignal: AbortSignal): void
     draft(queueId: string, priority?: number): Promise<string>
 
     /**
@@ -79,6 +78,7 @@ interface ICore {
 
     getAllFailedMessageIds(queueId: string): AsyncIterable<string>
     getAllQueueIds(): AsyncIterable<string>
+    maintainAllQueues(): Promise<void>
 
     clear(queueId: string): Promise<void>
     stats(queueId: string): Promise<IStats>

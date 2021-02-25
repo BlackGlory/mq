@@ -2,16 +2,6 @@ import { ConfigurationDAO, MQDAO, SignalDAO } from '@dao'
 import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, THROTTLE, UNIQUE, CONCURRENCY } from '@env'
 import { nanoid } from 'nanoid'
 import { CustomError } from '@blackglory/errors'
-import { delay } from 'extra-promise'
-
-export function autoMaintain(abortSignal: AbortSignal): void {
-  ;(async () => {
-    while (!abortSignal.aborted) {
-      await maintainAllQueues()
-      await delay(1_000)
-    }
-  })()
-}
 
 export async function draft(queueId: string, priority?: number): Promise<string> {
   await maintain(queueId)
@@ -175,6 +165,12 @@ export async function* getAllQueueIds(): AsyncIterable<string> {
   yield* MQDAO.getAllQueueIds()
 }
 
+export async function maintainAllQueues(): Promise<void> {
+  for await (const id of MQDAO.getAllWorkingQueueIds()) {
+    await maintain(id)
+  }
+}
+
 async function maintain(queueId: string): Promise<void> {
   let emit = false
   const timestamp = Date.now()
@@ -199,12 +195,6 @@ async function maintain(queueId: string): Promise<void> {
   }
 
   if (emit) await SignalDAO.emit(queueId)
-}
-
-async function maintainAllQueues() {
-  for await (const id of MQDAO.getAllWorkingQueueIds()) {
-    await maintain(id)
-  }
 }
 
 export class BadMessageState extends CustomError {}
