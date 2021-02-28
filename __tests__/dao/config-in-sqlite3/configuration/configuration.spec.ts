@@ -1,6 +1,6 @@
 import * as DAO from '@dao/config-in-sqlite3/configuration/configuration'
 import { resetEnvironment, resetDatabases } from '@test/utils'
-import { getRawConfiguration, hasRawConfiguration, setRawConfiguration } from './utils'
+import { setMinimalConfiguration, getRawConfiguration, hasRawConfiguration, setRawConfiguration } from './utils'
 import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
@@ -15,15 +15,9 @@ describe('Configuration', () => {
   describe('getAllIdsWithConfigurations(): string[]', () => {
     it('return string[]', () => {
       const id = 'id'
-      setRawConfiguration({
+      setMinimalConfiguration({
         mq_id: id
       , uniq: 1
-      , drafting_timeout: null
-      , ordered_timeout: null
-      , active_timeout: null
-      , concurrency: null
-      , throttle_duration: null
-      , throttle_limit: null
       })
 
       const result = DAO.getAllIdsWithConfigurations()
@@ -36,15 +30,9 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return', () => {
         const id = 'id'
-        setRawConfiguration({
+        setMinimalConfiguration({
           mq_id: id
         , uniq: 1
-        , drafting_timeout: null
-        , ordered_timeout: null
-        , active_timeout: null
-        , concurrency: null
-        , throttle_duration: null
-        , throttle_limit: null
         })
 
         const result = DAO.getConfigurations(id)
@@ -86,8 +74,7 @@ describe('Configuration', () => {
       const row = getRawConfiguration(id)
 
       expect(result).toBeUndefined()
-      expect(row).not.toBeNull()
-      expect(row!['uniq']).toBe(1)
+      expect(row).toMatchObject({ uniq: 1 })
     })
   })
 
@@ -95,23 +82,16 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return undefined', () => {
         const id = 'id'
-        setRawConfiguration({
+        setMinimalConfiguration({
           mq_id: id
-        , uniq: null
         , drafting_timeout: 100
-        , ordered_timeout: null
-        , active_timeout: null
-        , concurrency: null
-        , throttle_duration: null
-        , throttle_limit: null
         })
 
         const result = DAO.unsetUnique(id)
         const row = getRawConfiguration(id)
 
         expect(result).toBeUndefined()
-        expect(row).not.toBeNull()
-        expect(row!['uniq']).toBeNull()
+        expect(row).toMatchObject({ uniq: null })
       })
     })
 
@@ -135,8 +115,7 @@ describe('Configuration', () => {
       const row = getRawConfiguration(id)
 
       expect(result).toBeUndefined()
-      expect(row).not.toBeNull()
-      expect(row!['drafting_timeout']).toBe(100)
+      expect(row).toMatchObject({ drafting_timeout: 100 })
     })
   })
 
@@ -144,23 +123,16 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return undefined', () => {
         const id = 'id'
-        setRawConfiguration({
+        setMinimalConfiguration({
           mq_id: id
-        , uniq: null
         , drafting_timeout: 100
-        , ordered_timeout: null
-        , active_timeout: null
-        , concurrency: null
-        , throttle_duration: null
-        , throttle_limit: null
         })
 
         const result = DAO.unsetDraftingTimeout(id)
         const row = getRawConfiguration(id)
 
         expect(result).toBeUndefined()
-        expect(row).not.toBeNull()
-        expect(row!['drafting_timeout']).toBeNull()
+        expect(row).toMatchObject({ drafting_timeout: null })
       })
     })
 
@@ -184,8 +156,7 @@ describe('Configuration', () => {
       const row = getRawConfiguration(id)
 
       expect(result).toBeUndefined()
-      expect(row).not.toBeNull()
-      expect(row!['ordered_timeout']).toBe(100)
+      expect(row).toMatchObject({ ordered_timeout: 100 })
     })
   })
 
@@ -193,23 +164,16 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return undefined', () => {
         const id = 'id'
-        setRawConfiguration({
+        setMinimalConfiguration({
           mq_id: id
-        , uniq: null
-        , drafting_timeout: null
         , ordered_timeout: 100
-        , active_timeout: null
-        , concurrency: null
-        , throttle_duration: null
-        , throttle_limit: null
         })
 
         const result = DAO.unsetOrderedTimeout(id)
         const row = getRawConfiguration(id)
 
         expect(result).toBeUndefined()
-        expect(row).not.toBeNull()
-        expect(row!['ordered_timeout']).toBeNull()
+        expect(row).toMatchObject({ ordered_timeout: null })
       })
     })
 
@@ -233,8 +197,7 @@ describe('Configuration', () => {
       const row = getRawConfiguration(id)
 
       expect(result).toBeUndefined()
-      expect(row).not.toBeNull()
-      expect(row!['active_timeout']).toBe(100)
+      expect(row).toMatchObject({ active_timeout: 100 })
     })
   })
 
@@ -242,23 +205,16 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return undefined', () => {
         const id = 'id'
-        setRawConfiguration({
+        setMinimalConfiguration({
           mq_id: id
-        , uniq: null
-        , drafting_timeout: null
-        , ordered_timeout: null
         , active_timeout: 100
-        , concurrency: null
-        , throttle_duration: null
-        , throttle_limit: null
         })
 
         const result = DAO.unsetActiveTimeout(id)
         const row = getRawConfiguration(id)
 
         expect(result).toBeUndefined()
-        expect(row).not.toBeNull()
-        expect(row!['active_timeout']).toBeNull()
+        expect(row).toMatchObject({ active_timeout: null })
       })
     })
 
@@ -282,8 +238,7 @@ describe('Configuration', () => {
       const row = getRawConfiguration(id)
 
       expect(result).toBeUndefined()
-      expect(row).not.toBeNull()
-      expect(row!['concurrency']).toBe(100)
+      expect(row).toMatchObject({ concurrency: 100 })
     })
   })
 
@@ -291,23 +246,16 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return undefined', () => {
         const id = 'id'
-        setRawConfiguration({
+        setMinimalConfiguration({
           mq_id: id
-        , uniq: null
-        , drafting_timeout: null
-        , ordered_timeout: null
         , active_timeout: 100
-        , concurrency: null
-        , throttle_duration: null
-        , throttle_limit: null
         })
 
         const result = DAO.unsetConcurrency(id)
         const row = getRawConfiguration(id)
 
         expect(result).toBeUndefined()
-        expect(row).not.toBeNull()
-        expect(row!['concurrency']).toBeNull()
+        expect(row).toMatchObject({ concurrency: null })
       })
     })
 
@@ -334,9 +282,10 @@ describe('Configuration', () => {
       const row = getRawConfiguration(id)
 
       expect(result).toBeUndefined()
-      expect(row).not.toBeNull()
-      expect(row!['throttle_duration']).toBe(100)
-      expect(row!['throttle_limit']).toBe(200)
+      expect(row).toMatchObject({
+        throttle_duration: 100
+      , throttle_limit: 200
+      })
     })
   })
 
@@ -344,13 +293,8 @@ describe('Configuration', () => {
     describe('exists', () => {
       it('return undefined', () => {
         const id = 'id'
-        setRawConfiguration({
+        setMinimalConfiguration({
           mq_id: id
-        , uniq: null
-        , drafting_timeout: null
-        , ordered_timeout: null
-        , active_timeout: null
-        , concurrency: null
         , throttle_duration: 100
         , throttle_limit: 200
         })
@@ -359,9 +303,10 @@ describe('Configuration', () => {
         const row = getRawConfiguration(id)
 
         expect(result).toBeUndefined()
-        expect(row).not.toBeNull()
-        expect(row!['throttle_duration']).toBeNull()
-        expect(row!['throttle_limit']).toBeNull()
+        expect(row).toMatchObject({
+          throttle_duration: null
+        , throttle_limit: null
+        })
       })
     })
 

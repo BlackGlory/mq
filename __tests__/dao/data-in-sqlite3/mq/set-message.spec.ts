@@ -74,11 +74,11 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
           })
 
           const result = getError(() => DAO.setMessage(queueId, messageId, type, payload, true))
-          const message = getRawMessage(queueId, messageId)
-          const stats = getRawStats(queueId)
+          const rawMessageResult = getRawMessage(queueId, messageId)
+          const rawStatsResult = getRawStats(queueId)
 
           expect(result).toBeInstanceOf(DuplicatePayload)
-          expect(message).toMatchObject({
+          expect(rawMessageResult).toMatchObject({
             priority: null
           , type: null
           , payload: null
@@ -86,7 +86,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
           , state: 'drafting'
           , state_updated_at: 0
           })
-          expect(stats).toMatchObject({
+          expect(rawStatsResult).toMatchObject({
             drafting: 1
           , waiting: 1
           , ordered: 0
@@ -134,11 +134,11 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
           })
 
           const result = DAO.setMessage(queueId, messageId, type, payload, true)
-          const message = getRawMessage(queueId, messageId)
-          const stats = getRawStats(queueId)
+          const rawMessageResult = getRawMessage(queueId, messageId)
+          const rawStatsResult = getRawStats(queueId)
 
           expect(result).toBeUndefined()
-          expect(message).toMatchObject({
+          expect(rawMessageResult).toMatchObject({
             priority: null
           , type
           , payload
@@ -146,7 +146,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
           , state: 'waiting'
           , state_updated_at: timestamp
           })
-          expect(stats).toMatchObject({
+          expect(rawStatsResult).toMatchObject({
             drafting: 0
           , waiting: 2
           , ordered: 0
@@ -185,11 +185,11 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         })
 
         const result = DAO.setMessage(queueId, messageId, type, payload)
-        const message = getRawMessage(queueId, messageId)
-        const stats = getRawStats(queueId)
+        const rawMessageResult = getRawMessage(queueId, messageId)
+        const rawStatsResult = getRawStats(queueId)
 
         expect(result).toBeUndefined()
-        expect(message).toMatchObject({
+        expect(rawMessageResult).toMatchObject({
           priority: null
         , type
         , payload
@@ -197,7 +197,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         , state: 'waiting'
         , state_updated_at: timestamp
         })
-        expect(stats).toMatchObject({
+        expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 1
         , ordered: 0
@@ -236,20 +236,20 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         })
 
         const result = DAO.setMessage(queueId, messageId, type, payload)
-        const message = getRawMessage(queueId, messageId)
-        const stats = getRawStats(queueId)
+        const rawMessageResult = getRawMessage(queueId, messageId)
+        const rawStatsResult = getRawStats(queueId)
 
         expect(result).toBeUndefined()
-        expect(message).toMatchObject({
+        expect(rawMessageResult).toMatchObject({
           priority: null
         , type
         , payload
         , state: 'waiting'
         , state_updated_at: 0
         })
-        expect(message!.hash).toBeString()
-        expect(message!.hash).not.toBe(oldHash)
-        expect(stats).toMatchObject({
+        expect(rawMessageResult!.hash).toBeString()
+        expect(rawMessageResult!.hash).not.toBe(oldHash)
+        expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 1
         , ordered: 0
@@ -287,11 +287,11 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         })
 
         const err = getError(() => DAO.setMessage(queueId, messageId, type, payload))
-        const message = getRawMessage(queueId, messageId)
-        const stats = getRawStats(queueId)
+        const rawMessageResult = getRawMessage(queueId, messageId)
+        const rawStatsResult = getRawStats(queueId)
 
         expect(err).toBeInstanceOf(BadMessageState)
-        expect(message).toMatchObject({
+        expect(rawMessageResult).toMatchObject({
           priority: null
         , type: 'old-type'
         , payload: 'old-payload'
@@ -299,7 +299,7 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         , hash: 'old-hash'
         , state_updated_at: 0
         })
-        expect(stats).toMatchObject({
+        expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 0
         , ordered: 0

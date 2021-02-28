@@ -1,6 +1,6 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/get-all-failed-message-ids'
 import { resetDatabases, resetEnvironment } from '@test/utils'
-import { setRawMessage, setRawStats } from './utils'
+import { setMinimalRawMessage, setRawStats } from './utils'
 import { toArray } from 'iterable-operator'
 import 'jest-extended'
 import '@blackglory/jest-matchers'
@@ -25,15 +25,11 @@ describe('getAllFailedMessageIds(queueId: string): Iterable<string>', () => {
     it('return Iterable<string>', () => {
       const queueId = 'queue-id'
       const messageId = 'message-id'
-      setRawMessage({
+      setMinimalRawMessage({
         mq_id: queueId
       , message_id: messageId
-      , hash: 'hash'
-      , payload: 'payload'
-      , priority: null
       , state: 'failed'
       , state_updated_at: 0
-      , type: 'type'
       })
       setRawStats({
         mq_id: queueId

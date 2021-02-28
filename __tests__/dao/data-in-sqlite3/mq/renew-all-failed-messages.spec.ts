@@ -1,6 +1,6 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/renew-all-failed-messages'
 import { resetDatabases, resetEnvironment } from '@test/utils'
-import { setRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
+import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
 import 'jest-extended'
 
 const timestamp = Date.now()
@@ -22,15 +22,11 @@ describe('renewAllFailedMessages(queueId: string): void', () => {
   it('convert state to waiting', () => {
     const queueId = 'queue-id'
     const messageId = 'message-id'
-    setRawMessage({
+    setMinimalRawMessage({
       mq_id: queueId
     , message_id: messageId
-    , hash: 'hash'
-    , payload: 'payload'
-    , priority: null
     , state: 'failed'
     , state_updated_at: 0
-    , type: 'type'
     })
     setRawStats({
       mq_id: queueId

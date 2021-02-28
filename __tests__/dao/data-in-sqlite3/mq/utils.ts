@@ -1,4 +1,5 @@
 import { getDatabase } from '@dao/data-in-sqlite3/database'
+import { NullablePropsToOptionalProps } from '@blackglory/types'
 
 type IState = 'drafting' | 'waiting' | 'ordered' | 'active' | 'completed' | 'failed'
 
@@ -29,11 +30,13 @@ interface IRawThrottle {
   count: number
 }
 
-export function setRawThrottle(props: IRawThrottle): void {
+export function setRawThrottle(item: IRawThrottle): IRawThrottle {
   getDatabase().prepare(`
     INSERT INTO mq_throttle (mq_id, cycle_start_time, count)
     VALUES ($mq_id, $cycle_start_time, $count)
-  `).run(props)
+  `).run(item)
+
+  return item
 }
 
 export function hasRawThrottle(queueId: string): boolean {
@@ -48,7 +51,7 @@ export function getRawThrottle(queueId: string): IRawThrottle | null {
   `).get({ queueId })
 }
 
-export function setRawMessage(props: IRawMessage): void {
+export function setRawMessage<T extends IRawMessage>(item: T): T {
   getDatabase().prepare(`
     INSERT INTO mq_message (
       mq_id
@@ -70,7 +73,22 @@ export function setRawMessage(props: IRawMessage): void {
     , $state
     , $state_updated_at
     );
-  `).run(props)
+  `).run(item)
+
+  return item
+}
+
+export function setMinimalRawMessage(item: NullablePropsToOptionalProps<IRawMessage>): IRawMessage {
+  return setRawMessage({
+    mq_id: item.mq_id
+  , message_id: item.message_id
+  , priority: item.priority ?? null
+  , type: item.type ?? null
+  , payload: item.payload ?? null
+  , hash: item.hash ?? null
+  , state: item.state
+  , state_updated_at: item.state_updated_at
+  })
 }
 
 export function hasRawMessage(queueId: string, messageId: string): boolean {
@@ -85,8 +103,8 @@ export function getRawMessage(queueId: string, messageId: string): IRawMessage |
   `).get({ queueId, messageId })
 }
 
-export function setRawStats(props: IRawStats) {
-  return getDatabase().prepare(`
+export function setRawStats(item: IRawStats): IRawStats {
+  getDatabase().prepare(`
     INSERT INTO mq_stats (
       mq_id
     , drafting
@@ -105,7 +123,9 @@ export function setRawStats(props: IRawStats) {
     , $completed
     , $failed
     );
-  `).run(props)
+  `).run(item)
+
+  return item
 }
 
 export function hasRawStats(queueId: string): boolean {

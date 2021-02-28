@@ -1,3 +1,4 @@
+import { NullablePropsToOptionalProps } from '@blackglory/types'
 import { getDatabase } from '@dao/config-in-sqlite3/database'
 
 interface IRawConfiguration {
@@ -11,7 +12,7 @@ interface IRawConfiguration {
   throttle_limit: number | null
 }
 
-export function setRawConfiguration(props: IRawConfiguration): void {
+export function setRawConfiguration<T extends IRawConfiguration>(item: T): T {
   getDatabase().prepare(`
     INSERT INTO mq_configuration (
       mq_id
@@ -33,7 +34,22 @@ export function setRawConfiguration(props: IRawConfiguration): void {
     , $throttle_duration
     , $throttle_limit
     );
-  `).run(props)
+  `).run(item)
+
+  return item
+}
+
+export function setMinimalConfiguration(item: NullablePropsToOptionalProps<IRawConfiguration>): IRawConfiguration {
+  return setRawConfiguration({
+    mq_id: item.mq_id
+  , drafting_timeout: item.drafting_timeout ?? null
+  , ordered_timeout: item.ordered_timeout ?? null
+  , active_timeout: item.active_timeout ?? null
+  , concurrency: item.concurrency ?? null
+  , throttle_duration: item.throttle_duration ?? null
+  , throttle_limit: item.throttle_limit ?? null
+  , uniq: item.uniq ?? null
+  })
 }
 
 export function hasRawConfiguration(id: string): boolean {

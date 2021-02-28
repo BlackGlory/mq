@@ -1,7 +1,7 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/renew-message'
 import { BadMessageState, NotFound } from '@dao/data-in-sqlite3/mq/error'
 import { resetDatabases, resetEnvironment } from '@test/utils'
-import { setRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
+import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
 import { getError } from 'return-style'
 import 'jest-extended'
 
@@ -37,15 +37,11 @@ describe('renewMessage(queueId: string, messageId: string): void', () => {
       it('convert state to waiting', () => {
         const queueId = 'queue-id'
         const messageId = 'message-id'
-        setRawMessage({
+        setMinimalRawMessage({
           mq_id: queueId
         , message_id: messageId
-        , hash: 'hash'
-        , payload: 'payload'
-        , priority: null
         , state: 'failed'
         , state_updated_at: 0
-        , type: 'type'
         })
         setRawStats({
           mq_id: queueId
@@ -59,11 +55,11 @@ describe('renewMessage(queueId: string, messageId: string): void', () => {
 
         const result = DAO.renewMessage(queueId, messageId)
         const exists = hasRawMessage(queueId, messageId)
-        const stats = getRawStats(queueId)
+        const rawStatsResult = getRawStats(queueId)
 
         expect(result).toBeUndefined()
         expect(exists).toBeTrue()
-        expect(stats).toMatchObject({
+        expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 1
         , ordered: 0
@@ -78,15 +74,11 @@ describe('renewMessage(queueId: string, messageId: string): void', () => {
       it('throw BadMessageState', async () => {
         const queueId = 'queue-id'
         const messageId = 'message-id'
-        setRawMessage({
+        setMinimalRawMessage({
           mq_id: queueId
         , message_id: messageId
-        , hash: 'hash'
-        , payload: 'payload'
-        , priority: null
         , state: 'waiting'
         , state_updated_at: 0
-        , type: 'type'
         })
         setRawStats({
           mq_id: queueId

@@ -58,19 +58,19 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         })
 
         const result = DAO.getMessage(queueId, messageId)
-        const message = getRawMessage(queueId, messageId)
-        const stats = getRawStats(queueId)
+        const rawMessageResult = getRawMessage(queueId, messageId)
+        const rawStatsResult = getRawStats(queueId)
 
         expect(result).toEqual({
           type: 'type'
         , payload: 'payload'
         , priority: null
         })
-        expect(message).toMatchObject({
+        expect(rawMessageResult).toMatchObject({
           state: 'active'
         , state_updated_at: timestamp
         })
-        expect(stats).toMatchObject({
+        expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 0
         , ordered: 0
@@ -136,19 +136,19 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         })
 
         const result = DAO.getMessage(queueId, messageId)
-        const message = getRawMessage(queueId, messageId)
-        const stats = getRawStats(queueId)
+        const rawMessageResult = getRawMessage(queueId, messageId)
+        const rawStatsResult = getRawStats(queueId)
 
         expect(result).toEqual({
           type: 'type'
         , payload: 'payload'
         , priority: null
         })
-        expect(message).toMatchObject({
+        expect(rawMessageResult).toMatchObject({
           state: 'waiting'
         , state_updated_at: 0
         })
-        expect(stats).toMatchObject({
+        expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 1
         , ordered: 0

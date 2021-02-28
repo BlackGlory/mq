@@ -15,27 +15,24 @@ describe('token-based access control', () => {
   describe('getAllIdsWithTokens(): string[]', () => {
     it('return string[]', () => {
       const id1 = 'id-1'
-      const token1 = 'token-1'
       const id2 = 'id-2'
-      const token2 = 'token-2'
       const id3 = 'id-3'
-      const token3 = 'token-3'
       setRawToken({
-        token: token1
+        token: 'token-1'
       , mq_id: id1
       , consume_permission: 1
       , produce_permission: 0
       , clear_permission: 0
       })
       setRawToken({
-        token: token2
+        token: 'token-2'
       , mq_id: id2
       , consume_permission: 0
       , produce_permission: 1
       , clear_permission: 0
       })
       setRawToken({
-        token: token3
+        token: 'token-3'
       , mq_id: id3
       , consume_permission: 0
       , produce_permission: 0
@@ -51,25 +48,22 @@ describe('token-based access control', () => {
   describe('getAllTokens(id: string): TokenInfo[]', () => {
     it('return TokenInfo[]', () => {
       const id = 'id-1'
-      const token1 = 'token-1'
-      const token2 = 'token-2'
-      const token3 = 'token-3'
-      setRawToken({
-        token: token1
+      const token1 = setRawToken({
+        token: 'token-1'
       , mq_id: id
       , consume_permission: 1
       , produce_permission: 0
       , clear_permission: 0
       })
-      setRawToken({
-        token: token2
+      const token2 = setRawToken({
+        token: 'token-2'
       , mq_id: id
       , consume_permission: 0
       , produce_permission: 1
       , clear_permission: 0
       })
-      setRawToken({
-        token: token3
+      const token3 = setRawToken({
+        token: 'token-3'
       , mq_id: id
       , consume_permission: 0
       , produce_permission: 0
@@ -79,9 +73,24 @@ describe('token-based access control', () => {
       const result = DAO.getAllTokens(id)
 
       expect(result).toEqual([
-        { token: token1, consume: true, produce: false, clear: false }
-      , { token: token2, consume: false, produce: true, clear: false }
-      , { token: token3, consume: false, produce: false, clear: true }
+        {
+          token: token1.token
+        , consume: !!token1.consume_permission
+        , produce: !!token1.produce_permission
+        , clear: !!token1.clear_permission
+        }
+      , {
+          token: token2.token
+        , consume: !!token2.consume_permission
+        , produce: !!token2.produce_permission
+        , clear: !!token2.clear_permission
+        }
+      , {
+          token: token3.token
+        , consume: !!token3.consume_permission
+        , produce: !!token3.produce_permission
+        , clear: !!token3.clear_permission
+        }
       ])
     })
   })
@@ -90,10 +99,9 @@ describe('token-based access control', () => {
     describe('hasProduceTokens(id: string): boolean', () => {
       describe('tokens exist', () => {
         it('return true', () => {
-          const token = 'token-1'
           const id = 'id-1'
           setRawToken({
-            token
+            token: 'token-1'
           , mq_id: id
           , consume_permission: 0
           , produce_permission: 1
@@ -108,10 +116,9 @@ describe('token-based access control', () => {
 
       describe('tokens do not exist', () => {
         it('return false', () => {
-          const token = 'token-1'
           const id = 'id-1'
           setRawToken({
-            token
+            token: 'token-1'
           , mq_id: id
           , consume_permission: 1
           , produce_permission: 0
@@ -131,7 +138,7 @@ describe('token-based access control', () => {
           const token = 'token-1'
           const id = 'id-1'
           setRawToken({
-            token
+            token: 'token-1'
           , mq_id: id
           , consume_permission: 0
           , produce_permission: 1

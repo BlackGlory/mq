@@ -81,15 +81,15 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           })
 
           const result = DAO.orderMessage(queueId, concurrency, Infinity, Infinity)!
-          const message = getRawMessage(queueId, result)
-          const stats = getRawStats(queueId)
+          const rawMessageResult = getRawMessage(queueId, result)
+          const rawStatsResult = getRawStats(queueId)
 
           expect(result).toBe('3')
-          expect(message).toMatchObject({
+          expect(rawMessageResult).toMatchObject({
             state: 'ordered'
           , state_updated_at: timestamp
           })
-          expect(stats).toMatchObject({
+          expect(rawStatsResult).toMatchObject({
             drafting: 0
           , waiting: 0
           , ordered: 2
@@ -145,15 +145,15 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
           })
 
           const result = DAO.orderMessage(queueId, concurrency, Infinity, Infinity)!
-          const message = getRawMessage(queueId, '3')
-          const stats = getRawStats(queueId)
+          const rawMessageResult = getRawMessage(queueId, '3')
+          const rawStatsResult = getRawStats(queueId)
 
           expect(result).toBeNull()
-          expect(message).toMatchObject({
+          expect(rawMessageResult).toMatchObject({
             state: 'waiting'
           , state_updated_at: 0
           })
-          expect(stats).toMatchObject({
+          expect(rawStatsResult).toMatchObject({
             drafting: 0
           , waiting: 1
           , ordered: 1
@@ -213,15 +213,15 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             })
 
             const result = DAO.orderMessage(queueId, Infinity, duration, limit)!
-            const message = getRawMessage(queueId, result)
-            const stats = getRawStats(queueId)
+            const rawMessageResult = getRawMessage(queueId, result)
+            const rawStatsResult = getRawStats(queueId)
 
             expect(result).toBe('1')
-            expect(message).toMatchObject({
+            expect(rawMessageResult).toMatchObject({
               state: 'ordered'
             , state_updated_at: timestamp
             })
-            expect(stats).toMatchObject({
+            expect(rawStatsResult).toMatchObject({
               drafting: 0
             , waiting: 2
             , ordered: 1
@@ -278,15 +278,15 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             })
 
             const result = DAO.orderMessage(queueId, Infinity, duration, limit)!
-            const message = getRawMessage(queueId, result)
-            const stats = getRawStats(queueId)
+            const rawMessageResult = getRawMessage(queueId, result)
+            const rawStatsResult = getRawStats(queueId)
 
             expect(result).toBe('2')
-            expect(message).toMatchObject({
+            expect(rawMessageResult).toMatchObject({
               state: 'ordered'
             , state_updated_at: timestamp
             })
-            expect(stats).toMatchObject({
+            expect(rawStatsResult).toMatchObject({
               drafting: 0
             , waiting: 2
             , ordered: 1
@@ -340,16 +340,16 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             })
 
             const result = DAO.orderMessage(queueId, Infinity, duration, limit)!
-            const message = getRawMessage(queueId, result)
-            const stats = getRawStats(queueId)
-            const throttle = getRawThrottle(queueId)
+            const rawMessageResult = getRawMessage(queueId, result)
+            const rawStatsResult = getRawStats(queueId)
+            const rawThrottleResult = getRawThrottle(queueId)
 
             expect(result).toBe('2')
-            expect(message).toMatchObject({
+            expect(rawMessageResult).toMatchObject({
               state: 'ordered'
             , state_updated_at: timestamp
             })
-            expect(stats).toMatchObject({
+            expect(rawStatsResult).toMatchObject({
               drafting: 0
             , waiting: 0
             , ordered: 2
@@ -357,10 +357,10 @@ describe('orderMessage(queueId: string, concurrency: number, duration: number, l
             , completed: 0
             , failed: 0
             })
-            expect(throttle).toMatchObject({
+            expect(rawThrottleResult).toMatchObject({
               count: 1
             })
-            expect(Math.abs(timestamp - throttle!.cycle_start_time)).toBeLessThanOrEqual(duration)
+            expect(Math.abs(timestamp - rawThrottleResult!.cycle_start_time)).toBeLessThanOrEqual(duration)
           })
         })
 

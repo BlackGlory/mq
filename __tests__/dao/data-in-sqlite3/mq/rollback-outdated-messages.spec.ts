@@ -44,11 +44,11 @@ describe('rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
 
       const result = DAO.rollbackOutdatedDraftingMessages(queueId, 1)
       const messageExists = hasRawMessage(queueId, '1')
-      const stats = getRawStats(queueId)
+      const rawStatsResult = getRawStats(queueId)
 
       expect(result).toBeFalse()
       expect(messageExists).toBeTrue()
-      expect(stats).toMatchObject({
+      expect(rawStatsResult).toMatchObject({
         drafting: 1
       , waiting: 0
       , ordered: 0
@@ -95,12 +95,12 @@ describe('rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
       const result = DAO.rollbackOutdatedDraftingMessages(queueId, 1)
       const message1Exists = hasRawMessage(queueId, '1')
       const message2Exists = hasRawMessage(queueId, '2')
-      const stats = getRawStats(queueId)
+      const rawStatsResult = getRawStats(queueId)
 
       expect(result).toBeTrue()
       expect(message1Exists).toBeFalse()
       expect(message2Exists).toBeTrue()
-      expect(stats).toMatchObject({
+      expect(rawStatsResult).toMatchObject({
         drafting: 1
       , waiting: 0
       , ordered: 0
@@ -137,16 +137,16 @@ describe('rollbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
       })
 
       const result = DAO.rollbackOutdatedOrderedMessages(queueId, 1)
-      const message = getRawMessage(queueId, '1')
-      const stats = getRawStats(queueId)
+      const rawMessageResult = getRawMessage(queueId, '1')
+      const rawStatsResult = getRawStats(queueId)
 
       expect(result).toBeFalse()
-      expect(message).toMatchObject({
+      expect(rawMessageResult).toMatchObject({
         state: 'ordered'
       , state_updated_at: 1
       , type: null
       })
-      expect(stats).toMatchObject({
+      expect(rawStatsResult).toMatchObject({
         drafting: 0
       , waiting: 0
       , ordered: 1
@@ -191,21 +191,21 @@ describe('rollbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
       })
 
       const result = DAO.rollbackOutdatedOrderedMessages(queueId, 1)
-      const message1 = getRawMessage(queueId, '1')
-      const message2 = getRawMessage(queueId, '2')
-      const stats = getRawStats(queueId)
+      const rawMessage1Result = getRawMessage(queueId, '1')
+      const rawMessage2Result = getRawMessage(queueId, '2')
+      const rawStatsResult = getRawStats(queueId)
 
       expect(result).toBeTrue()
-      expect(message1).toMatchObject({
+      expect(rawMessage1Result).toMatchObject({
         state: 'waiting'
       , state_updated_at: timestamp
       })
-      expect(message2).toMatchObject({
+      expect(rawMessage2Result).toMatchObject({
         state: 'ordered'
       , state_updated_at: 1
       , type: null
       })
-      expect(stats).toMatchObject({
+      expect(rawStatsResult).toMatchObject({
         drafting: 0
       , waiting: 1
       , ordered: 1
@@ -242,15 +242,15 @@ describe('rollbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
       })
 
       const result = DAO.rollbackOutdatedActiveMessages(queueId, 1)
-      const message = getRawMessage(queueId, '1')
-      const stats = getRawStats(queueId)
+      const rawMessageResult = getRawMessage(queueId, '1')
+      const rawStatsResult = getRawStats(queueId)
 
       expect(result).toBeFalse()
-      expect(message).toMatchObject({
+      expect(rawMessageResult).toMatchObject({
         state: 'active'
       , state_updated_at: 1
       })
-      expect(stats).toMatchObject({
+      expect(rawStatsResult).toMatchObject({
         drafting: 0
       , waiting: 0
       , ordered: 0
@@ -295,20 +295,20 @@ describe('rollbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
       })
 
       const result = DAO.rollbackOutdatedActiveMessages(queueId, 1)
-      const message1 = getRawMessage(queueId, '1')
-      const message2 = getRawMessage(queueId, '2')
-      const stats = getRawStats(queueId)
+      const rawMessage1Result = getRawMessage(queueId, '1')
+      const rawMessage2Result = getRawMessage(queueId, '2')
+      const rawStatsResult = getRawStats(queueId)
 
       expect(result).toBeTrue()
-      expect(message1).toMatchObject({
+      expect(rawMessage1Result).toMatchObject({
         state: 'waiting'
       , state_updated_at: timestamp
       })
-      expect(message2).toMatchObject({
+      expect(rawMessage2Result).toMatchObject({
         state: 'active'
       , state_updated_at: 1
       })
-      expect(stats).toMatchObject({
+      expect(rawStatsResult).toMatchObject({
         drafting: 0
       , waiting: 1
       , ordered: 0

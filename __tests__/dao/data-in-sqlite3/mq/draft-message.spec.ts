@@ -24,11 +24,11 @@ describe('draftMessage(queueId: string, messageId: string, priority?: number): v
     const messageId = 'message-id'
 
     const result = DAO.draftMessage(queueId, messageId)
-    const message = getRawMessage(queueId, messageId)
-    const stats = getRawStats(queueId)
+    const rawMessageResult = getRawMessage(queueId, messageId)
+    const rawStatsResult = getRawStats(queueId)
 
     expect(result).toBeUndefined()
-    expect(message).toMatchObject({
+    expect(rawMessageResult).toMatchObject({
       priority: null
     , type: null
     , payload: null
@@ -36,7 +36,7 @@ describe('draftMessage(queueId: string, messageId: string, priority?: number): v
     , state: 'drafting'
     , state_updated_at: timestamp
     })
-    expect(stats).toMatchObject({
+    expect(rawStatsResult).toMatchObject({
       drafting: 1
     , waiting: 0
     , ordered: 0

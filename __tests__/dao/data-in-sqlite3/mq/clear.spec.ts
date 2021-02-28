@@ -1,7 +1,7 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/clear'
 import { resetDatabases, resetEnvironment } from '@test/utils'
 import {
-  setRawThrottle, setRawMessage, setRawStats
+  setRawThrottle, setMinimalRawMessage, setRawStats
 , hasRawThrottle, hasRawStats, hasRawMessage
 } from './utils'
 import 'jest-extended'
@@ -18,15 +18,11 @@ describe('clear(queueId: string): void', () => {
   it('return undefined', () => {
     const queueId = 'queue-id'
     const messageId = 'message-id'
-    setRawMessage({
+    setMinimalRawMessage({
       mq_id: queueId
     , message_id: messageId
-    , hash: 'hash'
-    , payload: 'payload'
-    , priority: null
     , state: 'waiting'
     , state_updated_at: 0
-    , type: 'type'
     })
     setRawStats({
       mq_id: queueId
@@ -44,13 +40,13 @@ describe('clear(queueId: string): void', () => {
     })
 
     const result = DAO.clear(queueId)
-    const isMessageExists = hasRawMessage(queueId, messageId)
-    const isStatsExists = hasRawStats(queueId)
-    const isThrottleExists = hasRawThrottle(queueId)
+    const messageExists = hasRawMessage(queueId, messageId)
+    const statsExists = hasRawStats(queueId)
+    const throttleExists = hasRawThrottle(queueId)
 
     expect(result).toBeUndefined()
-    expect(isMessageExists).toBeFalse()
-    expect(isStatsExists).toBeFalse()
-    expect(isThrottleExists).toBeFalse()
+    expect(messageExists).toBeFalse()
+    expect(statsExists).toBeFalse()
+    expect(throttleExists).toBeFalse()
   })
 })

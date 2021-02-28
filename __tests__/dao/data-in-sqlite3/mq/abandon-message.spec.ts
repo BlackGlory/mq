@@ -1,7 +1,7 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/abandon-message'
 import { NotFound } from '@dao/data-in-sqlite3/mq/error'
 import { resetDatabases, resetEnvironment } from '@test/utils'
-import { setRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
+import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
 import { getError } from 'return-style'
 import 'jest-extended'
 
@@ -37,15 +37,11 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
       it('delete message', () => {
         const queueId = 'queue-id'
         const messageId = 'message-id'
-        setRawMessage({
+        setMinimalRawMessage({
           mq_id: queueId
         , message_id: messageId
-        , hash: 'hash'
-        , payload: 'payload'
-        , priority: null
         , state: 'drafting'
         , state_updated_at: 0
-        , type: 'type'
         })
         setRawStats({
           mq_id: queueId
@@ -59,11 +55,11 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
 
         const result = DAO.abandonMessage(queueId, messageId)
         const exists = hasRawMessage(queueId, messageId)
-        const stats = getRawStats(queueId)
+        const rawStatsResult = getRawStats(queueId)
 
         expect(result).toBeUndefined()
         expect(exists).toBeFalse()
-        expect(stats).toMatchObject({
+        expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 0
         , ordered: 0
@@ -78,15 +74,11 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
       it('delete message', () => {
         const queueId = 'queue-id'
         const messageId = 'message-id'
-        setRawMessage({
+        setMinimalRawMessage({
           mq_id: queueId
         , message_id: messageId
-        , hash: 'hash'
-        , payload: 'payload'
-        , priority: null
         , state: 'waiting'
         , state_updated_at: 0
-        , type: 'type'
         })
         setRawStats({
           mq_id: queueId
@@ -100,11 +92,11 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
 
         const result = DAO.abandonMessage(queueId, messageId)
         const exists = hasRawMessage(queueId, messageId)
-        const stats = getRawStats(queueId)
+        const rawStatsResult = getRawStats(queueId)
 
         expect(result).toBeUndefined()
         expect(exists).toBeFalse()
-        expect(stats).toMatchObject({
+        expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 0
         , ordered: 0
@@ -119,15 +111,11 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
       it('delete message', () => {
         const queueId = 'queue-id'
         const messageId = 'message-id'
-        setRawMessage({
+        setMinimalRawMessage({
           mq_id: queueId
         , message_id: messageId
-        , hash: 'hash'
-        , payload: 'payload'
-        , priority: null
         , state: 'ordered'
         , state_updated_at: 0
-        , type: 'type'
         })
         setRawStats({
           mq_id: queueId
@@ -141,11 +129,11 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
 
         const result = DAO.abandonMessage(queueId, messageId)
         const exists = hasRawMessage(queueId, messageId)
-        const stats = getRawStats(queueId)
+        const rawStatsResult = getRawStats(queueId)
 
         expect(result).toBeUndefined()
         expect(exists).toBeFalse()
-        expect(stats).toMatchObject({
+        expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 0
         , ordered: 0
@@ -160,15 +148,11 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
       it('delete message', () => {
         const queueId = 'queue-id'
         const messageId = 'message-id'
-        setRawMessage({
+        setMinimalRawMessage({
           mq_id: queueId
         , message_id: messageId
-        , hash: 'hash'
-        , payload: 'payload'
-        , priority: null
         , state: 'active'
         , state_updated_at: 0
-        , type: 'type'
         })
         setRawStats({
           mq_id: queueId
@@ -182,11 +166,11 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
 
         const result = DAO.abandonMessage(queueId, messageId)
         const exists = hasRawMessage(queueId, messageId)
-        const stats = getRawStats(queueId)
+        const rawStatsResult = getRawStats(queueId)
 
         expect(result).toBeUndefined()
         expect(exists).toBeFalse()
-        expect(stats).toMatchObject({
+        expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 0
         , ordered: 0
@@ -201,15 +185,11 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
       it('delete message', () => {
         const queueId = 'queue-id'
         const messageId = 'message-id'
-        setRawMessage({
+        setMinimalRawMessage({
           mq_id: queueId
         , message_id: messageId
-        , hash: 'hash'
-        , payload: 'payload'
-        , priority: null
         , state: 'failed'
         , state_updated_at: 0
-        , type: 'type'
         })
         setRawStats({
           mq_id: queueId
@@ -223,11 +203,11 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
 
         const result = DAO.abandonMessage(queueId, messageId)
         const exists = hasRawMessage(queueId, messageId)
-        const stats = getRawStats(queueId)
+        const rawStatsResult = getRawStats(queueId)
 
         expect(result).toBeUndefined()
         expect(exists).toBeFalse()
-        expect(stats).toMatchObject({
+        expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 0
         , ordered: 0
