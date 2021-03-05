@@ -135,7 +135,7 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages`, {
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/$mqId/messages/$msgId`, {
+await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`, {
   method: 'PUT'
 , body: msg
 })
@@ -364,7 +364,7 @@ curl \
 
 ****** JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/$id`, {
+await fetch(`http://localhost:8080/mq/${id}`, {
   method: 'DELETE'
 })
 #+END_SRC
@@ -575,7 +575,7 @@ curl \
 
 ******* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/$id/configurations/unique`, {
+await fetch(`http://localhost:8080/api/mq/${id}/configurations/unique`, {
   method: 'DELETE'
 })
 #+END_SRC
@@ -1032,7 +1032,7 @@ curl \
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/tokens/$token/produce`, {
+await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/produce`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -1080,7 +1080,7 @@ curl \
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/tokens/$token/consume`, {
+await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/consume`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -1128,7 +1128,7 @@ curl \
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/tokens/$token/clear`, {
+await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/clear`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
