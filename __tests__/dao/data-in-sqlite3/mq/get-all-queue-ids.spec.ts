@@ -1,5 +1,5 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/get-all-queue-ids'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { reset } from '@test/utils'
 import { setRawStats } from './utils'
 import { toArray } from 'iterable-operator'
 import '@blackglory/jest-matchers'
@@ -7,10 +7,7 @@ import '@blackglory/jest-matchers'
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(reset)
 
 describe('getAllQueueIds(): Iterable<string>', () => {
   describe('exist', () => {

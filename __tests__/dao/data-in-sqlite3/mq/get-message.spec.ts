@@ -1,6 +1,6 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/get-message'
 import { NotFound, BadMessageState } from '@dao/data-in-sqlite3/mq/error'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { reset } from '@test/utils'
 import { setRawMessage, getRawMessage, setRawStats, getRawStats } from './utils'
 import { getError } from 'return-style'
 import 'jest-extended'
@@ -15,10 +15,7 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
   }
 }))
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(reset)
 
 describe('getMessage(queueId: string, messageId: string): IMessage', () => {
   describe('message does not exist', () => {

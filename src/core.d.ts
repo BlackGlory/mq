@@ -26,12 +26,6 @@ interface IThrottle {
 interface ICore {
   isAdmin(password: string): boolean
 
-  metrics(): {
-    memoryUsage: NodeJS.MemoryUsage
-    cpuUsage: NodeJS.CpuUsage
-    resourceUsage: NodeJS.ResourceUsage
-  }
-
   MQ: {
     draft(queueId: string, priority?: number): Promise<string>
 

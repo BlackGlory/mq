@@ -74,7 +74,7 @@
     "@blackglory/better-sqlite3-migrations": "^0.1.5",
     "@blackglory/errors": "^1.1.2",
     "@blackglory/go": "^0.1.0",
-    "@blackglory/types": "^0.3.0",
+    "@blackglory/types": "^0.3.3",
     "abort-controller": "^3.0.0",
     "ajv": "^7.1.1",
     "app-root-path": "^3.0.0",
@@ -87,12 +87,14 @@
     "fastify-accepts": "^2.0.1",
     "fastify-bearer-auth": "^5.1.0",
     "fastify-cors": "^5.2.0",
+    "fastify-metrics": "^7.0.0",
     "fastify-plugin": "^3.0.0",
     "fs-extra": "^9.1.0",
     "iterable-operator": "^0.13.4",
     "migrations-file": "^0.1.4",
     "ms": "^2.1.3",
     "nanoid": "^3.1.20",
+    "prom-client": "^13.1.0",
     "return-style": "^0.12.2",
     "value-getter": "^0.1.11"
   }

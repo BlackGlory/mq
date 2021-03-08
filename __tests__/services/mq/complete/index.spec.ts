@@ -1,5 +1,5 @@
-import { buildServer } from '@src/server'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { getServer } from '@test/utils'
+import { startService, stopService } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { prepareActiveMessage } from './utils'
 
@@ -7,16 +7,14 @@ jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 expect.extend(matchers)
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(startService)
+afterEach(stopService)
 
 describe('no access control', () => {
   it('204', async () => {
     const mqId = 'mq-id'
     const messageId = 'message-id'
-    const server = await buildServer()
+    const server = getServer()
     await prepareActiveMessage(mqId, messageId, 'text/plain', 'payload')
 
     const res = await server.inject({

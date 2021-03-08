@@ -1,5 +1,5 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/order-message'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { reset } from '@test/utils'
 import {
   setRawMessage, setRawStats, setRawThrottle
 , getRawMessage, getRawStats, getRawThrottle
@@ -16,10 +16,7 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
   }
 }))
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(reset)
 
 describe('orderMessage(queueId: string, concurrency: number, duration: number, limit: number): string | null', () => {
   describe('message does not exist', () => {

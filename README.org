@@ -419,18 +419,6 @@ curl 'http://localhost:8080/mq'
 await fetch('http://localhost:8080/mq').then(res => res.json())
 #+END_SRC
 
-**** metrics
-=GET /metrics=
-
-输出JSON:
-#+BEGIN_SRC ts
-{
-  memoryUsage: NodeJS.MemoryUsage
-  cpuUsage: NodeJS.CpuUsage
-  resourceUsage: NodeJS.ResourceUsage
-}
-#+END_SRC
-
 ***** Example
 ****** curl
 #+BEGIN_SRC sh

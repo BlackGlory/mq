@@ -1,14 +1,11 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/stats'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { reset } from '@test/utils'
 import { setRawStats } from './utils'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(reset)
 
 describe('stats(queueId: string): IStats', () => {
   describe('exist', () => {

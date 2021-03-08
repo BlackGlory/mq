@@ -1,5 +1,5 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/abandon-all-failed-messages'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { reset } from '@test/utils'
 import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
 import 'jest-extended'
 
@@ -13,10 +13,7 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
   }
 }))
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(reset)
 
 describe('abandonAllFailedMessages(queueId: string): void', () => {
   it('delete messages', () => {

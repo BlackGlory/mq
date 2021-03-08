@@ -1,15 +1,12 @@
 import * as DAO from '@dao/config-in-sqlite3/access-control/token'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { reset } from '@test/utils'
 import { getRawToken, hasRawToken, setRawToken } from './utils'
 import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(reset)
 
 describe('token-based access control', () => {
   describe('getAllIdsWithTokens(): string[]', () => {

@@ -1,5 +1,5 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/rollback-outdated-messages'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { reset } from '@test/utils'
 import { setRawMessage, setRawStats, getRawStats, hasRawMessage, getRawMessage } from './utils'
 import 'jest-extended'
 
@@ -13,10 +13,7 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
   }
 }))
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(reset)
 
 describe('rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): void', () => {
   describe('no changes', () => {

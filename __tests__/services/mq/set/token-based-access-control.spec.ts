@@ -1,5 +1,4 @@
-import { buildServer } from '@src/server'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { startService, stopService, getServer } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
 import { prepareDraftingMessage, createJsonHeaders } from './utils'
@@ -8,10 +7,8 @@ jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 expect.extend(matchers)
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(startService)
+afterEach(stopService)
 
 describe('token-based access control', () => {
   describe('enabled', () => {
@@ -23,7 +20,7 @@ describe('token-based access control', () => {
           const messageId = 'message-id'
           const payload = 'payload'
           const token = 'token'
-          const server = await buildServer()
+          const server = getServer()
           await prepareDraftingMessage(mqId, messageId)
           await AccessControlDAO.setProduceTokenRequired(mqId, true)
           await AccessControlDAO.setProduceToken({ id: mqId, token })
@@ -47,7 +44,7 @@ describe('token-based access control', () => {
           const messageId = 'message-id'
           const payload = 'payload'
           const token = 'token'
-          const server = await buildServer()
+          const server = getServer()
           await prepareDraftingMessage(mqId, messageId)
           await AccessControlDAO.setProduceTokenRequired(mqId, true)
           await AccessControlDAO.setProduceToken({ id: mqId, token })
@@ -71,7 +68,7 @@ describe('token-based access control', () => {
           const messageId = 'message-id'
           const payload = 'payload'
           const token = 'token'
-          const server = await buildServer()
+          const server = getServer()
           await prepareDraftingMessage(mqId, messageId)
           await AccessControlDAO.setProduceTokenRequired(mqId, true)
           await AccessControlDAO.setProduceToken({ id: mqId, token })
@@ -96,7 +93,7 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const messageId = 'message-id'
           const payload = 'payload'
-          const server = await buildServer()
+          const server = getServer()
           await prepareDraftingMessage(mqId, messageId)
 
           const res = await server.inject({
@@ -116,7 +113,7 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const messageId = 'message-id'
           const payload = 'payload'
-          const server = await buildServer()
+          const server = getServer()
           await prepareDraftingMessage(mqId, messageId)
 
           const res = await server.inject({
@@ -140,7 +137,7 @@ describe('token-based access control', () => {
           const messageId = 'message-id'
           const payload = 'payload'
           const token = 'token'
-          const server = await buildServer()
+          const server = getServer()
           await prepareDraftingMessage(mqId, messageId)
           await AccessControlDAO.setProduceTokenRequired(mqId, true)
           await AccessControlDAO.setProduceToken({ id: mqId, token })
@@ -165,7 +162,7 @@ describe('token-based access control', () => {
           const messageId = 'message-id'
           const payload = 'payload'
           const token = 'token'
-          const server = await buildServer()
+          const server = getServer()
           await prepareDraftingMessage(mqId, messageId)
           await AccessControlDAO.setProduceTokenRequired(mqId, true)
           await AccessControlDAO.setProduceToken({ id: mqId, token })

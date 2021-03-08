@@ -1,5 +1,4 @@
-import { buildServer } from '@src/server'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { startService, stopService, getServer } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
 import { prepareFailedMessage } from './utils'
@@ -8,10 +7,8 @@ jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 expect.extend(matchers)
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(startService)
+afterEach(stopService)
 
 describe('blacklist', () => {
   describe('enabled', () => {
@@ -20,7 +17,7 @@ describe('blacklist', () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const mqId = 'mq-id'
         const messageId = 'message-id'
-        const server = await buildServer()
+        const server = getServer()
         await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
         await AccessControlDAO.addBlacklistItem(mqId)
 
@@ -38,7 +35,7 @@ describe('blacklist', () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const mqId = 'mq-id'
         const messageId = 'message-id'
-        const server = await buildServer()
+        const server = getServer()
         await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
 
         const res = await server.inject({
@@ -56,7 +53,7 @@ describe('blacklist', () => {
       it('204', async () => {
         const mqId = 'mq-id'
         const messageId = 'message-id'
-        const server = await buildServer()
+        const server = getServer()
         await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
         await AccessControlDAO.addBlacklistItem(mqId)
 

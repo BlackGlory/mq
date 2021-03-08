@@ -1,22 +1,19 @@
-import { buildServer } from '@src/server'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { startService, stopService, getServer } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 expect.extend(matchers)
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(startService)
+afterEach(stopService)
 
 describe('TokenPolicy', () => {
   describe('GET /api/mq-with-token-policies', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
 
         const res = await server.inject({
           method: 'GET'
@@ -34,7 +31,7 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = await buildServer()
+        const server = getServer()
 
         const res = await server.inject({
           method: 'GET'
@@ -48,7 +45,7 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
 
         const res = await server.inject({
           method: 'GET'
@@ -65,7 +62,7 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -97,7 +94,7 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -112,7 +109,7 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -130,7 +127,7 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
         const val = true
 
@@ -150,7 +147,7 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
         const val = true
 
@@ -170,7 +167,7 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
         const val = true
 
@@ -193,7 +190,7 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
         const val = true
 
@@ -213,7 +210,7 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
         const val = true
 
@@ -231,7 +228,7 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
         const val = true
 
@@ -254,7 +251,7 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
         const val = true
 
@@ -274,7 +271,7 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
         const val = true
 
@@ -292,7 +289,7 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
         const val = true
 
@@ -315,7 +312,7 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -330,7 +327,7 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -345,7 +342,7 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -363,7 +360,7 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -378,7 +375,7 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -393,7 +390,7 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -411,7 +408,7 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -426,7 +423,7 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -441,7 +438,7 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({

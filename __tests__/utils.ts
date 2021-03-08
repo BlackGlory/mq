@@ -1,25 +1,44 @@
+import { UnboxPromise } from '@blackglory/types'
 import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database'
 import * as DataInSqlite3 from '@dao/data-in-sqlite3/database'
 import { resetCache } from '@env/cache'
+import { buildServer } from '@src/server'
 
-export async function resetDatabases() {
+let server: UnboxPromise<ReturnType<typeof buildServer>>
+
+export function getServer() {
+  return server
+}
+
+export async function startService() {
+  await reset()
+  server = await buildServer()
+}
+
+export async function stopService() {
+  server.metrics.clearRegister()
+  await server.close()
+}
+
+export async function reset() {
+  resetEnvironment()
   await resetConfigInSqlite3Database()
   await resetDataInSqlite3Database()
 }
 
-export async function resetConfigInSqlite3Database() {
+async function resetConfigInSqlite3Database() {
   ConfigInSqlite3.closeDatabase()
   ConfigInSqlite3.openDatabase()
   await ConfigInSqlite3.prepareDatabase()
 }
 
-export async function resetDataInSqlite3Database() {
+async function resetDataInSqlite3Database() {
   await DataInSqlite3.closeDatabase()
   DataInSqlite3.openDatabase()
   await DataInSqlite3.prepareDatabase()
 }
 
-export async function resetEnvironment() {
+async function resetEnvironment() {
   // assigning a property on `process.env` will implicitly convert the value to a string.
   // use `delete` to delete a property from `process.env`.
   // see also: https://nodejs.org/api/process.html#process_process_env

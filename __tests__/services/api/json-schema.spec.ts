@@ -1,5 +1,4 @@
-import { buildServer } from '@src/server'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { startService, stopService, getServer } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { JsonSchemaDAO } from '@dao'
 
@@ -7,17 +6,15 @@ jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 expect.extend(matchers)
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(startService)
+afterEach(stopService)
 
 describe('json schema', () => {
   describe('GET /api/mq-with-json-schema', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
 
         const res = await server.inject({
           method: 'GET'
@@ -35,7 +32,7 @@ describe('json schema', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = await buildServer()
+        const server = getServer()
 
         const res = await server.inject({
           method: 'GET'
@@ -49,7 +46,7 @@ describe('json schema', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
 
         const res = await server.inject({
           method: 'GET'
@@ -67,7 +64,7 @@ describe('json schema', () => {
       describe('exist', () => {
         it('200', async () => {
           process.env.MQ_ADMIN_PASSWORD = 'password'
-          const server = await buildServer()
+          const server = getServer()
           const id = 'id'
           const schema = { type: 'number' }
           await JsonSchemaDAO.setJsonSchema({
@@ -89,7 +86,7 @@ describe('json schema', () => {
       describe('not exist', () => {
         it('404', async () => {
           process.env.MQ_ADMIN_PASSWORD = 'password'
-          const server = await buildServer()
+          const server = getServer()
           const id = 'id'
 
           const res = await server.inject({
@@ -105,7 +102,7 @@ describe('json schema', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -120,7 +117,7 @@ describe('json schema', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -139,7 +136,7 @@ describe('json schema', () => {
       describe('valid JSON', () => {
         it('204', async () => {
           process.env.MQ_ADMIN_PASSWORD = 'password'
-          const server = await buildServer()
+          const server = getServer()
           const id = 'id'
           const schema = { type: 'number' }
 
@@ -160,7 +157,7 @@ describe('json schema', () => {
       describe('invalid JSON', () => {
         it('400', async () => {
           process.env.MQ_ADMIN_PASSWORD = 'password'
-          const server = await buildServer()
+          const server = getServer()
           const id = 'id'
 
           const res = await server.inject({
@@ -180,7 +177,7 @@ describe('json schema', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
         const schema = { type: 'number' }
 
@@ -198,7 +195,7 @@ describe('json schema', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
         const schema = { type: 'number' }
 
@@ -221,7 +218,7 @@ describe('json schema', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -236,7 +233,7 @@ describe('json schema', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({
@@ -251,7 +248,7 @@ describe('json schema', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = await buildServer()
+        const server = getServer()
         const id = 'id'
 
         const res = await server.inject({

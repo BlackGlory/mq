@@ -1,5 +1,4 @@
-import { buildServer } from '@src/server'
-import { resetDatabases, resetEnvironment } from '@test/utils'
+import { startService, stopService, getServer } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
 
@@ -7,10 +6,8 @@ jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 expect.extend(matchers)
 
-beforeEach(async () => {
-  resetEnvironment()
-  await resetDatabases()
-})
+beforeEach(startService)
+afterEach(stopService)
 
 describe('token-based access control', () => {
   describe('enabled', () => {
@@ -20,7 +17,7 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const mqId = 'mq-id'
           const token = 'token'
-          const server = await buildServer()
+          const server = getServer()
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
@@ -39,7 +36,7 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const mqId = 'mq-id'
           const token = 'token'
-          const server = await buildServer()
+          const server = getServer()
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
@@ -58,7 +55,7 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const mqId = 'mq-id'
           const token = 'token'
-          const server = await buildServer()
+          const server = getServer()
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
@@ -78,7 +75,7 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.MQ_CONSUME_TOKEN_REQUIRED = 'true'
           const mqId = 'mq-id'
-          const server = await buildServer()
+          const server = getServer()
 
           const res = await server.inject({
             method: 'GET'
@@ -93,7 +90,7 @@ describe('token-based access control', () => {
         it('200', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const mqId = 'mq-id'
-          const server = await buildServer()
+          const server = getServer()
 
           const res = await server.inject({
             method: 'GET'
@@ -112,7 +109,7 @@ describe('token-based access control', () => {
         it('200', async () => {
           const mqId = 'mq-id'
           const token = 'token'
-          const server = await buildServer()
+          const server = getServer()
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
@@ -132,7 +129,7 @@ describe('token-based access control', () => {
           process.env.MQ_CONSUME_TOKEN_REQUIRED = 'true'
           const mqId = 'mq-id'
           const token = 'token'
-          const server = await buildServer()
+          const server = getServer()
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
