@@ -340,15 +340,6 @@
     ajv "^7.1.1"
     extra-dom "^0.2.9"
 
-"@blackglory/types@^0.2.21":
-  version "0.2.23"
-  resolved "https://registry.yarnpkg.com/@blackglory/types/-/types-0.2.23.tgz#4e4d79f545fdf9901bedd4df3092e14897073717"
-  integrity sha512-shJnVh+oSAoxtBEQyEjGta+nqzfwOfvKyHmEG1GkrwdQFQHhtkQsKwEu9TI4UiGc5rt0X6iLXvG96j4bB504/w==
-  dependencies:
-    "@types/node" "^14.14.31"
-    ajv "^7.1.1"
-    extra-dom "^0.2.12"
-
 "@blackglory/types@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@blackglory/types/-/types-0.3.0.tgz#deb85aa266b8e717da6de300f8b5e64fca46ac4f"
@@ -356,7 +347,7 @@
   dependencies:
     ajv "^7.1.1"
 
-"@blackglory/types@^0.3.3":
+"@blackglory/types@^0.3.1", "@blackglory/types@^0.3.3":
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/@blackglory/types/-/types-0.3.3.tgz#4e6852a32ae51e2d3547d643edf409d050c19505"
   integrity sha512-ZQ3nJQtHnnPRgMEO1c2dGlxodhK15AABnXnFHqSaaFGvJzgUAh6zWym+iQCuRV30uCSRT974a1Lx7MKwrYi5Rw==
@@ -1096,6 +1087,11 @@
   version "14.14.31"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.31.tgz#72286bd33d137aa0d152d47ec7c1762563d34055"
   integrity sha512-vFHy/ezP5qI0rFgJ7aQnjDXwAMrG0KqqIH7tQG5PPv3BWBayOPIQNBjVc/P6hhdZfMx51REc6tfDNXHUio893g==
+
+"@types/node@^14.14.32":
+  version "14.14.32"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.32.tgz#90c5c4a8d72bbbfe53033f122341343249183448"
+  integrity sha512-/Ctrftx/zp4m8JOujM5ZhwzlWLx22nbQJiVqz8/zE15gOeEW+uly3FSX4fGFpcfEvFzXcMCJwq9lGVWgyARXhg==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -3108,14 +3104,6 @@ extglob@^2.0.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-extra-dom@^0.2.12:
-  version "0.2.12"
-  resolved "https://registry.yarnpkg.com/extra-dom/-/extra-dom-0.2.12.tgz#2be1a6a482d7d8afe9c84d40dd9408482730c68d"
-  integrity sha512-7hTL+yRzpQZeeHhLTaWcUhwpimivFGiq0+Nrv3xfUeNeSuP00iNFHPI7dSLMmOiIEuRNSLuEd7M8xA8RvfmEoQ==
-  dependencies:
-    "@blackglory/types" "^0.2.17"
-    iterable-operator "^0.13.2"
-
 extra-dom@^0.2.9:
   version "0.2.11"
   resolved "https://registry.yarnpkg.com/extra-dom/-/extra-dom-0.2.11.tgz#e97fadbb237afe289e094d11cbbf955356187456"
@@ -3136,13 +3124,13 @@ extra-fetch@^1.2.0:
     formdata-node "^2.4.0"
     node-fetch "3.0.0-beta.9"
 
-extra-generator@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/extra-generator/-/extra-generator-0.1.5.tgz#40edae6b1d9c744c677eff157a7245791fa50bbb"
-  integrity sha512-uF6mL3Trzy7hNnYR6MVwKA540mV7nOD4Q8vY+k9kASonlTi2ZF4yWCwDUdRK3UQDrTv/NwIDfT6OniB8VRxRfA==
+extra-generator@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/extra-generator/-/extra-generator-0.1.6.tgz#7f195e77317e38dc8ef082876bb4af7af06f87ed"
+  integrity sha512-kQBcC4BHFOXbCHsQ/eCicBzFh0VtNMVpHhIEPQx2BcO6RaiUPJugOFwqQ5c3T64iDg01XlapdKehVSxUN0HLNQ==
   dependencies:
     "@blackglory/errors" "^1.1.1"
-    "@blackglory/types" "^0.2.9"
+    "@blackglory/types" "^0.3.1"
 
 extra-promise@^0.14.4:
   version "0.14.4"
@@ -5379,12 +5367,12 @@ micromatch@^4.0.2:
     braces "^3.0.1"
     picomatch "^2.0.5"
 
-migrations-file@^0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/migrations-file/-/migrations-file-0.1.4.tgz#d3c5d34030e874d9060b536072c689e219981982"
-  integrity sha512-+huQWB2rLiOo6uDZFDEeffUrh9EbrGD8c+0E/kC+LXmWl1fy9D9nsQhpS7HABpp0Lk5u9KmKMyGfvWKFy8/qjg==
+migrations-file@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/migrations-file/-/migrations-file-0.1.5.tgz#7a8e7f6f68503ad84e6305218eba15be08828d81"
+  integrity sha512-1kgXaQEn2T8jl27OXyRkwDRnVyC+gBOVaRSCBn7sytXYzqW2U7xgZGt6fCFtHu/mg49D8IHYiA7vapXotv54HQ==
   dependencies:
-    extra-promise "^0.14.4"
+    extra-promise "^0.15.4"
 
 mime-db@1.44.0:
   version "1.44.0"
@@ -7994,12 +7982,12 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-value-getter@^0.1.11:
-  version "0.1.11"
-  resolved "https://registry.yarnpkg.com/value-getter/-/value-getter-0.1.11.tgz#cd00b056bf363e2a16071174d0f5d5e6f052f8ae"
-  integrity sha512-oUgXOA3MJ2PwIxhCfxU45znppn4lY4OyoGuF/xYIeOL/D3L8K5cfDQUTOant5zUw2ot3kMtzZRXq0yDAcwJ6bQ==
+value-getter@^0.1.12:
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/value-getter/-/value-getter-0.1.12.tgz#a63142c09a0767dc88a9af2440166a3a98e3de9c"
+  integrity sha512-pIlPAa92r9QN0T0dFvr/x37NgN6FV62kn66sk1qaSNXFTfQP62pfGfja027AyAJYN4rzA9d+hlX4BKO+FEygwQ==
   dependencies:
-    "@blackglory/types" "^0.2.21"
+    "@blackglory/types" "^0.3.1"
 
 vary@^1.1.2:
   version "1.1.2"
