@@ -1,3 +1,4 @@
+import { go } from '@blackglory/go'
 import { AbortController } from 'abort-controller'
 import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database'
 import * as DataInSqlite3 from '@dao/data-in-sqlite3/database'
@@ -18,7 +19,7 @@ process.on('SIGHUP', () => process.exit(128 + 1))
 process.on('SIGINT', () => process.exit(128 + 2))
 process.on('SIGTERM', () => process.exit(128 + 15))
 
-;(async () => {
+go(async () => {
   ConfigInSqlite3.openDatabase()
   await ConfigInSqlite3.prepareDatabase()
 
@@ -32,4 +33,4 @@ process.on('SIGTERM', () => process.exit(128 + 15))
   maintainQueuesEverySecond(maintainController.signal)
 
   process.send?.('ready')
-})()
+})
