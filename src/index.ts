@@ -26,7 +26,7 @@ go(async () => {
   DataInSqlite3.openDatabase()
   await DataInSqlite3.prepareDatabase()
 
-  const server = await buildServer()
+  const server = buildServer()
   await server.listen(PORT(), HOST())
   if (CI()) await process.exit()
 
