@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --quiet src __tests__",
-    "test": "jest --runInBand --no-cache --config jest.config.js",
+    "test": "jest --no-cache --config jest.config.js",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test:coverage": "jest --coverage --config jest.config.js",
     "dev": "nodemon",

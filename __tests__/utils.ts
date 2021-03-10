@@ -18,6 +18,7 @@ export async function startService() {
 export async function stopService() {
   server.metrics.clearRegister()
   await server.close()
+  clearDatabases()
   resetEnvironment()
 }
 
