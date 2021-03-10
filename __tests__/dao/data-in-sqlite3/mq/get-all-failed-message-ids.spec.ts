@@ -1,5 +1,5 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/get-all-failed-message-ids'
-import { reset } from '@test/utils'
+import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setMinimalRawMessage, setRawStats } from './utils'
 import { toArray } from 'iterable-operator'
 import 'jest-extended'
@@ -15,7 +15,8 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
   }
 }))
 
-beforeEach(reset)
+beforeEach(initializeDatabases)
+afterEach(clearDatabases)
 
 describe('getAllFailedMessageIds(queueId: string): Iterable<string>', () => {
   describe('exist', () => {

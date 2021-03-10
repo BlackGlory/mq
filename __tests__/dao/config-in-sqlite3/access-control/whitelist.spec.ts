@@ -1,12 +1,13 @@
 import * as DAO from '@dao/config-in-sqlite3/access-control/whitelist'
-import { reset } from '@test/utils'
+import { initializeDatabases, clearDatabases } from '@test/utils'
 import { hasRawWhitelist, setRawWhitelist } from './utils'
 import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 
-beforeEach(reset)
+beforeEach(initializeDatabases)
+afterEach(clearDatabases)
 
 describe('whitelist', () => {
   describe('getAllWhitelistItems(): string[]', () => {

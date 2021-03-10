@@ -11,31 +11,27 @@ export function getServer() {
 }
 
 export async function startService() {
-  await reset()
+  await initializeDatabases()
   server = await buildServer()
 }
 
 export async function stopService() {
   server.metrics.clearRegister()
   await server.close()
-}
-
-export async function reset() {
   resetEnvironment()
-  await resetConfigInSqlite3Database()
-  await resetDataInSqlite3Database()
 }
 
-async function resetConfigInSqlite3Database() {
-  ConfigInSqlite3.closeDatabase()
+export async function initializeDatabases() {
   ConfigInSqlite3.openDatabase()
   await ConfigInSqlite3.prepareDatabase()
-}
 
-async function resetDataInSqlite3Database() {
-  await DataInSqlite3.closeDatabase()
   DataInSqlite3.openDatabase()
   await DataInSqlite3.prepareDatabase()
+}
+
+export async function clearDatabases() {
+  ConfigInSqlite3.closeDatabase()
+  DataInSqlite3.closeDatabase()
 }
 
 async function resetEnvironment() {

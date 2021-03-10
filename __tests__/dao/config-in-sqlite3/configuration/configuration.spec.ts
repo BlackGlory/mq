@@ -1,12 +1,13 @@
 import * as DAO from '@dao/config-in-sqlite3/configuration/configuration'
-import { reset } from '@test/utils'
+import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setMinimalConfiguration, getRawConfiguration, hasRawConfiguration } from './utils'
 import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 
-beforeEach(reset)
+beforeEach(initializeDatabases)
+afterEach(clearDatabases)
 
 describe('Configuration', () => {
   describe('getAllIdsWithConfigurations(): string[]', () => {

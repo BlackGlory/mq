@@ -1,6 +1,6 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/abandon-message'
 import { NotFound } from '@dao/data-in-sqlite3/mq/error'
-import { reset } from '@test/utils'
+import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
 import { getError } from 'return-style'
 import 'jest-extended'
@@ -15,7 +15,8 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
   }
 }))
 
-beforeEach(reset)
+beforeEach(initializeDatabases)
+afterEach(clearDatabases)
 
 describe('abandonMessage(queueId: string, messageId: string): void', () => {
   describe('message does not exist', () => {

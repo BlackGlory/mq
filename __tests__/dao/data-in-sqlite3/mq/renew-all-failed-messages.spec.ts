@@ -1,5 +1,5 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/renew-all-failed-messages'
-import { reset } from '@test/utils'
+import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
 import 'jest-extended'
 
@@ -13,7 +13,8 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
   }
 }))
 
-beforeEach(reset)
+beforeEach(initializeDatabases)
+afterEach(clearDatabases)
 
 describe('renewAllFailedMessages(queueId: string): void', () => {
   it('convert state to waiting', () => {

@@ -1,5 +1,5 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/clear'
-import { reset } from '@test/utils'
+import { initializeDatabases, clearDatabases } from '@test/utils'
 import {
   setRawThrottle, setMinimalRawMessage, setRawStats
 , hasRawThrottle, hasRawStats, hasRawMessage
@@ -9,7 +9,8 @@ import 'jest-extended'
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 
-beforeEach(reset)
+beforeEach(initializeDatabases)
+afterEach(clearDatabases)
 
 describe('clear(queueId: string): void', () => {
   it('return undefined', () => {

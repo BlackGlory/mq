@@ -1,5 +1,5 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/draft-message'
-import { reset } from '@test/utils'
+import { initializeDatabases, clearDatabases } from '@test/utils'
 import { getRawMessage, getRawStats } from './utils'
 import 'jest-extended'
 
@@ -13,7 +13,8 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
   }
 }))
 
-beforeEach(reset)
+beforeEach(initializeDatabases)
+afterEach(clearDatabases)
 
 describe('draftMessage(queueId: string, messageId: string, priority?: number): void', () => {
   it('insert a drafting message', () => {
