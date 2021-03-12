@@ -1,6 +1,9 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
+import { fetch } from 'extra-fetch'
+import { get } from 'extra-request'
+import { url, pathname, searchParam } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -17,17 +20,16 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const mqId = 'mq-id'
           const token = 'token'
-          const server = getServer()
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/failed-messages`
-          , query: { token }
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/failed-messages`)
+          , searchParam('token', token)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
 
@@ -36,17 +38,16 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const mqId = 'mq-id'
           const token = 'token'
-          const server = getServer()
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/failed-messages`
-          , query: { token: 'bad' }
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/failed-messages`)
+          , searchParam('token', 'bad')
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -55,16 +56,15 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const mqId = 'mq-id'
           const token = 'token'
-          const server = getServer()
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/failed-messages`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/failed-messages`)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
     })
@@ -75,14 +75,13 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.MQ_CONSUME_TOKEN_REQUIRED = 'true'
           const mqId = 'mq-id'
-          const server = getServer()
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/failed-messages`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/failed-messages`)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -90,14 +89,13 @@ describe('token-based access control', () => {
         it('200', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const mqId = 'mq-id'
-          const server = getServer()
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/failed-messages`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/failed-messages`)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
     })
@@ -109,16 +107,15 @@ describe('token-based access control', () => {
         it('200', async () => {
           const mqId = 'mq-id'
           const token = 'token'
-          const server = getServer()
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/failed-messages`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/failed-messages`)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
     })
@@ -129,16 +126,15 @@ describe('token-based access control', () => {
           process.env.MQ_CONSUME_TOKEN_REQUIRED = 'true'
           const mqId = 'mq-id'
           const token = 'token'
-          const server = getServer()
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/failed-messages`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/failed-messages`)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
     })

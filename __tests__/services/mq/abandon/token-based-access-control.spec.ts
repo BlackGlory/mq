@@ -1,6 +1,9 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO, MQDAO } from '@dao'
+import { fetch } from 'extra-fetch'
+import { del } from 'extra-request'
+import { url, pathname, searchParam } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -18,18 +21,17 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const messageId = 'message-id'
           const token = 'token'
-          const server = getServer()
           await MQDAO.draftMessage(mqId, messageId)
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'DELETE'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          , query: { token }
-          })
+          const res = await fetch(del(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          , searchParam('token', token)
+          ))
 
-          expect(res.statusCode).toBe(204)
+          expect(res.status).toBe(204)
         })
       })
 
@@ -39,18 +41,17 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const messageId = 'message-id'
           const token = 'token'
-          const server = getServer()
           await MQDAO.draftMessage(mqId, messageId)
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'DELETE'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          , query: { token: 'bad' }
-          })
+          const res = await fetch(del(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          , searchParam('token', 'bad')
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -60,17 +61,16 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const messageId = 'message-id'
           const token = 'token'
-          const server = getServer()
           await MQDAO.draftMessage(mqId, messageId)
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'DELETE'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          })
+          const res = await fetch(del(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
     })
@@ -82,15 +82,14 @@ describe('token-based access control', () => {
           process.env.MQ_CONSUME_TOKEN_REQUIRED = 'true'
           const mqId = 'mq-id'
           const messageId = 'message-id'
-          const server = getServer()
           await MQDAO.draftMessage(mqId, messageId)
 
-          const res = await server.inject({
-            method: 'DELETE'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          })
+          const res = await fetch(del(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -99,15 +98,14 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const mqId = 'mq-id'
           const messageId = 'message-id'
-          const server = getServer()
           await MQDAO.draftMessage(mqId, messageId)
 
-          const res = await server.inject({
-            method: 'DELETE'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          })
+          const res = await fetch(del(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          ))
 
-          expect(res.statusCode).toBe(204)
+          expect(res.status).toBe(204)
         })
       })
     })
@@ -120,17 +118,16 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const messageId = 'message-id'
           const token = 'token'
-          const server = getServer()
           await MQDAO.draftMessage(mqId, messageId)
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'DELETE'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          })
+          const res = await fetch(del(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          ))
 
-          expect(res.statusCode).toBe(204)
+          expect(res.status).toBe(204)
         })
       })
     })
@@ -142,17 +139,16 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const messageId = 'message-id'
           const token = 'token'
-          const server = getServer()
           await MQDAO.draftMessage(mqId, messageId)
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'DELETE'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          })
+          const res = await fetch(del(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          ))
 
-          expect(res.statusCode).toBe(204)
+          expect(res.status).toBe(204)
         })
       })
     })

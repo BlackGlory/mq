@@ -1,7 +1,9 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
-import { createJsonHeaders } from './utils'
+import { fetch } from 'extra-fetch'
+import { post } from 'extra-request'
+import { url, pathname, searchParam, json } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -19,19 +21,17 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const token = 'token'
           const payload = { priority: null }
-          const server = getServer()
           await AccessControlDAO.setProduceTokenRequired(mqId, true)
           await AccessControlDAO.setProduceToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages`
-          , query: { token }
-          , headers: createJsonHeaders()
-          , payload: JSON.stringify(payload)
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages`)
+          , searchParam('token', token)
+          , json(payload)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
 
@@ -41,19 +41,17 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const token = 'token'
           const payload = { priority: null }
-          const server = getServer()
           await AccessControlDAO.setProduceTokenRequired(mqId, true)
           await AccessControlDAO.setProduceToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages`
-          , query: { token: 'bad' }
-          , headers: createJsonHeaders()
-          , payload: JSON.stringify(payload)
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages`)
+          , searchParam('token', 'bad')
+          , json(payload)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -63,18 +61,16 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const token = 'token'
           const payload = { priority: null }
-          const server = getServer()
           await AccessControlDAO.setProduceTokenRequired(mqId, true)
           await AccessControlDAO.setProduceToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages`
-          , headers: createJsonHeaders()
-          , payload: JSON.stringify(payload)
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages`)
+          , json(payload)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
     })
@@ -86,16 +82,14 @@ describe('token-based access control', () => {
           process.env.MQ_PRODUCE_TOKEN_REQUIRED = 'true'
           const mqId = 'mq-id'
           const payload = { priority: null }
-          const server = getServer()
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages`
-          , headers: createJsonHeaders()
-          , payload: JSON.stringify(payload)
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages`)
+          , json(payload)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -104,16 +98,14 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const mqId = 'mq-id'
           const payload = { priority: null }
-          const server = getServer()
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages`
-          , headers: createJsonHeaders()
-          , payload: JSON.stringify(payload)
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages`)
+          , json(payload)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
     })
@@ -126,18 +118,16 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const token = 'token'
           const payload = { priority: null }
-          const server = getServer()
           await AccessControlDAO.setProduceTokenRequired(mqId, true)
           await AccessControlDAO.setProduceToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages`
-          , headers: createJsonHeaders()
-          , payload: JSON.stringify(payload)
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages`)
+          , json(payload)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
     })
@@ -149,18 +139,16 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const token = 'token'
           const payload = { priority: null }
-          const server = getServer()
           await AccessControlDAO.setProduceTokenRequired(mqId, true)
           await AccessControlDAO.setProduceToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'POST'
-          , url: `/mq/${mqId}/messages`
-          , headers: createJsonHeaders()
-          , payload: JSON.stringify(payload)
-          })
+          const res = await fetch(post(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages`)
+          , json(payload)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
     })

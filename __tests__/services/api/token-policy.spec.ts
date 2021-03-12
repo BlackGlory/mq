@@ -1,5 +1,9 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
+import { fetch } from 'extra-fetch'
+import { get, put, del } from 'extra-request'
+import { url, pathname, headers, json } from 'extra-request/lib/es2018/transformers'
+import { toJSON } from 'extra-response'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -13,16 +17,15 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: '/api/mq-with-token-policies'
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname('/api/mq-with-token-policies')
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(200)
-        expect(res.json()).toMatchSchema({
+        expect(res.status).toBe(200)
+        expect(await toJSON(res)).toMatchSchema({
           type: 'array'
         , items: { type: 'string' }
         })
@@ -31,29 +34,26 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname('/api/mq-with-token-policies')
+        ))
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: '/api/mq-with-token-policies'
-        })
-
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: '/api/mq-with-token-policies'
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname('/api/mq-with-token-policies')
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -62,17 +62,16 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: `/api/mq/${id}/token-policies`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(200)
-        expect(res.json()).toMatchSchema({
+        expect(res.status).toBe(200)
+        expect(await toJSON(res)).toMatchSchema({
           type: 'object'
         , properties: {
             produceTokenRequired: {
@@ -94,31 +93,29 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: `/api/mq/${id}/token-policies`
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: `/api/mq/${id}/token-policies`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -127,61 +124,49 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const val = true
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/token-policies/produce-token-required`
-        , payload: JSON.stringify(val)
-        , headers: {
-            ...createJsonHeaders()
-          , ...createAuthHeaders()
-          }
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/produce-token-required`)
+        , headers(createAuthHeaders())
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
         const val = true
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/token-policies/produce-token-required`
-        , payload: JSON.stringify(val)
-        , headers: {
-            ...createJsonHeaders()
-          }
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/produce-token-required`)
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const val = true
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/token-policies/produce-token-required`
-        , payload: JSON.stringify(val)
-        , headers: {
-            ...createJsonHeaders()
-          , ...createAuthHeaders('bad')
-          }
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/produce-token-required`)
+        , headers(createAuthHeaders('bad'))
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -190,59 +175,49 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const val = true
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/token-policies/consume-token-required`
-        , payload: JSON.stringify(val)
-        , headers: {
-            ...createJsonHeaders()
-          , ...createAuthHeaders()
-          }
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/consume-token-required`)
+        , headers(createAuthHeaders())
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
         const val = true
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/token-policies/consume-token-required`
-        , payload: JSON.stringify(val)
-        , headers: createJsonHeaders()
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/consume-token-required`)
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const val = true
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/token-policies/consume-token-required`
-        , payload: JSON.stringify(val)
-        , headers: {
-            ...createJsonHeaders()
-          , ...createAuthHeaders('bad')
-          }
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/consume-token-required`)
+        , headers(createAuthHeaders('bad'))
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -251,59 +226,49 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const val = true
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/token-policies/clear-token-required`
-        , payload: JSON.stringify(val)
-        , headers: {
-            ...createJsonHeaders()
-          , ...createAuthHeaders()
-          }
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/clear-token-required`)
+        , headers(createAuthHeaders())
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
         const val = true
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/token-policies/clear-token-required`
-        , payload: JSON.stringify(val)
-        , headers: createJsonHeaders()
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/clear-token-required`)
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const val = true
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/token-policies/clear-token-required`
-        , payload: JSON.stringify(val)
-        , headers: {
-            ...createJsonHeaders()
-          , ...createAuthHeaders('bad')
-          }
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/clear-token-required`)
+        , headers(createAuthHeaders('bad'))
+        , json(val)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -312,46 +277,43 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/token-policies/produce-token-required`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/produce-token-required`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/token-policies/produce-token-required`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/produce-token-required`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/token-policies/produce-token-required`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/produce-token-required`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -360,46 +322,43 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/token-policies/consume-token-required`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/consume-token-required`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/token-policies/consume-token-required`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/consume-token-required`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/token-policies/consume-token-required`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/consume-token-required`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -408,46 +367,43 @@ describe('TokenPolicy', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/token-policies/clear-token-required`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/clear-token-required`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/token-policies/clear-token-required`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/clear-token-required`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/token-policies/clear-token-required`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/token-policies/clear-token-required`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -456,11 +412,5 @@ describe('TokenPolicy', () => {
 function createAuthHeaders(adminPassword?: string) {
   return {
     'Authorization': `Bearer ${ adminPassword ?? process.env.MQ_ADMIN_PASSWORD }`
-  }
-}
-
-function createJsonHeaders() {
-  return {
-    'Content-Type': 'application/json'
   }
 }

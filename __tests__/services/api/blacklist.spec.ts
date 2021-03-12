@@ -1,5 +1,9 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
+import { fetch } from 'extra-fetch'
+import { get, put, del } from 'extra-request'
+import { url, pathname, headers } from 'extra-request/lib/es2018/transformers'
+import { toJSON } from 'extra-response'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -13,16 +17,15 @@ describe('blacklist', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: '/api/blacklist'
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname('/api/blacklist')
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(200)
-        expect(res.json()).toMatchSchema({
+        expect(res.status).toBe(200)
+        expect(await toJSON(res)).toMatchSchema({
           type: 'array'
         , items: { type: 'string' }
         })
@@ -31,29 +34,26 @@ describe('blacklist', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname('/api/blacklist')
+        ))
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: '/api/blacklist'
-        })
-
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: '/api/blacklist'
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname('/api/blacklist')
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -63,29 +63,27 @@ describe('blacklist', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
         const id = 'id'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/blacklist/${id}`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/blacklist/${id}`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
         const id = 'id'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/blacklist/${id}`
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/blacklist/${id}`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
@@ -93,15 +91,14 @@ describe('blacklist', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
         const id = 'id'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/blacklist/${id}`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/blacklist/${id}`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -111,29 +108,27 @@ describe('blacklist', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
         const id = 'id'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/blacklist/${id}`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/blacklist/${id}`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
         const id = 'id'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/blacklist/${id}`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/blacklist/${id}`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
@@ -141,15 +136,14 @@ describe('blacklist', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
         const id = 'id'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/blacklist/${id}`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/blacklist/${id}`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -158,11 +152,5 @@ describe('blacklist', () => {
 function createAuthHeaders(adminPassword?: string) {
   return {
     'Authorization': `Bearer ${ adminPassword ?? process.env.MQ_ADMIN_PASSWORD }`
-  }
-}
-
-function createJsonHeaders() {
-  return {
-    'Content-Type': 'application/json'
   }
 }

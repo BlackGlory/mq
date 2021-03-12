@@ -1,7 +1,10 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
 import { prepareFailedMessage } from './utils'
+import { fetch } from 'extra-fetch'
+import { del } from 'extra-request'
+import { url, pathname } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -17,16 +20,15 @@ describe('blacklist', () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const mqId = 'mq-id'
         const messageId = 'message-id'
-        const server = getServer()
         await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
         await AccessControlDAO.addBlacklistItem(mqId)
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/mq/${mqId}/failed-messages`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/mq/${mqId}/failed-messages`)
+        ))
 
-        expect(res.statusCode).toBe(403)
+        expect(res.status).toBe(403)
       })
     })
 
@@ -35,15 +37,14 @@ describe('blacklist', () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const mqId = 'mq-id'
         const messageId = 'message-id'
-        const server = getServer()
         await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/mq/${mqId}/failed-messages`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/mq/${mqId}/failed-messages`)
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
   })
@@ -53,16 +54,15 @@ describe('blacklist', () => {
       it('204', async () => {
         const mqId = 'mq-id'
         const messageId = 'message-id'
-        const server = getServer()
         await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
         await AccessControlDAO.addBlacklistItem(mqId)
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/mq/${mqId}/failed-messages`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/mq/${mqId}/failed-messages`)
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
   })

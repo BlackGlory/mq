@@ -1,6 +1,10 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { tokenSchema } from '@src/schema'
+import { fetch } from 'extra-fetch'
+import { get, put, del } from 'extra-request'
+import { url, pathname, headers } from 'extra-request/lib/es2018/transformers'
+import { toJSON } from 'extra-response'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -14,16 +18,15 @@ describe('TBAC', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: '/api/mq-with-tokens'
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname('/api/mq-with-tokens')
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(200)
-        expect(res.json()).toMatchSchema({
+        expect(res.status).toBe(200)
+        expect(await toJSON(res)).toMatchSchema({
           type: 'array'
         , items: { type: 'string' }
         })
@@ -32,29 +35,26 @@ describe('TBAC', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname('/api/mq-with-tokens')
+        ))
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: '/api/mq-with-tokens'
-        })
-
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: '/api/mq-with-tokens'
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname('/api/mq-with-tokens')
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -63,17 +63,16 @@ describe('TBAC', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: `/api/mq/${id}/tokens`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(200)
-        expect(res.json()).toMatchSchema({
+        expect(res.status).toBe(200)
+        expect(await toJSON(res)).toMatchSchema({
           type: 'array'
         , items: {
             type: 'object'
@@ -90,31 +89,29 @@ describe('TBAC', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: `/api/mq/${id}/tokens`
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
 
-        const res = await server.inject({
-          method: 'GET'
-        , url: `/api/mq/${id}/tokens`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(get(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -123,49 +120,46 @@ describe('TBAC', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/tokens/${token}/produce`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/produce`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/tokens/${token}/produce`
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/produce`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/tokens/${token}/produce`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/produce`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -174,49 +168,46 @@ describe('TBAC', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/tokens/${token}/produce`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/produce`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/tokens/${token}/produce`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/produce`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/tokens/${token}/produce`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/produce`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -225,49 +216,46 @@ describe('TBAC', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/tokens/${token}/consume`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/consume`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/tokens/${token}/consume`
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/consume`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/tokens/${token}/consume`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/consume`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -276,49 +264,46 @@ describe('TBAC', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/tokens/${token}/consume`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/consume`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/tokens/${token}/consume`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/consume`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/tokens/${token}/consume`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/consume`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -327,49 +312,46 @@ describe('TBAC', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/tokens/${token}/clear`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/clear`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/tokens/${token}/clear`
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/clear`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'PUT'
-        , url: `/api/mq/${id}/tokens/${token}/clear`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/clear`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })
@@ -378,49 +360,46 @@ describe('TBAC', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/tokens/${token}/clear`
-        , headers: createAuthHeaders()
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/clear`)
+        , headers(createAuthHeaders())
+        ))
 
-        expect(res.statusCode).toBe(204)
+        expect(res.status).toBe(204)
       })
     })
 
     describe('no admin password', () => {
       it('401', async () => {
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/tokens/${token}/clear`
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/clear`)
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
 
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const server = getServer()
         const id = 'id'
         const token = 'token'
 
-        const res = await server.inject({
-          method: 'DELETE'
-        , url: `/api/mq/${id}/tokens/${token}/clear`
-        , headers: createAuthHeaders('bad')
-        })
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/api/mq/${id}/tokens/${token}/clear`)
+        , headers(createAuthHeaders('bad'))
+        ))
 
-        expect(res.statusCode).toBe(401)
+        expect(res.status).toBe(401)
       })
     })
   })

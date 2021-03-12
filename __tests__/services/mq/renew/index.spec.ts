@@ -1,6 +1,9 @@
-import { startService, stopService, getServer } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { prepareFailedMessage } from './utils'
+import { fetch } from 'extra-fetch'
+import { patch } from 'extra-request'
+import { url, pathname } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -13,14 +16,13 @@ describe('no access control', () => {
   it('204', async () => {
     const mqId = 'mq-id'
     const messageId = 'message-id'
-    const server = getServer()
     await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
 
-    const res = await server.inject({
-      method: 'PATCH'
-    , url: `/mq/${mqId}/messages/${messageId}/renew`
-    })
+    const res = await fetch(patch(
+      url(getAddress())
+    , pathname(`/mq/${mqId}/messages/${messageId}/renew`)
+    ))
 
-    expect(res.statusCode).toBe(204)
+    expect(res.status).toBe(204)
   })
 })

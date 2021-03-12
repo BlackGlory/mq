@@ -1,8 +1,10 @@
-import { getServer } from '@test/utils'
-import { startService, stopService } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
 import { AccessControlDAO } from '@dao'
 import { prepareOrderedMessage } from './utils'
+import { fetch } from 'extra-fetch'
+import { get } from 'extra-request'
+import { url, pathname, searchParam } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -20,18 +22,17 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const messageId = 'message-id'
           const token = 'token'
-          const server = getServer()
           await prepareOrderedMessage(mqId, messageId, 'text/plain', 'payload')
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          , query: { token }
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          , searchParam('token', token)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
 
@@ -41,18 +42,17 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const messageId = 'message-id'
           const token = 'token'
-          const server = getServer()
           await prepareOrderedMessage(mqId, messageId, 'text/plain', 'payload')
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          , query: { token: 'bad' }
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          , searchParam('token', 'bad')
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -62,17 +62,16 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const messageId = 'message-id'
           const token = 'token'
-          const server = getServer()
           await prepareOrderedMessage(mqId, messageId, 'text/plain', 'payload')
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
     })
@@ -84,15 +83,14 @@ describe('token-based access control', () => {
           process.env.MQ_CONSUME_TOKEN_REQUIRED = 'true'
           const mqId = 'mq-id'
           const messageId = 'message-id'
-          const server = getServer()
           await prepareOrderedMessage(mqId, messageId, 'text/plain', 'payload')
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          ))
 
-          expect(res.statusCode).toBe(401)
+          expect(res.status).toBe(401)
         })
       })
 
@@ -101,15 +99,14 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const mqId = 'mq-id'
           const messageId = 'message-id'
-          const server = getServer()
           await prepareOrderedMessage(mqId, messageId, 'text/plain', 'payload')
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
     })
@@ -122,17 +119,16 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const messageId = 'message-id'
           const token = 'token'
-          const server = getServer()
           await prepareOrderedMessage(mqId, messageId, 'text/plain', 'payload')
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
     })
@@ -144,17 +140,16 @@ describe('token-based access control', () => {
           const mqId = 'mq-id'
           const messageId = 'message-id'
           const token = 'token'
-          const server = getServer()
           await prepareOrderedMessage(mqId, messageId, 'text/plain', 'payload')
           await AccessControlDAO.setConsumeTokenRequired(mqId, true)
           await AccessControlDAO.setConsumeToken({ id: mqId, token })
 
-          const res = await server.inject({
-            method: 'GET'
-          , url: `/mq/${mqId}/messages/${messageId}`
-          })
+          const res = await fetch(get(
+            url(getAddress())
+          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          ))
 
-          expect(res.statusCode).toBe(200)
+          expect(res.status).toBe(200)
         })
       })
     })
