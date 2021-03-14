@@ -12,15 +12,15 @@ expect.extend(matchers)
 beforeEach(startService)
 afterEach(stopService)
 
-describe('blacklist', () => {
-  describe('GET /api/blacklist', () => {
+describe('whitelist', () => {
+  describe('GET /admin/whitelist', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname('/api/blacklist')
+        , pathname('/admin/whitelist')
         , headers(createAuthHeaders())
         ))
 
@@ -36,7 +36,7 @@ describe('blacklist', () => {
       it('401', async () => {
         const res = await fetch(get(
           url(getAddress())
-        , pathname('/api/blacklist')
+        , pathname('/admin/whitelist')
         ))
 
         expect(res.status).toBe(401)
@@ -49,7 +49,7 @@ describe('blacklist', () => {
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname('/api/blacklist')
+        , pathname('/admin/whitelist')
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -58,7 +58,7 @@ describe('blacklist', () => {
     })
   })
 
-  describe('PUT /api/blacklist/:id', () => {
+  describe('PUT /admin/whitelist/:id', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
@@ -66,7 +66,7 @@ describe('blacklist', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/blacklist/${id}`)
+        , pathname(`/admin/whitelist/${id}`)
         , headers(createAuthHeaders())
         ))
 
@@ -80,7 +80,7 @@ describe('blacklist', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/blacklist/${id}`)
+        , pathname(`/admin/whitelist/${id}`)
         ))
 
         expect(res.status).toBe(401)
@@ -94,7 +94,7 @@ describe('blacklist', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/blacklist/${id}`)
+        , pathname(`/admin/whitelist/${id}`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -103,7 +103,7 @@ describe('blacklist', () => {
     })
   })
 
-  describe('DELETE /api/blacklist/:id', () => {
+  describe('DELETE /admin/whitelist/:id', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
@@ -111,7 +111,7 @@ describe('blacklist', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/blacklist/${id}`)
+        , pathname(`/admin/whitelist/${id}`)
         , headers(createAuthHeaders())
         ))
 
@@ -125,7 +125,7 @@ describe('blacklist', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/blacklist/${id}`)
+        , pathname(`/admin/whitelist/${id}`)
         ))
 
         expect(res.status).toBe(401)
@@ -139,7 +139,7 @@ describe('blacklist', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/blacklist/${id}`)
+        , pathname(`/admin/whitelist/${id}`)
         , headers(createAuthHeaders('bad'))
         ))
 

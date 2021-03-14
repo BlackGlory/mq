@@ -455,7 +455,7 @@ await fetch('http://localhost:8080/metrics').then(res => res.json())
 =MQ_THROTTLE=, 需满足JSON语法, 默认为无限制.
 
 ***** 获取所有具有配置的MQ id
-=GET /api/mq-with-configurations=
+=GET /admin/mq-with-configurations=
 
 返回由JSON表示的字符串数组 =string[]=.
 
@@ -464,12 +464,12 @@ await fetch('http://localhost:8080/metrics').then(res => res.json())
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq-with-configurations"
+  "http://localhost:8080/admin/mq-with-configurations"
 #+END_SRC
 
 ******* fetch
 #+BEGIN_SRC js
-await fetch('http://localhost:8080/api/mq-with-configurations', {
+await fetch('http://localhost:8080/admin/mq-with-configurations', {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -477,7 +477,7 @@ await fetch('http://localhost:8080/api/mq-with-configurations', {
 #+END_SRC
 
 ***** 获取特定队列的配置
-=GET /api/mq/<id>/configurations=
+=GET /admin/mq/<id>/configurations=
 
 返回JSON:
 #+BEGIN_SRC ts
@@ -499,12 +499,12 @@ await fetch('http://localhost:8080/api/mq-with-configurations', {
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/configurations"
+  "http://localhost:8080/admin/mq/$id/configurations"
 #+END_SRC
 
 ******* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/configurations`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/configurations`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -512,12 +512,12 @@ await fetch(`http://localhost:8080/api/mq/${id}/configurations`, {
 #+END_SRC
 
 ***** 设置配置
-=PUT /api/mq/<mq-id>/configurations/unique=
-=PUT /api/mq/<mq-id>/configurations/drafting-timeout=
-=PUT /api/mq/<mq-id>/configurations/ordered-timeout=
-=PUT /api/mq/<mq-id>/configurations/active-timeout=
-=PUT /api/mq/<mq-id>/configurations/concurrency=
-=PUT /api/mq/<mq-id>/configurations/throttle=
+=PUT /admin/mq/<mq-id>/configurations/unique=
+=PUT /admin/mq/<mq-id>/configurations/drafting-timeout=
+=PUT /admin/mq/<mq-id>/configurations/ordered-timeout=
+=PUT /admin/mq/<mq-id>/configurations/active-timeout=
+=PUT /admin/mq/<mq-id>/configurations/concurrency=
+=PUT /admin/mq/<mq-id>/configurations/throttle=
 
 Payload必须为对应的null以外的JSON值.
 
@@ -529,12 +529,12 @@ curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
   --header "Content-Type: application/json" \
   --data "$UNIQUE" \
-  "http://localhost:8080/api/mq/$id/configurations/unique"
+  "http://localhost:8080/admin/mq/$id/configurations/unique"
 #+END_SRC
 
 ******* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/configurations/unique`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/configurations/unique`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -545,12 +545,12 @@ await fetch(`http://localhost:8080/api/mq/${id}/configurations/unique`, {
 #+END_SRC
 
 ***** 移除配置
-=DELETE /api/mq/<mq-id>/configurations/unique=
-=DELETE /api/mq/<mq-id>/configurations/drafting-timeout=
-=DELETE /api/mq/<mq-id>/configurations/ordered-timeout=
-=DELETE /api/mq/<mq-id>/configurations/active-timeout=
-=DELETE /api/mq/<mq-id>/configurations/concurrency=
-=DELETE /api/mq/<mq-id>/configurations/throttle=
+=DELETE /admin/mq/<mq-id>/configurations/unique=
+=DELETE /admin/mq/<mq-id>/configurations/drafting-timeout=
+=DELETE /admin/mq/<mq-id>/configurations/ordered-timeout=
+=DELETE /admin/mq/<mq-id>/configurations/active-timeout=
+=DELETE /admin/mq/<mq-id>/configurations/concurrency=
+=DELETE /admin/mq/<mq-id>/configurations/throttle=
 
 ****** Example
 ******* curl
@@ -558,12 +558,12 @@ await fetch(`http://localhost:8080/api/mq/${id}/configurations/unique`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/configurations/unique"
+  "http://localhost:8080/admin/mq/$id/configurations/unique"
 #+END_SRC
 
 ******* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/configurations/unique`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/configurations/unique`, {
   method: 'DELETE'
 })
 #+END_SRC
@@ -585,7 +585,7 @@ JSON验证仅用于验证, 不会重新序列化消息, 因此follow得到的pay
 可单独为mq设置JSON Schema, 被设置的mq将仅接受 =Content-Type: application/json= 请求.
 
 ****** 获取所有具有JSON Schema的mqId
-=GET /api/mq-with-json-schema=
+=GET /admin/mq-with-json-schema=
 
 获取所有具有JSON Schema的mqId, 返回由JSON表示的字符串数组 =string[]=.
 
@@ -594,12 +594,12 @@ JSON验证仅用于验证, 不会重新序列化消息, 因此follow得到的pay
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq-with-json-schema"
+  "http://localhost:8080/admin/mq-with-json-schema"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch('http://localhost:8080/api/mq-with-json-schema', {
+await fetch('http://localhost:8080/admin/mq-with-json-schema', {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -607,19 +607,19 @@ await fetch('http://localhost:8080/api/mq-with-json-schema', {
 #+END_SRC
 
 ****** 获取JSON Schema
-=GET /api/mq/<id>/json-schema=
+=GET /admin/mq/<id>/json-schema=
 
 ******* Example
 ******** curl
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/json-schema"
+  "http://localhost:8080/admin/mq/$id/json-schema"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/json-schema`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/json-schema`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -627,7 +627,7 @@ await fetch(`http://localhost:8080/api/mq/${id}/json-schema`, {
 #+END_SRC
 
 ****** 设置JSON Schema
-=PUT /api/mq/<id>/json-schema=
+=PUT /admin/mq/<id>/json-schema=
 
 ******* Example
 ******** curl
@@ -637,12 +637,12 @@ curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
   --header "Content-Type: application/json" \
   --data "$JSON_SCHEMA" \
-  "http://localhost:8080/api/mq/$id/jsonschema"
+  "http://localhost:8080/admin/mq/$id/jsonschema"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/json-schema`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/json-schema`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -653,7 +653,7 @@ await fetch(`http://localhost:8080/api/mq/${id}/json-schema`, {
 #+END_SRC
 
 ****** 移除JSON Schema
-=DELETE /api/mq/<id>/json-schema=
+=DELETE /admin/mq/<id>/json-schema=
 
 ******* Example
 ******** curl
@@ -661,12 +661,12 @@ await fetch(`http://localhost:8080/api/mq/${id}/json-schema`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/json-schema"
+  "http://localhost:8080/admin/mq/$id/json-schema"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/json-schema`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/json-schema`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -694,7 +694,7 @@ mq提供两种可以同时启用的访问控制策略.
 
 ****** 黑名单
 ******* 获取黑名单
-=GET /api/blacklist=
+=GET /admin/blacklist=
 
 获取位于黑名单中的所有mqId, 返回JSON表示的字符串数组 =string[]=.
 
@@ -703,12 +703,12 @@ mq提供两种可以同时启用的访问控制策略.
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/blacklist"
+  "http://localhost:8080/admin/blacklist"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch('http://localhost:8080/api/blacklist', {
+await fetch('http://localhost:8080/admin/blacklist', {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -716,7 +716,7 @@ await fetch('http://localhost:8080/api/blacklist', {
 #+END_SRC
 
 ******* 添加黑名单
-=PUT /api/blacklist/<id>=
+=PUT /admin/blacklist/<id>=
 
 将特定mq加入黑名单.
 
@@ -726,12 +726,12 @@ await fetch('http://localhost:8080/api/blacklist', {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/blacklist/$id"
+  "http://localhost:8080/admin/blacklist/$id"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/blacklist/${id}`, {
+await fetch(`http://localhost:8080/admin/blacklist/${id}`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -740,7 +740,7 @@ await fetch(`http://localhost:8080/api/blacklist/${id}`, {
 #+END_SRC
 
 ******* 移除黑名单
-=DELETE /api/blacklist/<id>=
+=DELETE /admin/blacklist/<id>=
 
 将特定mq从黑名单中移除.
 
@@ -750,12 +750,12 @@ await fetch(`http://localhost:8080/api/blacklist/${id}`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/blacklist/$id"
+  "http://localhost:8080/admin/blacklist/$id"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/blacklist/${id}`, {
+await fetch(`http://localhost:8080/admin/blacklist/${id}`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -765,7 +765,7 @@ await fetch(`http://localhost:8080/api/blacklist/${id}`, {
 
 ****** 白名单
 ******* 获取白名单
-=GET /api/whitelist=
+=GET /admin/whitelist=
 
 获取位于黑名单中的所有mqId, 返回JSON表示的字符串数组 =string[]=.
 
@@ -774,12 +774,12 @@ await fetch(`http://localhost:8080/api/blacklist/${id}`, {
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIM_PASSWORD" \
-  "http://localhost:8080/api/whitelist"
+  "http://localhost:8080/admin/whitelist"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch('http://localhost:8080/api/whitelist', {
+await fetch('http://localhost:8080/admin/whitelist', {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -787,7 +787,7 @@ await fetch('http://localhost:8080/api/whitelist', {
 #+END_SRC
 
 ******* 添加白名单
-=PUT /api/whitelist/<id>=
+=PUT /admin/whitelist/<id>=
 
 将特定mq加入白名单.
 
@@ -797,12 +797,12 @@ await fetch('http://localhost:8080/api/whitelist', {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/whitelist/$id"
+  "http://localhost:8080/admin/whitelist/$id"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/whitelist/${id}`, {
+await fetch(`http://localhost:8080/admin/whitelist/${id}`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -811,7 +811,7 @@ await fetch(`http://localhost:8080/api/whitelist/${id}`, {
 #+END_SRC
 
 ******* 移除白名单
-=DELETE /api/whitelist/<id>=
+=DELETE /admin/whitelist/<id>=
 
 将特定mq从白名单中移除.
 
@@ -821,12 +821,12 @@ await fetch(`http://localhost:8080/api/whitelist/${id}`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/whitelist/$id"
+  "http://localhost:8080/admin/whitelist/$id"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/whitelist/${id}`, {
+await fetch(`http://localhost:8080/admin/whitelist/${id}`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -851,7 +851,7 @@ await fetch(`http://localhost:8080/api/whitelist/${id}`, {
 - token的意外泄露可以被迅速处理
 
 ****** 获取所有具有token策略的频道id
-=GET /api/mq-with-token-policies=
+=GET /admin/mq-with-token-policies=
 
 获取所有具有token策略的频道id, 返回由JSON表示的字符串数组 =string[]=.
 
@@ -860,16 +860,16 @@ await fetch(`http://localhost:8080/api/whitelist/${id}`, {
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq-with-token-policies"
+  "http://localhost:8080/admin/mq-with-token-policies"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch('http://localhost:8080/api/mq-with-token-policies')
+await fetch('http://localhost:8080/admin/mq-with-token-policies')
 #+END_SRC
 
 ****** 获取特定频道的token策略
-=GET /api/mq/<id>/token-policies=
+=GET /admin/mq/<id>/token-policies=
 
 返回JSON:
 #+BEGIN_SRC ts
@@ -886,12 +886,12 @@ await fetch('http://localhost:8080/api/mq-with-token-policies')
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/token-policies"
+  "http://localhost:8080/admin/mq/$id/token-policies"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fethc(`http://localhost:8080/api/mq/${id}/token-policies`, {
+await fethc(`http://localhost:8080/admin/mq/${id}/token-policies`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -899,9 +899,9 @@ await fethc(`http://localhost:8080/api/mq/${id}/token-policies`, {
 #+END_SRC
 
 ****** 设置token策略
-=PUT /api/mq/<id>/token-policies/produce-token-required=
-=PUT /api/mq/<id>/token-policies/consume-token-required=
-=PUT /api/mq/<id>/token-policies/clear-token-required=
+=PUT /admin/mq/<id>/token-policies/produce-token-required=
+=PUT /admin/mq/<id>/token-policies/consume-token-required=
+=PUT /admin/mq/<id>/token-policies/clear-token-required=
 
 Payload必须是一个布尔值.
 
@@ -913,12 +913,12 @@ curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
   --header "Content-Type: application/json" \
   --data "$PRODUCE_TOKEN_REQUIRED" \
-  "http://localhost:8080/api/mq/$id/token-policies/produce-token-required"
+  "http://localhost:8080/admin/mq/$id/token-policies/produce-token-required"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/token-policies/produce-token-required`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/token-policies/produce-token-required`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -929,9 +929,9 @@ await fetch(`http://localhost:8080/api/mq/${id}/token-policies/produce-token-req
 #+END_SRC
 
 ****** 移除token策略
-=DELETE /api/mq/<id>/token-policies/produce-token-required=
-=DELETE /api/mq/<id>/token-policies/consume-token-required=
-=DELETE /api/mq/<id>/token-policies/clear-token-required=
+=DELETE /admin/mq/<id>/token-policies/produce-token-required=
+=DELETE /admin/mq/<id>/token-policies/consume-token-required=
+=DELETE /admin/mq/<id>/token-policies/clear-token-required=
 
 ******* Example
 ******** curl
@@ -939,12 +939,12 @@ await fetch(`http://localhost:8080/api/mq/${id}/token-policies/produce-token-req
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/token-policies/produce-token-required"
+  "http://localhost:8080/admin/mq/$id/token-policies/produce-token-required"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/token-policies/produce-token-required`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/token-policies/produce-token-required`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -953,7 +953,7 @@ await fetch(`http://localhost:8080/api/mq/${id}/token-policies/produce-token-req
 #+END_SRC
 
 ****** 获取所有具有token的mqId
-=GET /api/mq-with-tokens=
+=GET /admin/mq-with-tokens=
 
 获取所有具有token的mqId, 返回由JSON表示的字符串数组 =string[]=
 
@@ -962,12 +962,12 @@ await fetch(`http://localhost:8080/api/mq/${id}/token-policies/produce-token-req
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq-with-tokens"
+  "http://localhost:8080/admin/mq-with-tokens"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq-with-tokens`, {
+await fetch(`http://localhost:8080/admin/mq-with-tokens`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -975,7 +975,7 @@ await fetch(`http://localhost:8080/api/mq-with-tokens`, {
 #+END_SRC
 
 ****** 获取特定mq的所有token信息
-=GET /api/mq/<id>/tokens=
+=GET /admin/mq/<id>/tokens=
 
 获取特定mq的所有token信息, 返回JSON表示的token信息数组:
 #+BEGIN_SRC ts
@@ -992,12 +992,12 @@ Array<{
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/tokens"
+  "http://localhost:8080/admin/mq/$id/tokens"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/tokens`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/tokens`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -1005,7 +1005,7 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens`, {
 #+END_SRC
 
 ****** 为特定mq的token设置produce权限
-=PUT /api/mq/<id>/tokens/<token>/produce=
+=PUT /admin/mq/<id>/tokens/<token>/produce=
 
 添加/更新token, 为token设置produce权限.
 
@@ -1015,12 +1015,12 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens`, {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/tokens/$token/produce"
+  "http://localhost:8080/admin/mq/$id/tokens/$token/produce"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/produce`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/produce`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -1029,7 +1029,7 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/produce`, {
 #+END_SRC
 
 ****** 取消特定mq的token的produce权限
-=DELETE /api/mq/<id>/tokens/<token>/produce=
+=DELETE /admin/mq/<id>/tokens/<token>/produce=
 
 取消token的produce权限.
 
@@ -1039,12 +1039,12 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/produce`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/tokens/$token/produce"
+  "http://localhost:8080/admin/mq/$id/tokens/$token/produce"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/produce`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/produce`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -1053,7 +1053,7 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/produce`, {
 #+END_SRC
 
 ****** 为特定mq的token设置consume权限
-=PUT /api/mq/<id>/tokens/<token>/consume=
+=PUT /admin/mq/<id>/tokens/<token>/consume=
 
 添加/更新token, 为token设置consume权限.
 
@@ -1063,12 +1063,12 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/produce`, {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/tokens/$token/consume"
+  "http://localhost:8080/admin/mq/$id/tokens/$token/consume"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/consume`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/consume`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -1077,7 +1077,7 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/consume`, {
 #+END_SRC
 
 ****** 取消特定mq的token的consume权限
-=DELETE /api/mq/<id>/tokens/<token>/consume=
+=DELETE /admin/mq/<id>/tokens/<token>/consume=
 
 取消token的consume权限.
 
@@ -1087,12 +1087,12 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/consume`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/tokens/$token/consume"
+  "http://localhost:8080/admin/mq/$id/tokens/$token/consume"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/consume`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/consume`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -1101,7 +1101,7 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/consume`, {
 #+END_SRC
 
 ****** 为特定mq的token设置clear权限
-=PUT /api/mq/<id>/tokens/<token>/clear=
+=PUT /admin/mq/<id>/tokens/<token>/clear=
 
 添加/更新token, 为token设置clear权限.
 
@@ -1111,12 +1111,12 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/consume`, {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/tokens/$token/clear"
+  "http://localhost:8080/admin/mq/$id/tokens/$token/clear"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/clear`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/clear`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -1125,7 +1125,7 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/clear`, {
 #+END_SRC
 
 ****** 取消特定mq的token的clear权限
-=DELETE /api/mq/<id>/tokens/<token>/clear=
+=DELETE /admin/mq/<id>/tokens/<token>/clear=
 
 取消token的clear权限.
 
@@ -1135,12 +1135,12 @@ await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/clear`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/api/mq/$id/tokens/$token/clear"
+  "http://localhost:8080/admin/mq/$id/tokens/$token/clear"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/api/mq/${id}/tokens/${token}/clear`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/clear`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`

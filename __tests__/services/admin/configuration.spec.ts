@@ -13,14 +13,14 @@ beforeEach(startService)
 afterEach(stopService)
 
 describe('Configuration', () => {
-  describe('GET /api/mq-with-configurations', () => {
+  describe('GET /admin/mq-with-configurations', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname('/api/mq-with-configurations')
+        , pathname('/admin/mq-with-configurations')
         , headers(createAuthHeaders())
         ))
 
@@ -36,7 +36,7 @@ describe('Configuration', () => {
       it('401', async () => {
         const res = await fetch(get(
           url(getAddress())
-        , pathname('/api/mq-with-configurations')
+        , pathname('/admin/mq-with-configurations')
         ))
 
         expect(res.status).toBe(401)
@@ -49,7 +49,7 @@ describe('Configuration', () => {
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname('/api/mq-with-configurations')
+        , pathname('/admin/mq-with-configurations')
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -58,7 +58,7 @@ describe('Configuration', () => {
     })
   })
 
-  describe('GET /api/mq/:id/configurations', () => {
+  describe('GET /admin/mq/:id/configurations', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
@@ -66,7 +66,7 @@ describe('Configuration', () => {
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations`)
+        , pathname(`/admin/mq/${id}/configurations`)
         , headers(createAuthHeaders())
         ))
 
@@ -127,7 +127,7 @@ describe('Configuration', () => {
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations`)
+        , pathname(`/admin/mq/${id}/configurations`)
         ))
 
         expect(res.status).toBe(401)
@@ -141,7 +141,7 @@ describe('Configuration', () => {
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations`)
+        , pathname(`/admin/mq/${id}/configurations`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -150,7 +150,7 @@ describe('Configuration', () => {
     })
   })
 
-  describe('PUT /api/mq/:id/configurations/unique', () => {
+  describe('PUT /admin/mq/:id/configurations/unique', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
@@ -159,7 +159,7 @@ describe('Configuration', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/unique`)
+        , pathname(`/admin/mq/${id}/configurations/unique`)
         , headers(createAuthHeaders())
         , json(val)
         ))
@@ -175,7 +175,7 @@ describe('Configuration', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/unique`)
+        , pathname(`/admin/mq/${id}/configurations/unique`)
         , json(val)
         ))
 
@@ -191,7 +191,7 @@ describe('Configuration', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/unique`)
+        , pathname(`/admin/mq/${id}/configurations/unique`)
         , json(val)
         , headers(createAuthHeaders('bad'))
         ))
@@ -201,7 +201,7 @@ describe('Configuration', () => {
     })
   })
 
-  describe('DELETE /api/mq/:id/configurations/unique', () => {
+  describe('DELETE /admin/mq/:id/configurations/unique', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
@@ -209,7 +209,7 @@ describe('Configuration', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/unique`)
+        , pathname(`/admin/mq/${id}/configurations/unique`)
         , headers(createAuthHeaders())
         ))
 
@@ -223,7 +223,7 @@ describe('Configuration', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/unique`)
+        , pathname(`/admin/mq/${id}/configurations/unique`)
         ))
 
         expect(res.status).toBe(401)
@@ -237,7 +237,7 @@ describe('Configuration', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/unique`)
+        , pathname(`/admin/mq/${id}/configurations/unique`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -247,7 +247,7 @@ describe('Configuration', () => {
   })
 
 
-  describe('PUT /api/mq/:id/configurations/drafting-timeout', () => {
+  describe('PUT /admin/mq/:id/configurations/drafting-timeout', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
@@ -256,103 +256,7 @@ describe('Configuration', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/drafting-timeout`)
-        , headers(createAuthHeaders())
-        , json(val)
-        ))
-
-        expect(res.status).toBe(204)
-      })
-    })
-
-    describe('no admin password', () => {
-      it('401', async () => {
-        const id = 'id'
-        const val = 100
-
-        const res = await fetch(put(
-          url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/drafting-timeout`)
-        , json(val)
-        ))
-
-        expect(res.status).toBe(401)
-      })
-    })
-
-    describe('bad auth', () => {
-      it('401', async () => {
-        process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
-        const val = 100
-
-        const res = await fetch(put(
-          url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/drafting-timeout`)
-        , json(val)
-        , headers(createAuthHeaders('bad'))
-        ))
-
-        expect(res.status).toBe(401)
-      })
-    })
-  })
-
-  describe('DELETE /api/mq/:id/configurations/drafting-timeout', () => {
-    describe('auth', () => {
-      it('204', async () => {
-        process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
-
-        const res = await fetch(del(
-          url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/drafting-timeout`)
-        , headers(createAuthHeaders())
-        ))
-
-        expect(res.status).toBe(204)
-      })
-    })
-
-    describe('no admin password', () => {
-      it('401', async () => {
-        const id = 'id'
-
-        const res = await fetch(del(
-          url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/drafting-timeout`)
-        ))
-
-        expect(res.status).toBe(401)
-      })
-    })
-
-    describe('bad auth', () => {
-      it('401', async () => {
-        process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
-
-        const res = await fetch(del(
-          url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/drafting-timeout`)
-        , headers(createAuthHeaders('bad'))
-        ))
-
-        expect(res.status).toBe(401)
-      })
-    })
-  })
-
-  describe('PUT /api/mq/:id/configurations/ordered-timeout', () => {
-    describe('auth', () => {
-      it('204', async () => {
-        process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
-        const val = 100
-
-        const res = await fetch(put(
-          url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/ordered-timeout`)
+        , pathname(`/admin/mq/${id}/configurations/drafting-timeout`)
         , headers(createAuthHeaders())
         , json(val)
         ))
@@ -368,7 +272,7 @@ describe('Configuration', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/ordered-timeout`)
+        , pathname(`/admin/mq/${id}/configurations/drafting-timeout`)
         , json(val)
         ))
 
@@ -384,9 +288,9 @@ describe('Configuration', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/ordered-timeout`)
-        , headers(createAuthHeaders('bad'))
+        , pathname(`/admin/mq/${id}/configurations/drafting-timeout`)
         , json(val)
+        , headers(createAuthHeaders('bad'))
         ))
 
         expect(res.status).toBe(401)
@@ -394,7 +298,7 @@ describe('Configuration', () => {
     })
   })
 
-  describe('DELETE /api/mq/:id/configurations/ordered-timeout', () => {
+  describe('DELETE /admin/mq/:id/configurations/drafting-timeout', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
@@ -402,7 +306,7 @@ describe('Configuration', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/ordered-timeout`)
+        , pathname(`/admin/mq/${id}/configurations/drafting-timeout`)
         , headers(createAuthHeaders())
         ))
 
@@ -416,7 +320,7 @@ describe('Configuration', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/ordered-timeout`)
+        , pathname(`/admin/mq/${id}/configurations/drafting-timeout`)
         ))
 
         expect(res.status).toBe(401)
@@ -430,7 +334,7 @@ describe('Configuration', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/ordered-timeout`)
+        , pathname(`/admin/mq/${id}/configurations/drafting-timeout`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -439,7 +343,7 @@ describe('Configuration', () => {
     })
   })
 
-  describe('PUT /api/mq/:id/configurations/active-timeout', () => {
+  describe('PUT /admin/mq/:id/configurations/ordered-timeout', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
@@ -448,103 +352,7 @@ describe('Configuration', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/active-timeout`)
-        , headers(createAuthHeaders())
-        , json(val)
-        ))
-
-        expect(res.status).toBe(204)
-      })
-    })
-
-    describe('no admin password', () => {
-      it('401', async () => {
-        const id = 'id'
-        const val = 100
-
-        const res = await fetch(put(
-          url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/active-timeout`)
-        , json(val)
-        ))
-
-        expect(res.status).toBe(401)
-      })
-    })
-
-    describe('bad auth', () => {
-      it('401', async () => {
-        process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
-        const val = 100
-
-        const res = await fetch(put(
-          url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/active-timeout`)
-        , headers(createAuthHeaders('bad'))
-        , json(val)
-        ))
-
-        expect(res.status).toBe(401)
-      })
-    })
-  })
-
-  describe('DELETE /api/mq/:id/configurations/active-timeout', () => {
-    describe('auth', () => {
-      it('204', async () => {
-        process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
-
-        const res = await fetch(del(
-          url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/active-timeout`)
-        , headers(createAuthHeaders())
-        ))
-
-        expect(res.status).toBe(204)
-      })
-    })
-
-    describe('no admin password', () => {
-      it('401', async () => {
-        const id = 'id'
-
-        const res = await fetch(del(
-          url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/active-timeout`)
-        ))
-
-        expect(res.status).toBe(401)
-      })
-    })
-
-    describe('bad auth', () => {
-      it('401', async () => {
-        process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
-
-        const res = await fetch(del(
-          url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/active-timeout`)
-        , headers(createAuthHeaders('bad'))
-        ))
-
-        expect(res.status).toBe(401)
-      })
-    })
-  })
-
-  describe('PUT /api/mq/:id/configurations/concurrency', () => {
-    describe('auth', () => {
-      it('204', async () => {
-        process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
-        const val = 100
-
-        const res = await fetch(put(
-          url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/concurrency`)
+        , pathname(`/admin/mq/${id}/configurations/ordered-timeout`)
         , headers(createAuthHeaders())
         , json(val)
         ))
@@ -560,7 +368,7 @@ describe('Configuration', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/concurrency`)
+        , pathname(`/admin/mq/${id}/configurations/ordered-timeout`)
         , json(val)
         ))
 
@@ -576,7 +384,7 @@ describe('Configuration', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/concurrency`)
+        , pathname(`/admin/mq/${id}/configurations/ordered-timeout`)
         , headers(createAuthHeaders('bad'))
         , json(val)
         ))
@@ -586,7 +394,7 @@ describe('Configuration', () => {
     })
   })
 
-  describe('DELETE /api/mq/:id/configurations/concurrency', () => {
+  describe('DELETE /admin/mq/:id/configurations/ordered-timeout', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
@@ -594,7 +402,7 @@ describe('Configuration', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/concurrency`)
+        , pathname(`/admin/mq/${id}/configurations/ordered-timeout`)
         , headers(createAuthHeaders())
         ))
 
@@ -608,7 +416,7 @@ describe('Configuration', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/concurrency`)
+        , pathname(`/admin/mq/${id}/configurations/ordered-timeout`)
         ))
 
         expect(res.status).toBe(401)
@@ -622,7 +430,7 @@ describe('Configuration', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/concurrency`)
+        , pathname(`/admin/mq/${id}/configurations/ordered-timeout`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -631,7 +439,199 @@ describe('Configuration', () => {
     })
   })
 
-  describe('PUT /api/mq/:id/configurations/throttle', () => {
+  describe('PUT /admin/mq/:id/configurations/active-timeout', () => {
+    describe('auth', () => {
+      it('204', async () => {
+        process.env.MQ_ADMIN_PASSWORD = 'password'
+        const id = 'id'
+        const val = 100
+
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/admin/mq/${id}/configurations/active-timeout`)
+        , headers(createAuthHeaders())
+        , json(val)
+        ))
+
+        expect(res.status).toBe(204)
+      })
+    })
+
+    describe('no admin password', () => {
+      it('401', async () => {
+        const id = 'id'
+        const val = 100
+
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/admin/mq/${id}/configurations/active-timeout`)
+        , json(val)
+        ))
+
+        expect(res.status).toBe(401)
+      })
+    })
+
+    describe('bad auth', () => {
+      it('401', async () => {
+        process.env.MQ_ADMIN_PASSWORD = 'password'
+        const id = 'id'
+        const val = 100
+
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/admin/mq/${id}/configurations/active-timeout`)
+        , headers(createAuthHeaders('bad'))
+        , json(val)
+        ))
+
+        expect(res.status).toBe(401)
+      })
+    })
+  })
+
+  describe('DELETE /admin/mq/:id/configurations/active-timeout', () => {
+    describe('auth', () => {
+      it('204', async () => {
+        process.env.MQ_ADMIN_PASSWORD = 'password'
+        const id = 'id'
+
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/admin/mq/${id}/configurations/active-timeout`)
+        , headers(createAuthHeaders())
+        ))
+
+        expect(res.status).toBe(204)
+      })
+    })
+
+    describe('no admin password', () => {
+      it('401', async () => {
+        const id = 'id'
+
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/admin/mq/${id}/configurations/active-timeout`)
+        ))
+
+        expect(res.status).toBe(401)
+      })
+    })
+
+    describe('bad auth', () => {
+      it('401', async () => {
+        process.env.MQ_ADMIN_PASSWORD = 'password'
+        const id = 'id'
+
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/admin/mq/${id}/configurations/active-timeout`)
+        , headers(createAuthHeaders('bad'))
+        ))
+
+        expect(res.status).toBe(401)
+      })
+    })
+  })
+
+  describe('PUT /admin/mq/:id/configurations/concurrency', () => {
+    describe('auth', () => {
+      it('204', async () => {
+        process.env.MQ_ADMIN_PASSWORD = 'password'
+        const id = 'id'
+        const val = 100
+
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/admin/mq/${id}/configurations/concurrency`)
+        , headers(createAuthHeaders())
+        , json(val)
+        ))
+
+        expect(res.status).toBe(204)
+      })
+    })
+
+    describe('no admin password', () => {
+      it('401', async () => {
+        const id = 'id'
+        const val = 100
+
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/admin/mq/${id}/configurations/concurrency`)
+        , json(val)
+        ))
+
+        expect(res.status).toBe(401)
+      })
+    })
+
+    describe('bad auth', () => {
+      it('401', async () => {
+        process.env.MQ_ADMIN_PASSWORD = 'password'
+        const id = 'id'
+        const val = 100
+
+        const res = await fetch(put(
+          url(getAddress())
+        , pathname(`/admin/mq/${id}/configurations/concurrency`)
+        , headers(createAuthHeaders('bad'))
+        , json(val)
+        ))
+
+        expect(res.status).toBe(401)
+      })
+    })
+  })
+
+  describe('DELETE /admin/mq/:id/configurations/concurrency', () => {
+    describe('auth', () => {
+      it('204', async () => {
+        process.env.MQ_ADMIN_PASSWORD = 'password'
+        const id = 'id'
+
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/admin/mq/${id}/configurations/concurrency`)
+        , headers(createAuthHeaders())
+        ))
+
+        expect(res.status).toBe(204)
+      })
+    })
+
+    describe('no admin password', () => {
+      it('401', async () => {
+        const id = 'id'
+
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/admin/mq/${id}/configurations/concurrency`)
+        ))
+
+        expect(res.status).toBe(401)
+      })
+    })
+
+    describe('bad auth', () => {
+      it('401', async () => {
+        process.env.MQ_ADMIN_PASSWORD = 'password'
+        const id = 'id'
+
+        const res = await fetch(del(
+          url(getAddress())
+        , pathname(`/admin/mq/${id}/configurations/concurrency`)
+        , headers(createAuthHeaders('bad'))
+        ))
+
+        expect(res.status).toBe(401)
+      })
+    })
+  })
+
+  describe('PUT /admin/mq/:id/configurations/throttle', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
@@ -640,7 +640,7 @@ describe('Configuration', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/throttle`)
+        , pathname(`/admin/mq/${id}/configurations/throttle`)
         , headers(createAuthHeaders())
         , json(val)
         ))
@@ -656,7 +656,7 @@ describe('Configuration', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/throttle`)
+        , pathname(`/admin/mq/${id}/configurations/throttle`)
         , json(val)
         ))
 
@@ -672,7 +672,7 @@ describe('Configuration', () => {
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/throttle`)
+        , pathname(`/admin/mq/${id}/configurations/throttle`)
         , headers(createAuthHeaders('bad'))
         , json(val)
         ))
@@ -682,7 +682,7 @@ describe('Configuration', () => {
     })
   })
 
-  describe('DELETE /api/mq/:id/configurations/throttle', () => {
+  describe('DELETE /admin/mq/:id/configurations/throttle', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
@@ -690,7 +690,7 @@ describe('Configuration', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/throttle`)
+        , pathname(`/admin/mq/${id}/configurations/throttle`)
         , headers(createAuthHeaders())
         ))
 
@@ -704,7 +704,7 @@ describe('Configuration', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/throttle`)
+        , pathname(`/admin/mq/${id}/configurations/throttle`)
         ))
 
         expect(res.status).toBe(401)
@@ -718,7 +718,7 @@ describe('Configuration', () => {
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/api/mq/${id}/configurations/throttle`)
+        , pathname(`/admin/mq/${id}/configurations/throttle`)
         , headers(createAuthHeaders('bad'))
         ))
 
