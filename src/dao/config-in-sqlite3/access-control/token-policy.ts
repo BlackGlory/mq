@@ -62,7 +62,7 @@ export function unsetProduceTokenRequired(id: string): void {
        WHERE mq_id = $id;
     `).run({ id })
 
-    clearNoPoliciesRow(id)
+    deleteNoPoliciesRow(id)
   })()
 }
 
@@ -84,7 +84,7 @@ export function unsetConsumeTokenRequired(id: string): void {
        WHERE mq_id = $id;
     `).run({ id })
 
-    clearNoPoliciesRow(id)
+    deleteNoPoliciesRow(id)
   })()
 }
 
@@ -106,11 +106,11 @@ export function unsetClearTokenRequired(id: string): void {
        WHERE mq_id = $id;
     `).run({ id })
 
-    clearNoPoliciesRow(id)
+    deleteNoPoliciesRow(id)
   })()
 }
 
-function clearNoPoliciesRow(id: string): void {
+function deleteNoPoliciesRow(id: string): void {
   getDatabase().prepare(`
     DELETE FROM mq_token_policy
      WHERE mq_id = $id

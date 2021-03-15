@@ -77,7 +77,7 @@ export function unsetProduceToken(params: { token: string; id: string }) {
          AND mq_id = $id;
     `).run(params)
 
-    clearNoPermissionToken(params)
+    deleteNoPermissionToken(params)
   })()
 }
 
@@ -127,7 +127,7 @@ export function unsetConsumeToken(params: { token: string; id: string }) {
          AND mq_id = $id;
     `).run(params)
 
-    clearNoPermissionToken(params)
+    deleteNoPermissionToken(params)
   })()
 }
 
@@ -164,11 +164,11 @@ export function unsetClearToken(params: { token: string; id: string }) {
          AND mq_id = $id;
     `).run(params)
 
-    clearNoPermissionToken(params)
+    deleteNoPermissionToken(params)
   })()
 }
 
-function clearNoPermissionToken(params: { token: string, id: string }) {
+function deleteNoPermissionToken(params: { token: string, id: string }) {
   getDatabase().prepare(`
     DELETE FROM mq_token
      WHERE token = $token
