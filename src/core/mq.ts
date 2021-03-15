@@ -2,6 +2,8 @@ import { ConfigurationDAO, MQDAO, SignalDAO } from '@dao'
 import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, THROTTLE, UNIQUE, CONCURRENCY } from '@env'
 import { nanoid } from 'nanoid'
 import { CustomError } from '@blackglory/errors'
+import { withAbortSignal, AbortError } from 'extra-promise'
+import { race, fromEvent, firstValueFrom } from 'rxjs'
 
 export async function draft(queueId: string, priority?: number): Promise<string> {
   await maintain(queueId)
@@ -33,21 +35,38 @@ export async function set(queueId: string, messageId: string, type: string, payl
   }
 }
 
-export async function order(queueId: string): Promise<string> {
-  while (true) {
-    await maintain(queueId)
+/**
+ * 该函数是一个长时函数, 每个异步操作都应该可以响应AbortSignal以提前返回.
+ * @throws {AbortError}
+ */
+export async function order(queueId: string, abortSignal: AbortSignal): Promise<string> {
+  while (!abortSignal.aborted) {
+    await withAbortSignal(abortSignal, () => maintain(queueId))
 
-    const configurations = await ConfigurationDAO.getConfigurations(queueId)
+    const configurations = await withAbortSignal(
+      abortSignal
+    , () => ConfigurationDAO.getConfigurations(queueId)
+    )
     const concurrency = configurations.concurrency ?? CONCURRENCY()
     const throttle = THROTTLE()
     const duration = configurations.throttle?.duration ?? throttle.duration
     const limit = configurations.throttle?.limit ?? throttle.limit
 
-    const messageId = await MQDAO.orderMessage(queueId, concurrency, duration, limit)
+    const messageId = await withAbortSignal(
+      abortSignal
+    , () => MQDAO.orderMessage(queueId, concurrency, duration, limit)
+    )
     if (messageId) return messageId
 
-    await SignalDAO.wait(queueId)
+    await firstValueFrom(
+      // 其中一个Observable返回值时, 另一个Observable会被退订
+      race(
+        SignalDAO.observe(queueId) // 如果入列信号先返回, 则进入下一轮循环
+      , fromEvent(abortSignal, 'abort') // 如果中断信号先返回, 则中断循环
+      )
+    )
   }
+  throw new AbortError()
 }
 
 /**
@@ -202,3 +221,5 @@ export class BadMessageState extends CustomError {}
 export class NotFound extends CustomError {}
 
 export class DuplicatePayload extends CustomError {}
+
+export { AbortError } from 'extra-promise'

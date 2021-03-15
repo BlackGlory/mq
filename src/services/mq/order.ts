@@ -1,5 +1,6 @@
 import { FastifyPluginAsync } from 'fastify'
 import { idSchema, tokenSchema } from '@src/schema'
+import { AbortController } from 'abort-controller'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.get<{
@@ -31,8 +32,11 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      const result = await Core.MQ.order(queueId)
+      const controller = new AbortController()
+      const result = await Core.MQ.order(queueId, controller.signal)
       reply.status(200).send(result)
+
+      req.raw.on('close', () => controller.abort())
     }
   )
 }

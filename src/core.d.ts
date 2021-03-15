@@ -36,7 +36,10 @@ interface ICore {
      */
     set(queueId: string, messageId: string, type: string, payload: string): Promise<void>
 
-    order(queueId: string): Promise<string>
+    /**
+     * @throws {AbortError}
+     */
+    order(queueId: string, abortSignal: AbortSignal): Promise<string>
 
     /**
      * @throws {NotFound}
@@ -80,6 +83,7 @@ interface ICore {
     NotFound: CustomErrorConstructor
     BadMessageState: CustomErrorConstructor
     DuplicatePayload: CustomErrorConstructor
+    AbortError: CustomErrorConstructor
   }
 
   Configuration: {
