@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/BlackGlory/mq/compare/v0.2.0...v0.3.0) (2021-03-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename `configurations` to `config` in urls
+
+### Features
+
+* rename `configurations` to `config` in urls ([bef3a2a](https://github.com/BlackGlory/mq/commit/bef3a2a4f1eb595d469930af6ff26a4a7a9daf0d))
+
 ## 0.2.0 (2021-03-14)
 
 
