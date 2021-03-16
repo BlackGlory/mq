@@ -18,6 +18,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
+      const controller = new AbortController()
+      req.raw.on('close', () => controller.abort())
+
       const queueId = req.params.queueId
       const token = req.query.token
 
@@ -32,11 +35,8 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      const controller = new AbortController()
       const result = await Core.MQ.order(queueId, controller.signal)
       reply.status(200).send(result)
-
-      req.raw.on('close', () => controller.abort())
     }
   )
 }
