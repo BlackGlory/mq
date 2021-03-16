@@ -21,7 +21,7 @@ export async function draft(queueId: string, priority?: number): Promise<string>
 export async function set(queueId: string, messageId: string, type: string, payload: string): Promise<void> {
   await maintain(queueId)
 
-  const configurations = await ConfigurationDAO.getConfigurations(queueId)
+  const configurations = await ConfigurationDAO.getConfiguration(queueId)
   const unique = configurations.unique ?? UNIQUE()
 
   try {
@@ -45,7 +45,7 @@ export async function order(queueId: string, abortSignal: AbortSignal): Promise<
 
     const configurations = await withAbortSignal(
       abortSignal
-    , () => ConfigurationDAO.getConfigurations(queueId)
+    , () => ConfigurationDAO.getConfiguration(queueId)
     )
     const concurrency = configurations.concurrency ?? CONCURRENCY()
     const throttle = THROTTLE()
@@ -194,7 +194,7 @@ async function maintain(queueId: string): Promise<void> {
   let emit = false
   const timestamp = Date.now()
 
-  const configurations = await ConfigurationDAO.getConfigurations(queueId)
+  const configurations = await ConfigurationDAO.getConfiguration(queueId)
 
   const draftingTimeout = configurations.draftingTimeout ?? DRAFTING_TIMEOUT()
   if (draftingTimeout !== Infinity) {

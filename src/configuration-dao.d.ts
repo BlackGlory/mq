@@ -1,4 +1,4 @@
-interface Configurations {
+interface Configuration {
   unique: boolean | null
   draftingTimeout: number | null
   orderedTimeout: number | null
@@ -16,8 +16,8 @@ interface Throttle {
 }
 
 interface IConfigurationDAO {
-  getAllIdsWithConfigurations(): Promise<string[]>
-  getConfigurations(queueId: string): Promise<Configurations>
+  getAllIdsWithConfiguration(): Promise<string[]>
+  getConfiguration(queueId: string): Promise<Configuration>
 
   setUnique(queueId: string, val: boolean): Promise<void>
   unsetUnique(queueId: string): Promise<void>

@@ -10,7 +10,7 @@ beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
 describe('Configuration', () => {
-  describe('getAllIdsWithConfigurations(): string[]', () => {
+  describe('getAllIdsWithConfiguration(): string[]', () => {
     it('return string[]', () => {
       const id = 'id'
       setMinimalConfiguration({
@@ -18,13 +18,13 @@ describe('Configuration', () => {
       , uniq: 1
       })
 
-      const result = DAO.getAllIdsWithConfigurations()
+      const result = DAO.getAllIdsWithConfiguration()
 
       expect(result).toEqual([id])
     })
   })
 
-  describe('getConfigurations(mqId: string): Configurations', () => {
+  describe('getConfiguration(mqId: string): Configuration', () => {
     describe('exists', () => {
       it('return', () => {
         const id = 'id'
@@ -33,7 +33,7 @@ describe('Configuration', () => {
         , uniq: 1
         })
 
-        const result = DAO.getConfigurations(id)
+        const result = DAO.getConfiguration(id)
 
         expect(result).toEqual({
           unique: true
@@ -50,7 +50,7 @@ describe('Configuration', () => {
       it('return', () => {
         const id = 'id'
 
-        const result = DAO.getConfigurations(id)
+        const result = DAO.getConfiguration(id)
 
         expect(result).toEqual({
           unique: null

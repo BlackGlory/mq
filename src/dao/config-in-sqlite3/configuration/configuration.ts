@@ -1,6 +1,6 @@
 import { getDatabase } from '../database'
 
-export function getAllIdsWithConfigurations(): string[] {
+export function getAllIdsWithConfiguration(): string[] {
   const result = getDatabase().prepare(`
     SELECT mq_id
       FROM mq_configuration;
@@ -8,7 +8,7 @@ export function getAllIdsWithConfigurations(): string[] {
   return result.map(x => x['mq_id'])
 }
 
-export function getConfigurations(id: string): Configurations {
+export function getConfiguration(id: string): Configuration {
   const row: {
     'uniq': number | null
     'drafting_timeout': number | null

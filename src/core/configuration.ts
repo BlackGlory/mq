@@ -1,11 +1,11 @@
 import { ConfigurationDAO } from '@dao/config-in-sqlite3/configuration'
 
 export function getAllIds(): Promise<string[]> {
-  return ConfigurationDAO.getAllIdsWithConfigurations()
+  return ConfigurationDAO.getAllIdsWithConfiguration()
 }
 
-export function get(queueId: string): Promise<Configurations> {
-  return ConfigurationDAO.getConfigurations(queueId)
+export function get(queueId: string): Promise<Configuration> {
+  return ConfigurationDAO.getConfiguration(queueId)
 }
 
 export function setUnique(queueId: string, val: boolean): Promise<void> {

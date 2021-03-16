@@ -3,7 +3,7 @@ import { idSchema } from '@src/schema'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.get(
-    '/mq-with-configurations'
+    '/mq-with-config'
   , {
       schema: {
         response: {
@@ -23,7 +23,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.get<{
     Params: { id: string }
   }>(
-    '/mq/:id/configurations'
+    '/mq/:id/config'
   , {
       schema: {
         params: { id: idSchema }
@@ -87,7 +87,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     Params: { id: string }
     Body: boolean
   }>(
-    '/mq/:id/configurations/unique'
+    '/mq/:id/config/unique'
   , {
       schema: {
         params: { id: idSchema }
@@ -108,7 +108,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.delete<{
     Params: { id: string }
   }>(
-    '/mq/:id/configurations/unique'
+    '/mq/:id/config/unique'
   , {
       schema: {
         params: { id: idSchema }
@@ -128,7 +128,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     Params: { id: string }
     Body: number
   }>(
-    '/mq/:id/configurations/drafting-timeout'
+    '/mq/:id/config/drafting-timeout'
   , {
       schema: {
         params: { id: idSchema }
@@ -149,7 +149,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.delete<{
     Params: { id: string }
   }>(
-    '/mq/:id/configurations/drafting-timeout'
+    '/mq/:id/config/drafting-timeout'
   , {
       schema: {
         params: { id: idSchema }
@@ -169,7 +169,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     Params: { id: string }
     Body: number
   }>(
-    '/mq/:id/configurations/ordered-timeout'
+    '/mq/:id/config/ordered-timeout'
   , {
       schema: {
         params: { id: idSchema }
@@ -189,7 +189,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.delete<{
     Params: { id: string }
   }>(
-    '/mq/:id/configurations/ordered-timeout'
+    '/mq/:id/config/ordered-timeout'
   , {
       schema: {
         params: { id: idSchema }
@@ -209,7 +209,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     Params: { id: string }
     Body: number
   }>(
-    '/mq/:id/configurations/active-timeout'
+    '/mq/:id/config/active-timeout'
   , {
       schema: {
         params: { id: idSchema }
@@ -229,7 +229,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.delete<{
     Params: { id: string }
   }>(
-    '/mq/:id/configurations/active-timeout'
+    '/mq/:id/config/active-timeout'
   , {
       schema: {
         params: { id: idSchema }
@@ -249,7 +249,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     Params: { id: string }
     Body: number
   }>(
-    '/mq/:id/configurations/concurrency'
+    '/mq/:id/config/concurrency'
   , {
       schema: {
         params: { id: idSchema }
@@ -269,7 +269,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.delete<{
     Params: { id: string }
   }>(
-    '/mq/:id/configurations/concurrency'
+    '/mq/:id/config/concurrency'
   , {
       schema: {
         params: { id: idSchema }
@@ -292,7 +292,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       limit: number
     }
   }>(
-    '/mq/:id/configurations/throttle'
+    '/mq/:id/config/throttle'
   , {
       schema: {
         params: { id: idSchema }
@@ -312,7 +312,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.delete<{
     Params: { id: string }
   }>(
-    '/mq/:id/configurations/throttle'
+    '/mq/:id/config/throttle'
   , {
       schema: {
         params: { id: idSchema }

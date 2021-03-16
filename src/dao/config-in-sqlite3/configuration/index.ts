@@ -1,8 +1,8 @@
 import * as Configuration from './configuration'
 
 export const ConfigurationDAO: IConfigurationDAO = {
-  getAllIdsWithConfigurations: asyncify(Configuration.getAllIdsWithConfigurations)
-, getConfigurations: asyncify(Configuration.getConfigurations)
+  getAllIdsWithConfiguration: asyncify(Configuration.getAllIdsWithConfiguration)
+, getConfiguration: asyncify(Configuration.getConfiguration)
 
 , setUnique: asyncify(Configuration.setUnique)
 , unsetUnique: asyncify(Configuration.unsetUnique)

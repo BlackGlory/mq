@@ -431,7 +431,7 @@ await fetch('http://localhost:8080/metrics').then(res => res.json())
 #+END_SRC
 
 *** Private
-**** 队列配置(configurations)
+**** 队列配置
 #+BEGIN_SRC ts
 {
   unique: boolean | null // 队列是否对消息自动去重, null表示继承全局设置
@@ -455,7 +455,7 @@ await fetch('http://localhost:8080/metrics').then(res => res.json())
 =MQ_THROTTLE=, 需满足JSON语法, 默认为无限制.
 
 ***** 获取所有具有配置的MQ id
-=GET /admin/mq-with-configurations=
+=GET /admin/mq-with-config=
 
 返回由JSON表示的字符串数组 =string[]=.
 
@@ -464,12 +464,12 @@ await fetch('http://localhost:8080/metrics').then(res => res.json())
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq-with-configurations"
+  "http://localhost:8080/admin/mq-with-config"
 #+END_SRC
 
 ******* fetch
 #+BEGIN_SRC js
-await fetch('http://localhost:8080/admin/mq-with-configurations', {
+await fetch('http://localhost:8080/admin/mq-with-config', {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -477,7 +477,7 @@ await fetch('http://localhost:8080/admin/mq-with-configurations', {
 #+END_SRC
 
 ***** 获取特定队列的配置
-=GET /admin/mq/<id>/configurations=
+=GET /admin/mq/<id>/config=
 
 返回JSON:
 #+BEGIN_SRC ts
@@ -499,12 +499,12 @@ await fetch('http://localhost:8080/admin/mq-with-configurations', {
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/configurations"
+  "http://localhost:8080/admin/mq/$id/config"
 #+END_SRC
 
 ******* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/configurations`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/config`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -512,12 +512,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/configurations`, {
 #+END_SRC
 
 ***** 设置配置
-=PUT /admin/mq/<mq-id>/configurations/unique=
-=PUT /admin/mq/<mq-id>/configurations/drafting-timeout=
-=PUT /admin/mq/<mq-id>/configurations/ordered-timeout=
-=PUT /admin/mq/<mq-id>/configurations/active-timeout=
-=PUT /admin/mq/<mq-id>/configurations/concurrency=
-=PUT /admin/mq/<mq-id>/configurations/throttle=
+=PUT /admin/mq/<mq-id>/config/unique=
+=PUT /admin/mq/<mq-id>/config/drafting-timeout=
+=PUT /admin/mq/<mq-id>/config/ordered-timeout=
+=PUT /admin/mq/<mq-id>/config/active-timeout=
+=PUT /admin/mq/<mq-id>/config/concurrency=
+=PUT /admin/mq/<mq-id>/config/throttle=
 
 Payload必须为对应的null以外的JSON值.
 
@@ -529,12 +529,12 @@ curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
   --header "Content-Type: application/json" \
   --data "$UNIQUE" \
-  "http://localhost:8080/admin/mq/$id/configurations/unique"
+  "http://localhost:8080/admin/mq/$id/config/unique"
 #+END_SRC
 
 ******* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/configurations/unique`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/config/unique`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -545,12 +545,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/configurations/unique`, {
 #+END_SRC
 
 ***** 移除配置
-=DELETE /admin/mq/<mq-id>/configurations/unique=
-=DELETE /admin/mq/<mq-id>/configurations/drafting-timeout=
-=DELETE /admin/mq/<mq-id>/configurations/ordered-timeout=
-=DELETE /admin/mq/<mq-id>/configurations/active-timeout=
-=DELETE /admin/mq/<mq-id>/configurations/concurrency=
-=DELETE /admin/mq/<mq-id>/configurations/throttle=
+=DELETE /admin/mq/<mq-id>/config/unique=
+=DELETE /admin/mq/<mq-id>/config/drafting-timeout=
+=DELETE /admin/mq/<mq-id>/config/ordered-timeout=
+=DELETE /admin/mq/<mq-id>/config/active-timeout=
+=DELETE /admin/mq/<mq-id>/config/concurrency=
+=DELETE /admin/mq/<mq-id>/config/throttle=
 
 ****** Example
 ******* curl
@@ -558,12 +558,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/configurations/unique`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/configurations/unique"
+  "http://localhost:8080/admin/mq/$id/config/unique"
 #+END_SRC
 
 ******* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/configurations/unique`, {
+await fetch(`http://localhost:8080/admin/mq/${id}/config/unique`, {
   method: 'DELETE'
 })
 #+END_SRC
