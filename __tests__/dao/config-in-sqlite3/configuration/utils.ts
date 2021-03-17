@@ -1,4 +1,4 @@
-import { NullablePropsToOptionalProps } from '@blackglory/types'
+import { MapNullablePropsToOptionalProps } from 'hotypes'
 import { getDatabase } from '@dao/config-in-sqlite3/database'
 
 interface IRawConfiguration {
@@ -39,7 +39,7 @@ export function setRawConfiguration<T extends IRawConfiguration>(item: T): T {
   return item
 }
 
-export function setMinimalConfiguration(item: NullablePropsToOptionalProps<IRawConfiguration>): IRawConfiguration {
+export function setMinimalConfiguration(item: MapNullablePropsToOptionalProps<IRawConfiguration>): IRawConfiguration {
   return setRawConfiguration({
     mq_id: item.mq_id
   , drafting_timeout: item.drafting_timeout ?? null

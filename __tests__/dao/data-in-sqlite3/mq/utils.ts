@@ -1,5 +1,5 @@
 import { getDatabase } from '@dao/data-in-sqlite3/database'
-import { NullablePropsToOptionalProps } from '@blackglory/types'
+import { MapNullablePropsToOptionalProps } from 'hotypes'
 
 type IState = 'drafting' | 'waiting' | 'ordered' | 'active' | 'completed' | 'failed'
 
@@ -78,7 +78,7 @@ export function setRawMessage<T extends IRawMessage>(item: T): T {
   return item
 }
 
-export function setMinimalRawMessage(item: NullablePropsToOptionalProps<IRawMessage>): IRawMessage {
+export function setMinimalRawMessage(item: MapNullablePropsToOptionalProps<IRawMessage>): IRawMessage {
   return setRawMessage({
     mq_id: item.mq_id
   , message_id: item.message_id
