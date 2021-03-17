@@ -88,7 +88,7 @@ interface ICore {
 
   Configuration: {
     getAllIds(): Promise<string[]>
-    get(id: string): Promise<Configuration>
+    get(id: string): Promise<IConfiguration>
 
     setUnique(queueId: string, val: boolean): Promise<void>
     unsetUnique(queueId: string): Promise<void>

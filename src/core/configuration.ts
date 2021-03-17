@@ -4,7 +4,7 @@ export function getAllIds(): Promise<string[]> {
   return ConfigurationDAO.getAllIdsWithConfiguration()
 }
 
-export function get(queueId: string): Promise<Configuration> {
+export function get(queueId: string): Promise<IConfiguration> {
   return ConfigurationDAO.getConfiguration(queueId)
 }
 

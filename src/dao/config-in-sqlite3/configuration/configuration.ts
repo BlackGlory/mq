@@ -8,7 +8,7 @@ export function getAllIdsWithConfiguration(): string[] {
   return result.map(x => x['mq_id'])
 }
 
-export function getConfiguration(id: string): Configuration {
+export function getConfiguration(id: string): IConfiguration {
   const row: {
     'uniq': number | null
     'drafting_timeout': number | null
