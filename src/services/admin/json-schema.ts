@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify'
 import { idSchema } from '@src/schema'
-import { Json } from '@blackglory/types'
+import { Json } from 'justypes'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.get(

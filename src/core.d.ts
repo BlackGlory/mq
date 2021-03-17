@@ -1,4 +1,4 @@
-type Json = import('@blackglory/types').Json
+type Json = import('justypes').Json
 type CustomErrorConstructor = import('@blackglory/errors').CustomErrorConstructor
 type CustomError = import('@blackglory/errors').CustomError
 
@@ -141,7 +141,7 @@ interface ICore {
     isEnabled(): boolean
     getAllIds(): Promise<string[]>
     get(id: string): Promise<string | null>
-    set(id: string, schema: import('@blackglory/types').Json): Promise<void>
+    set(id: string, schema: Json): Promise<void>
     remove(id: string): Promise<void>
 
     /**

@@ -1,5 +1,6 @@
 import { ValueGetter } from 'value-getter'
-import { Getter, isNumber, isObject } from '@blackglory/types'
+import { isNumber, isObject } from '@blackglory/types'
+import { Getter } from 'hotypes'
 import { assert } from '@blackglory/errors'
 import { getCache } from '@env/cache'
 import { path as appRoot } from 'app-root-path'
