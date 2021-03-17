@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/BlackGlory/mq/compare/v0.3.0...v0.3.1) (2021-03-17)
+
+
+### Bug Fixes
+
+* order ([367d103](https://github.com/BlackGlory/mq/commit/367d103a25c825e7bfc23a12b00270b7c9840751))
+
 ## [0.3.0](https://github.com/BlackGlory/mq/compare/v0.2.0...v0.3.0) (2021-03-16)
 
 
