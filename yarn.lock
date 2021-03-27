@@ -1318,10 +1318,10 @@ ajv@^7.2.1:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-ajv@^7.2.4:
-  version "7.2.4"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-7.2.4.tgz#8e239d4d56cf884bccca8cca362f508446dc160f"
-  integrity sha512-nBeQgg/ZZA3u3SYxyaDvpvDtgZ/EZPF547ARgZBrG9Bhu1vKDwAIjtIf+sDtJUKa2zOcEbmRLBRSyMraS/Oy1A==
+ajv@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.0.0.tgz#392f0aee6a4b6ee8367f5b0bf516e43210762ae7"
+  integrity sha512-AgKgeO3Y58RMZoi3S+6OYqGjndt8VlrCwGM3bQEMtbGTLOO+VrymV1Fb0TnffzG4gSwa6MEgIreOn9y3Q9rt+A==
   dependencies:
     fast-deep-equal "^3.1.1"
     json-schema-traverse "^1.0.0"
@@ -3176,10 +3176,10 @@ extra-promise@^0.15.6:
     reflect-metadata "^0.1.13"
     return-style "^0.12.2"
 
-extra-promise@^0.16.0:
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/extra-promise/-/extra-promise-0.16.0.tgz#77039485cf0a669ea305089ee8aa453958a04998"
-  integrity sha512-6AUfDqEOQ0qYXVSTLKvcE+y/xKOqznVDC69X/uOUW37YD/nsLTL4Rx/FvQ7JwsLIw6LlULTczPxnKVI6k7vZRQ==
+extra-promise@^0.16.2:
+  version "0.16.2"
+  resolved "https://registry.yarnpkg.com/extra-promise/-/extra-promise-0.16.2.tgz#ab8e04070dae72d246d6899e2acf28f7b91a0dbf"
+  integrity sha512-fd3mpWD+BH9pfB7aA5Bbx72uYRbwbzvxB7rbzhJ6GIWgGS7r1kCkPXTQ38ZP2h3gdODh0ouXTAH1iNf9IFR4gg==
   dependencies:
     "@blackglory/errors" "^1.1.2"
     "@blackglory/go" "^0.1.0"
@@ -3187,7 +3187,7 @@ extra-promise@^0.16.0:
     "@blackglory/types" "^0.4.1"
     eventemitter3 "^4.0.7"
     extra-fetch "^1.5.0"
-    iterable-operator "^0.13.5"
+    iterable-operator "^0.13.6"
     reflect-metadata "^0.1.13"
     return-style "^0.12.3"
 
