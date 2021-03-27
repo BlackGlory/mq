@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.3](https://github.com/BlackGlory/mq/compare/v0.3.2...v0.3.3) (2021-03-27)
+
+
+### Bug Fixes
+
+* maintainQueuesEverySecond ([a2c57cd](https://github.com/BlackGlory/mq/commit/a2c57cd5db1cf3a4feef6843c66199fc76fa2f03))
+
 ### [0.3.2](https://github.com/BlackGlory/mq/compare/v0.3.1...v0.3.2) (2021-03-27)
 
 ### [0.3.1](https://github.com/BlackGlory/mq/compare/v0.3.0...v0.3.1) (2021-03-17)
