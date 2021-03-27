@@ -12,7 +12,7 @@ export function maintainQueuesEverySecond(abortSignal: AbortSignal): void {
       await withAbortSignal(abortSignal, maintainAllQueues)
     } catch (e) {
       if (e instanceof AbortError) return cancel()
-      throw e
+      console.error(e)
     }
   })
 }

@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid'
 import { CustomError } from '@blackglory/errors'
 import { withAbortSignal, AbortError } from 'extra-promise'
 import { race, fromEvent, firstValueFrom } from 'rxjs'
+import { toArrayAsync } from 'iterable-operator'
 
 export async function draft(queueId: string, priority?: number): Promise<string> {
   const messageId = nanoid()
@@ -159,7 +160,8 @@ export async function* getAllQueueIds(): AsyncIterable<string> {
 }
 
 export async function maintainAllQueues(): Promise<void> {
-  for await (const id of MQDAO.getAllWorkingQueueIds()) {
+  const ids = await toArrayAsync(MQDAO.getAllWorkingQueueIds())
+  for (const id of ids) {
     await maintain(id)
   }
 }
