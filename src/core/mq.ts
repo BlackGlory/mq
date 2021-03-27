@@ -6,8 +6,6 @@ import { withAbortSignal, AbortError } from 'extra-promise'
 import { race, fromEvent, firstValueFrom } from 'rxjs'
 
 export async function draft(queueId: string, priority?: number): Promise<string> {
-  await maintain(queueId)
-
   const messageId = nanoid()
   await MQDAO.draftMessage(queueId, messageId, priority)
   return messageId
@@ -19,8 +17,6 @@ export async function draft(queueId: string, priority?: number): Promise<string>
  * @throws {DuplicatePayload}
  */
 export async function set(queueId: string, messageId: string, type: string, payload: string): Promise<void> {
-  await maintain(queueId)
-
   const configurations = await ConfigurationDAO.getConfiguration(queueId)
   const unique = configurations.unique ?? UNIQUE()
 
@@ -41,8 +37,6 @@ export async function set(queueId: string, messageId: string, type: string, payl
  */
 export async function order(queueId: string, abortSignal: AbortSignal): Promise<string> {
   while (!abortSignal.aborted) {
-    await withAbortSignal(abortSignal, () => maintain(queueId))
-
     const configurations = await withAbortSignal(
       abortSignal
     , () => ConfigurationDAO.getConfiguration(queueId)
@@ -74,8 +68,6 @@ export async function order(queueId: string, abortSignal: AbortSignal): Promise<
  * @throws {BadMessageState}
  */
 export async function get(queueId: string, messageId: string): Promise<IMessage> {
-  await maintain(queueId)
-
   try {
     const message = await MQDAO.getMessage(queueId, messageId)
     return message
@@ -90,8 +82,6 @@ export async function get(queueId: string, messageId: string): Promise<IMessage>
  * @throws {NotFound}
  */
 export async function abandon(queueId: string, messageId: string): Promise<void> {
-  await maintain(queueId)
-
   try {
     await MQDAO.abandonMessage(queueId, messageId)
   } catch (e) {
@@ -105,8 +95,6 @@ export async function abandon(queueId: string, messageId: string): Promise<void>
  * @throws {BadMessageState}
  */
 export async function complete(queueId: string, messageId: string): Promise<void> {
-  await maintain(queueId)
-
   try {
     await MQDAO.completeMessage(queueId, messageId)
   } catch (e) {
@@ -121,8 +109,6 @@ export async function complete(queueId: string, messageId: string): Promise<void
  * @throws {BadMessageState}
  */
 export async function fail(queueId: string, messageId: string): Promise<void> {
-  await maintain(queueId)
-
   try {
     await MQDAO.failMessage(queueId, messageId)
   } catch (e) {
@@ -137,8 +123,6 @@ export async function fail(queueId: string, messageId: string): Promise<void> {
  * @throws {BadMessageState}
  */
 export async function renew(queueId: string, messageId: string): Promise<void> {
-  await maintain(queueId)
-
   try {
     await MQDAO.renewMessage(queueId, messageId)
     queueMicrotask(() => SignalDAO.emit(queueId))
@@ -150,33 +134,23 @@ export async function renew(queueId: string, messageId: string): Promise<void> {
 }
 
 export async function abandonAllFailedMessages(queueId: string): Promise<void> {
-  await maintain(queueId)
-
   await MQDAO.abandonAllFailedMessages(queueId)
 }
 
 export async function renewAllFailedMessages(queueId: string): Promise<void> {
-  await maintain(queueId)
-
   await MQDAO.renewAllFailedMessages(queueId)
   queueMicrotask(() => SignalDAO.emit(queueId))
 }
 
 export async function clear(queueId: string): Promise<void> {
-  await maintain(queueId)
-
   await MQDAO.clear(queueId)
 }
 
 export async function stats(queueId: string): Promise<IStats> {
-  await maintain(queueId)
-
   return await MQDAO.stats(queueId)
 }
 
 export async function* getAllFailedMessageIds(queueId: string): AsyncIterable<string> {
-  await maintain(queueId)
-
   yield* MQDAO.getAllFailedMessageIds(queueId)
 }
 
