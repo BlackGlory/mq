@@ -15,7 +15,7 @@ describe('SignalDAO', () => {
     const elapsed = getTimestamp() - start
 
     expect(result).toBeInstanceOf(Observable)
-    expect(proResult).toBeNull()
+    expect(proResult).toBeUndefined()
     expect(elapsed).toBeGreaterThanOrEqual(1000 - TIME_ERROR)
   })
 })
