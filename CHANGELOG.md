@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/BlackGlory/mq/compare/v0.3.3...v0.4.0) (2021-04-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* The database schema has been upgraded.
+
+* rename ([7e66457](https://github.com/BlackGlory/mq/commit/7e66457922ac1c3deddcaaec9733776306565d4f))
+
 ### [0.3.3](https://github.com/BlackGlory/mq/compare/v0.3.2...v0.3.3) (2021-03-27)
 
 
