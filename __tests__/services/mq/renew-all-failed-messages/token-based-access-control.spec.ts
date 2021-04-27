@@ -19,16 +19,16 @@ describe('token-based access control', () => {
       describe('token matched', () => {
         it('204', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
+          const namespace = 'namespace'
+          const id = 'message-id'
           const token = 'token'
-          await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
-          await AccessControlDAO.setConsumeTokenRequired(mqId, true)
-          await AccessControlDAO.setConsumeToken({ id: mqId, token })
+          await prepareFailedMessage(namespace, id, 'text/plain', 'payload')
+          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
+          await AccessControlDAO.setConsumeToken({ namespace, token })
 
           const res = await fetch(patch(
             url(getAddress())
-          , pathname(`/mq/${mqId}/failed-messages/renew`)
+          , pathname(`/mq/${namespace}/failed-messages/renew`)
           , searchParam('token', token)
           ))
 
@@ -39,16 +39,16 @@ describe('token-based access control', () => {
       describe('token does not matched', () => {
         it('401', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
+          const namespace = 'namespace'
+          const id = 'message-id'
           const token = 'token'
-          await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
-          await AccessControlDAO.setConsumeTokenRequired(mqId, true)
-          await AccessControlDAO.setConsumeToken({ id: mqId, token })
+          await prepareFailedMessage(namespace, id, 'text/plain', 'payload')
+          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
+          await AccessControlDAO.setConsumeToken({ namespace, token })
 
           const res = await fetch(patch(
             url(getAddress())
-          , pathname(`/mq/${mqId}/failed-messages/renew`)
+          , pathname(`/mq/${namespace}/failed-messages/renew`)
           , searchParam('token', 'bad')
           ))
 
@@ -59,16 +59,16 @@ describe('token-based access control', () => {
       describe('no token', () => {
         it('401', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
+          const namespace = 'namespace'
+          const id = 'message-id'
           const token = 'token'
-          await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
-          await AccessControlDAO.setConsumeTokenRequired(mqId, true)
-          await AccessControlDAO.setConsumeToken({ id: mqId, token })
+          await prepareFailedMessage(namespace, id, 'text/plain', 'payload')
+          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
+          await AccessControlDAO.setConsumeToken({ namespace, token })
 
           const res = await fetch(patch(
             url(getAddress())
-          , pathname(`/mq/${mqId}/failed-messages/renew`)
+          , pathname(`/mq/${namespace}/failed-messages/renew`)
           ))
 
           expect(res.status).toBe(401)
@@ -76,18 +76,18 @@ describe('token-based access control', () => {
       })
     })
 
-    describe('id does not need consume tokens', () => {
+    describe('namespace does not need consume tokens', () => {
       describe('CONSUME_TOKEN_REQUIRED=true', () => {
         it('401', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.MQ_CONSUME_TOKEN_REQUIRED = 'true'
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
-          await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
+          const namespace = 'namespace'
+          const id = 'message-id'
+          await prepareFailedMessage(namespace, id, 'text/plain', 'payload')
 
           const res = await fetch(patch(
             url(getAddress())
-          , pathname(`/mq/${mqId}/failed-messages/renew`)
+          , pathname(`/mq/${namespace}/failed-messages/renew`)
           ))
 
           expect(res.status).toBe(401)
@@ -97,13 +97,13 @@ describe('token-based access control', () => {
       describe('CONSUME_TOKEN_REQUIRED=false', () => {
         it('204', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
-          await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
+          const namespace = 'namespace'
+          const id = 'message-id'
+          await prepareFailedMessage(namespace, id, 'text/plain', 'payload')
 
           const res = await fetch(patch(
             url(getAddress())
-          , pathname(`/mq/${mqId}/failed-messages/renew`)
+          , pathname(`/mq/${namespace}/failed-messages/renew`)
           ))
 
           expect(res.status).toBe(204)
@@ -116,16 +116,16 @@ describe('token-based access control', () => {
     describe('id need consume tokens', () => {
       describe('no token', () => {
         it('204', async () => {
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
+          const namespace = 'namespace'
+          const id = 'message-id'
           const token = 'token'
-          await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
-          await AccessControlDAO.setConsumeTokenRequired(mqId, true)
-          await AccessControlDAO.setConsumeToken({ id: mqId, token })
+          await prepareFailedMessage(namespace, id, 'text/plain', 'payload')
+          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
+          await AccessControlDAO.setConsumeToken({ namespace, token })
 
           const res = await fetch(patch(
             url(getAddress())
-          , pathname(`/mq/${mqId}/failed-messages/renew`)
+          , pathname(`/mq/${namespace}/failed-messages/renew`)
           ))
 
           expect(res.status).toBe(204)
@@ -133,20 +133,20 @@ describe('token-based access control', () => {
       })
     })
 
-    describe('id does not need consume tokens', () => {
+    describe('namespace does not need consume tokens', () => {
       describe('CONSUME_TOKEN_REQUIRED=true', () => {
         it('204', async () => {
           process.env.MQ_CONSUME_TOKEN_REQUIRED = 'true'
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
+          const namespace = 'namespace'
+          const id = 'message-id'
           const token = 'token'
-          await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
-          await AccessControlDAO.setConsumeTokenRequired(mqId, true)
-          await AccessControlDAO.setConsumeToken({ id: mqId, token })
+          await prepareFailedMessage(namespace, id, 'text/plain', 'payload')
+          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
+          await AccessControlDAO.setConsumeToken({ namespace, token })
 
           const res = await fetch(patch(
             url(getAddress())
-          , pathname(`/mq/${mqId}/failed-messages/renew`)
+          , pathname(`/mq/${namespace}/failed-messages/renew`)
           ))
 
           expect(res.status).toBe(204)

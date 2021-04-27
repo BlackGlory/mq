@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema } from '@src/schema'
+import { namespaceSchema } from '@src/schema'
 import { Json } from 'justypes'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
@@ -16,16 +16,16 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const result = await Core.JsonSchema.getAllIds()
+      const result = await Core.JsonSchema.getAllNamespaces()
       reply.send(result)
     }
   )
 
-  server.get<{ Params: { id: string }}>(
-    '/mq/:id/json-schema'
+  server.get<{ Params: { namespace: string }}>(
+    '/mq/:namespace/json-schema'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           200: { type: 'string' }
         , 404: { type: 'null' }
@@ -33,8 +33,8 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      const result = await Core.JsonSchema.get(id)
+      const namespace = req.params.namespace
+      const result = await Core.JsonSchema.get(namespace)
       if (result) {
         reply.header('content-type', 'application/json').send(result)
       } else {
@@ -44,39 +44,39 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: Json
   }>(
-    '/mq/:id/json-schema'
+    '/mq/:namespace/json-schema'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const schema = req.body
-      await Core.JsonSchema.set(id, schema)
+      await Core.JsonSchema.set(namespace, schema)
       reply.status(204).send()
     }
   )
 
-  server.delete<{ Params: { id: string }}>(
-    '/mq/:id/json-schema'
+  server.delete<{ Params: { namespace: string }}>(
+    '/mq/:namespace/json-schema'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.JsonSchema.remove(id)
+      const namespace = req.params.namespace
+      await Core.JsonSchema.remove(namespace)
       reply.status(204).send()
     }
   )

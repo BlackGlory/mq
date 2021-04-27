@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema, tokenSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema } from '@src/schema'
 import { stringifyJSONStreamAsync, stringifyNDJSONStreamAsync } from 'extra-generator'
 import accepts from 'fastify-accepts'
 import { Readable } from 'stream'
@@ -8,24 +8,24 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.register(accepts)
 
   server.get<{
-    Params: { queueId: string }
+    Params: { namespace: string }
     Querystring: { token?: string }
   }>(
-    '/mq/:queueId/failed-messages'
+    '/mq/:namespace/failed-messages'
   , {
       schema: {
-        params: { queueId: idSchema }
+        params: { namespace: namespaceSchema }
       , querystring: { token: tokenSchema }
       }
     }
   , async (req, reply) => {
-      const queueId = req.params.queueId
+      const namespace = req.params.namespace
       const token = req.query.token
 
       try {
-        await Core.Blacklist.check(queueId)
-        await Core.Whitelist.check(queueId)
-        await Core.TBAC.checkConsumePermission(queueId, token)
+        await Core.Blacklist.check(namespace)
+        await Core.Whitelist.check(namespace)
+        await Core.TBAC.checkConsumePermission(namespace, token)
       } catch (e) {
         if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
         if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
@@ -33,7 +33,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      const result = Core.MQ.getAllFailedMessageIds(queueId)
+      const result = Core.MQ.getAllFailedMessageIds(namespace)
 
       const accept = req.accepts().type(['application/json', 'application/x-ndjson'])
       if (accept === 'application/x-ndjson') {

@@ -19,15 +19,23 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-describe('setMessage(queueId: string, messageId: string, type: string, payload: string, unique?: boolean): void', () => {
+describe(`
+  setMessage(
+    namespace: string
+  , messageId: string
+  , type: string
+  , payload: string
+  , unique?: boolean
+  ): void
+`, () => {
   describe('message does not exist', () => {
     it('throw NotFound', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
       const messageId = 'message-id'
       const type = 'text/plain'
       const payload = 'payload'
 
-      const err = getError(() => DAO.setMessage(queueId, messageId, type, payload))
+      const err = getError(() => DAO.setMessage(namespace, messageId, type, payload))
 
       expect(err).toBeInstanceOf(NotFound)
     })
@@ -37,12 +45,12 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
     describe('unique', () => {
       describe('duplicate', () => {
         it('throw DuplicatePayload', () => {
-          const queueId = 'queue-id'
+          const namespace = 'namespace'
           const messageId = 'message-id'
           const type = 'text/plain'
           const payload = 'payload'
           setRawStats({
-            mq_id: queueId
+            namespace
           , drafting: 1
           , waiting: 1
           , ordered: 0
@@ -51,8 +59,8 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
           , failed: 0
           })
           setRawMessage({
-            mq_id: queueId
-          , message_id: 'old-message'
+            namespace
+          , id: 'old-message'
           , priority: null
           , type: 'text/plain'
           , payload
@@ -61,8 +69,8 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
           , state_updated_at: 0
           })
           setRawMessage({
-            mq_id: queueId
-          , message_id: messageId
+            namespace
+          , id: messageId
           , priority: null
           , type: null
           , payload: null
@@ -71,9 +79,9 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
           , state_updated_at: 0
           })
 
-          const result = getError(() => DAO.setMessage(queueId, messageId, type, payload, true))
-          const rawMessageResult = getRawMessage(queueId, messageId)
-          const rawStatsResult = getRawStats(queueId)
+          const result = getError(() => DAO.setMessage(namespace, messageId, type, payload, true))
+          const rawMessageResult = getRawMessage(namespace, messageId)
+          const rawStatsResult = getRawStats(namespace)
 
           expect(result).toBeInstanceOf(DuplicatePayload)
           expect(rawMessageResult).toMatchObject({
@@ -97,12 +105,12 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
 
       describe('not duplicate', () => {
         it('update message and convert state to waiting', () => {
-          const queueId = 'queue-id'
+          const namespace = 'namespace'
           const messageId = 'message-id'
           const type = 'text/plain'
           const payload = 'payload'
           setRawStats({
-            mq_id: queueId
+            namespace
           , drafting: 1
           , waiting: 1
           , ordered: 0
@@ -111,8 +119,8 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
           , failed: 0
           })
           setRawMessage({
-            mq_id: queueId
-          , message_id: 'old-message'
+            namespace
+          , id: 'old-message'
           , priority: null
           , type: 'text/plain'
           , payload: 'old-payload'
@@ -121,8 +129,8 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
           , state_updated_at: 0
           })
           setRawMessage({
-            mq_id: queueId
-          , message_id: messageId
+            namespace
+          , id: messageId
           , priority: null
           , type: null
           , payload: null
@@ -131,9 +139,9 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
           , state_updated_at: 0
           })
 
-          const result = DAO.setMessage(queueId, messageId, type, payload, true)
-          const rawMessageResult = getRawMessage(queueId, messageId)
-          const rawStatsResult = getRawStats(queueId)
+          const result = DAO.setMessage(namespace, messageId, type, payload, true)
+          const rawMessageResult = getRawMessage(namespace, messageId)
+          const rawStatsResult = getRawStats(namespace)
 
           expect(result).toBeUndefined()
           expect(rawMessageResult).toMatchObject({
@@ -158,12 +166,12 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
 
     describe('state: drafting', () => {
       it('update message and convert state to waiting', () => {
-        const queueId = 'queue-id'
+        const namespace = 'namespace'
         const messageId = 'message-id'
         const type = 'text/plain'
         const payload = 'payload'
         setRawStats({
-          mq_id: queueId
+          namespace
         , drafting: 1
         , waiting: 0
         , ordered: 0
@@ -172,8 +180,8 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         , failed: 0
         })
         setRawMessage({
-          mq_id: queueId
-        , message_id: messageId
+          namespace
+        , id: messageId
         , priority: null
         , type: null
         , payload: null
@@ -182,9 +190,9 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         , state_updated_at: 0
         })
 
-        const result = DAO.setMessage(queueId, messageId, type, payload)
-        const rawMessageResult = getRawMessage(queueId, messageId)
-        const rawStatsResult = getRawStats(queueId)
+        const result = DAO.setMessage(namespace, messageId, type, payload)
+        const rawMessageResult = getRawMessage(namespace, messageId)
+        const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
         expect(rawMessageResult).toMatchObject({
@@ -208,13 +216,13 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
 
     describe('state: waiting', () => {
       it('update message', () => {
-        const queueId = 'queue-id'
+        const namespace = 'namespace'
         const messageId = 'message-id'
         const type = 'text/plain'
         const payload = 'payload'
         const oldHash = 'old-hash'
         setRawStats({
-          mq_id: queueId
+          namespace
         , drafting: 0
         , waiting: 1
         , ordered: 0
@@ -223,8 +231,8 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         , failed: 0
         })
         setRawMessage({
-          mq_id: queueId
-        , message_id: messageId
+          namespace
+        , id: messageId
         , priority: null
         , type: 'old-type'
         , payload: 'old-payload'
@@ -233,9 +241,9 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         , state_updated_at: 0
         })
 
-        const result = DAO.setMessage(queueId, messageId, type, payload)
-        const rawMessageResult = getRawMessage(queueId, messageId)
-        const rawStatsResult = getRawStats(queueId)
+        const result = DAO.setMessage(namespace, messageId, type, payload)
+        const rawMessageResult = getRawMessage(namespace, messageId)
+        const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
         expect(rawMessageResult).toMatchObject({
@@ -260,12 +268,12 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
 
     describe('other states', () => {
       it('throw BadMessageState', () => {
-        const queueId = 'queue-id'
+        const namespace = 'namespace'
         const messageId = 'message-id'
         const type = 'text/plain'
         const payload = 'payload'
         setRawStats({
-          mq_id: queueId
+          namespace
         , drafting: 0
         , waiting: 0
         , ordered: 0
@@ -274,8 +282,8 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         , failed: 0
         })
         setRawMessage({
-          mq_id: queueId
-        , message_id: messageId
+          namespace
+        , id: messageId
         , priority: null
         , type: 'old-type'
         , payload: 'old-payload'
@@ -284,9 +292,9 @@ describe('setMessage(queueId: string, messageId: string, type: string, payload: 
         , state_updated_at: 0
         })
 
-        const err = getError(() => DAO.setMessage(queueId, messageId, type, payload))
-        const rawMessageResult = getRawMessage(queueId, messageId)
-        const rawStatsResult = getRawStats(queueId)
+        const err = getError(() => DAO.setMessage(namespace, messageId, type, payload))
+        const rawMessageResult = getRawMessage(namespace, messageId)
+        const rawStatsResult = getRawStats(namespace)
 
         expect(err).toBeInstanceOf(BadMessageState)
         expect(rawMessageResult).toMatchObject({

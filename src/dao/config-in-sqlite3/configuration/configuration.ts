@@ -2,13 +2,13 @@ import { getDatabase } from '../database'
 
 export function getAllIdsWithConfiguration(): string[] {
   const result = getDatabase().prepare(`
-    SELECT mq_id
+    SELECT namespace
       FROM mq_configuration;
   `).all()
-  return result.map(x => x['mq_id'])
+  return result.map(x => x['namespace'])
 }
 
-export function getConfiguration(id: string): IConfiguration {
+export function getConfiguration(namespace: string): IConfiguration {
   const row: {
     'uniq': number | null
     'drafting_timeout': number | null
@@ -26,8 +26,8 @@ export function getConfiguration(id: string): IConfiguration {
          , throttle_duration
          , throttle_limit
       FROM mq_configuration
-     WHERE mq_id = $id;
-  `).get({ id })
+     WHERE namespace = $namespace;
+  `).get({ namespace })
 
   if (row) {
     const unique = row['uniq']
@@ -58,148 +58,148 @@ export function getConfiguration(id: string): IConfiguration {
   }
 }
 
-export function setUnique(id: string, val: boolean): void {
+export function setUnique(namespace: string, val: boolean): void {
   getDatabase().prepare(`
-    INSERT INTO mq_configuration (mq_id, uniq)
-    VALUES ($id, $unique)
-        ON CONFLICT(mq_id)
+    INSERT INTO mq_configuration (namespace, uniq)
+    VALUES ($namespace, $unique)
+        ON CONFLICT(namespace)
         DO UPDATE SET uniq = $unique;
-  `).run({ id, unique: booleanToNumber(val) })
+  `).run({ namespace, unique: booleanToNumber(val) })
 }
 
-export function unsetUnique(id: string): void {
+export function unsetUnique(namespace: string): void {
   const db = getDatabase()
   db.transaction(() => {
     db.prepare(`
       UPDATE mq_configuration
          SET uniq = NULL
-       WHERE mq_id = $id;
-    `).run({ id })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
 
-    deleteNoConfigurationsRow(id)
+    deleteNoConfigurationsRow(namespace)
   })()
 }
 
-export function setDraftingTimeout(id: string, val: number): void {
+export function setDraftingTimeout(namespace: string, val: number): void {
   getDatabase().prepare(`
-    INSERT INTO mq_configuration (mq_id, drafting_timeout)
-    VALUES ($id, $draftingTimeout)
-        ON CONFLICT(mq_id)
+    INSERT INTO mq_configuration (namespace, drafting_timeout)
+    VALUES ($namespace, $draftingTimeout)
+        ON CONFLICT(namespace)
         DO UPDATE SET drafting_timeout = $draftingTimeout;
-  `).run({ id, draftingTimeout: val })
+  `).run({ namespace, draftingTimeout: val })
 }
 
-export function unsetDraftingTimeout(id: string): void {
+export function unsetDraftingTimeout(namespace: string): void {
   const db = getDatabase()
   db.transaction(() => {
     db.prepare(`
       UPDATE mq_configuration
          SET drafting_timeout = NULL
-       WHERE mq_id = $id;
-    `).run({ id })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
 
-    deleteNoConfigurationsRow(id)
+    deleteNoConfigurationsRow(namespace)
   })()
 }
 
-export function setOrderedTimeout(id: string, val: number): void {
+export function setOrderedTimeout(namespace: string, val: number): void {
   getDatabase().prepare(`
-    INSERT INTO mq_configuration (mq_id, ordered_timeout)
-    VALUES ($id, $orderedTimeout)
-        ON CONFLICT(mq_id)
+    INSERT INTO mq_configuration (namespace, ordered_timeout)
+    VALUES ($namespace, $orderedTimeout)
+        ON CONFLICT(namespace)
         DO UPDATE SET ordered_timeout = $orderedTimeout;
-  `).run({ id, orderedTimeout: val })
+  `).run({ namespace, orderedTimeout: val })
 }
 
-export function unsetOrderedTimeout(id: string): void {
+export function unsetOrderedTimeout(namespace: string): void {
   const db = getDatabase()
   db.transaction(() => {
     db.prepare(`
       UPDATE mq_configuration
          SET ordered_timeout = NULL
-       WHERE mq_id = $id;
-    `).run({ id })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
 
-    deleteNoConfigurationsRow(id)
+    deleteNoConfigurationsRow(namespace)
   })()
 }
 
-export function setActiveTimeout(id: string, val: number): void {
+export function setActiveTimeout(namespace: string, val: number): void {
   getDatabase().prepare(`
-    INSERT INTO mq_configuration (mq_id, active_timeout)
-    VALUES ($id, $activeTimeout)
-        ON CONFLICT(mq_id)
+    INSERT INTO mq_configuration (namespace, active_timeout)
+    VALUES ($namespace, $activeTimeout)
+        ON CONFLICT(namespace)
         DO UPDATE SET active_timeout = $activeTimeout;
-  `).run({ id, activeTimeout: val })
+  `).run({ namespace, activeTimeout: val })
 }
 
-export function unsetActiveTimeout(id: string): void {
+export function unsetActiveTimeout(namespace: string): void {
   const db = getDatabase()
   db.transaction(() => {
     db.prepare(`
       UPDATE mq_configuration
          SET active_timeout = NULL
-       WHERE mq_id = $id;
-    `).run({ id })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
 
-    deleteNoConfigurationsRow(id)
+    deleteNoConfigurationsRow(namespace)
   })()
 }
 
-export function setConcurrency(id: string, val: number): void {
+export function setConcurrency(namespace: string, val: number): void {
   getDatabase().prepare(`
-    INSERT INTO mq_configuration (mq_id, concurrency)
-    VALUES ($id, $concurrency)
-        ON CONFLICT(mq_id)
+    INSERT INTO mq_configuration (namespace, concurrency)
+    VALUES ($namespace, $concurrency)
+        ON CONFLICT(namespace)
         DO UPDATE SET concurrency = $concurrency;
-  `).run({ id, concurrency: val })
+  `).run({ namespace, concurrency: val })
 }
 
-export function unsetConcurrency(id: string): void {
+export function unsetConcurrency(namespace: string): void {
   const db = getDatabase()
   db.transaction(() => {
     db.prepare(`
       UPDATE mq_configuration
          SET concurrency = NULL
-       WHERE mq_id = $id;
-    `).run({ id })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
 
-    deleteNoConfigurationsRow(id)
+    deleteNoConfigurationsRow(namespace)
   })()
 }
 
-export function setThrottle(id: string, val: Throttle): void {
+export function setThrottle(namespace: string, val: Throttle): void {
   getDatabase().prepare(`
-    INSERT INTO mq_configuration (mq_id, throttle_duration, throttle_limit)
-    VALUES ($id, $duration, $limit)
-        ON CONFLICT(mq_id)
+    INSERT INTO mq_configuration (namespace, throttle_duration, throttle_limit)
+    VALUES ($namespace, $duration, $limit)
+        ON CONFLICT(namespace)
         DO UPDATE SET throttle_duration = $duration
                     , throttle_limit = $limit
   `).run({
-    id
+    namespace
   , duration: val.duration
   , limit: val.limit
   })
 }
 
-export function unsetThrottle(id: string): void {
+export function unsetThrottle(namespace: string): void {
   const db = getDatabase()
   db.transaction(() => {
     db.prepare(`
       UPDATE mq_configuration
          SET throttle_duration = NULL
            , throttle_limit = NULL
-       WHERE mq_id = $id;
-    `).run({ id })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
 
-    deleteNoConfigurationsRow(id)
+    deleteNoConfigurationsRow(namespace)
   })()
 }
 
-function deleteNoConfigurationsRow(id: string): void {
+function deleteNoConfigurationsRow(namespace: string): void {
   getDatabase().prepare(`
     DELETE FROM mq_configuration
-     WHERE mq_id = $id
+     WHERE namespace = $namespace
        AND uniq = NULL
        AND drafting_timeout = NULL
        AND ordered_timeout = NULL
@@ -207,7 +207,7 @@ function deleteNoConfigurationsRow(id: string): void {
        AND concurrency = NULL
        AND throttle_duration = NULL
        AND throttle_limit = NULL
-  `).run({ id })
+  `).run({ namespace })
 }
 
 function numberToBoolean(val: number): boolean {

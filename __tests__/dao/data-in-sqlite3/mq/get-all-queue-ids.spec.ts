@@ -13,9 +13,9 @@ afterEach(clearDatabases)
 describe('getAllQueueIds(): Iterable<string>', () => {
   describe('exist', () => {
     it('return Iterable<string>', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
       setRawStats({
-        mq_id: queueId
+        namespace
       , drafting: 0
       , waiting: 0
       , ordered: 0
@@ -27,7 +27,7 @@ describe('getAllQueueIds(): Iterable<string>', () => {
       const result = DAO.getAllQueueIds()
 
       expect(result).toBeIterable()
-      expect(toArray(result)).toEqual([queueId])
+      expect(toArray(result)).toEqual([namespace])
     })
   })
 

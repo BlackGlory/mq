@@ -16,13 +16,13 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-describe('rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): void', () => {
+describe('rollbackOutdatedDraftingMessages(namespace: string, timestamp: number): void', () => {
   describe('no changes', () => {
     it('return false', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
       setRawMessage({
-        mq_id: queueId
-      , message_id: '1'
+        namespace
+      , id: '1'
       , hash: null
       , payload: null
       , priority: null
@@ -31,7 +31,7 @@ describe('rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
       , type: null
       })
       setRawStats({
-        mq_id: queueId
+        namespace
       , drafting: 1
       , waiting: 0
       , ordered: 0
@@ -40,9 +40,9 @@ describe('rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
       , failed: 0
       })
 
-      const result = DAO.rollbackOutdatedDraftingMessages(queueId, 1)
-      const messageExists = hasRawMessage(queueId, '1')
-      const rawStatsResult = getRawStats(queueId)
+      const result = DAO.rollbackOutdatedDraftingMessages(namespace, 1)
+      const messageExists = hasRawMessage(namespace, '1')
+      const rawStatsResult = getRawStats(namespace)
 
       expect(result).toBeFalse()
       expect(messageExists).toBeTrue()
@@ -59,10 +59,10 @@ describe('rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
 
   describe('changes', () => {
     it('return true', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
       setRawMessage({
-        mq_id: queueId
-      , message_id: '1'
+        namespace
+      , id: '1'
       , hash: null
       , payload: null
       , priority: null
@@ -71,8 +71,8 @@ describe('rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
       , type: null
       })
       setRawMessage({
-        mq_id: queueId
-      , message_id: '2'
+        namespace
+      , id: '2'
       , hash: null
       , payload: null
       , priority: null
@@ -81,7 +81,7 @@ describe('rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
       , type: null
       })
       setRawStats({
-        mq_id: queueId
+        namespace
       , drafting: 2
       , waiting: 0
       , ordered: 0
@@ -90,10 +90,10 @@ describe('rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
       , failed: 0
       })
 
-      const result = DAO.rollbackOutdatedDraftingMessages(queueId, 1)
-      const message1Exists = hasRawMessage(queueId, '1')
-      const message2Exists = hasRawMessage(queueId, '2')
-      const rawStatsResult = getRawStats(queueId)
+      const result = DAO.rollbackOutdatedDraftingMessages(namespace, 1)
+      const message1Exists = hasRawMessage(namespace, '1')
+      const message2Exists = hasRawMessage(namespace, '2')
+      const rawStatsResult = getRawStats(namespace)
 
       expect(result).toBeTrue()
       expect(message1Exists).toBeFalse()
@@ -110,13 +110,13 @@ describe('rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): 
   })
 })
 
-describe('rollbackOutdatedOrderedMessages(queueId: string, timestamp: number): void', () => {
+describe('rollbackOutdatedOrderedMessages(namespace: string, timestamp: number): void', () => {
   describe('no changes', () => {
     it('return false', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
       setRawMessage({
-        mq_id: queueId
-      , message_id: '1'
+        namespace
+      , id: '1'
       , hash: null
       , payload: null
       , priority: null
@@ -125,7 +125,7 @@ describe('rollbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
       , type: null
       })
       setRawStats({
-        mq_id: queueId
+        namespace
       , drafting: 0
       , waiting: 0
       , ordered: 1
@@ -134,9 +134,9 @@ describe('rollbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
       , failed: 0
       })
 
-      const result = DAO.rollbackOutdatedOrderedMessages(queueId, 1)
-      const rawMessageResult = getRawMessage(queueId, '1')
-      const rawStatsResult = getRawStats(queueId)
+      const result = DAO.rollbackOutdatedOrderedMessages(namespace, 1)
+      const rawMessageResult = getRawMessage(namespace, '1')
+      const rawStatsResult = getRawStats(namespace)
 
       expect(result).toBeFalse()
       expect(rawMessageResult).toMatchObject({
@@ -157,10 +157,10 @@ describe('rollbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
 
   describe('changes', () => {
     it('return true', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
       setRawMessage({
-        mq_id: queueId
-      , message_id: '1'
+        namespace
+      , id: '1'
       , hash: null
       , payload: null
       , priority: null
@@ -169,8 +169,8 @@ describe('rollbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
       , type: null
       })
       setRawMessage({
-        mq_id: queueId
-      , message_id: '2'
+        namespace
+      , id: '2'
       , hash: null
       , payload: null
       , priority: null
@@ -179,7 +179,7 @@ describe('rollbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
       , type: null
       })
       setRawStats({
-        mq_id: queueId
+        namespace
       , drafting: 0
       , waiting: 0
       , ordered: 2
@@ -188,10 +188,10 @@ describe('rollbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
       , failed: 0
       })
 
-      const result = DAO.rollbackOutdatedOrderedMessages(queueId, 1)
-      const rawMessage1Result = getRawMessage(queueId, '1')
-      const rawMessage2Result = getRawMessage(queueId, '2')
-      const rawStatsResult = getRawStats(queueId)
+      const result = DAO.rollbackOutdatedOrderedMessages(namespace, 1)
+      const rawMessage1Result = getRawMessage(namespace, '1')
+      const rawMessage2Result = getRawMessage(namespace, '2')
+      const rawStatsResult = getRawStats(namespace)
 
       expect(result).toBeTrue()
       expect(rawMessage1Result).toMatchObject({
@@ -215,13 +215,13 @@ describe('rollbackOutdatedOrderedMessages(queueId: string, timestamp: number): v
   })
 })
 
-describe('rollbackOutdatedActiveMessages(queueId: string, timestamp: number): void', () => {
+describe('rollbackOutdatedActiveMessages(namespace: string, timestamp: number): void', () => {
   describe('no changes', () => {
     it('return false', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
       setRawMessage({
-        mq_id: queueId
-      , message_id: '1'
+        namespace
+      , id: '1'
       , hash: null
       , payload: null
       , priority: null
@@ -230,7 +230,7 @@ describe('rollbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
       , type: null
       })
       setRawStats({
-        mq_id: queueId
+        namespace
       , drafting: 0
       , waiting: 0
       , ordered: 0
@@ -239,9 +239,9 @@ describe('rollbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
       , failed: 0
       })
 
-      const result = DAO.rollbackOutdatedActiveMessages(queueId, 1)
-      const rawMessageResult = getRawMessage(queueId, '1')
-      const rawStatsResult = getRawStats(queueId)
+      const result = DAO.rollbackOutdatedActiveMessages(namespace, 1)
+      const rawMessageResult = getRawMessage(namespace, '1')
+      const rawStatsResult = getRawStats(namespace)
 
       expect(result).toBeFalse()
       expect(rawMessageResult).toMatchObject({
@@ -261,10 +261,10 @@ describe('rollbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
 
   describe('changes', () => {
     it('return true', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
       setRawMessage({
-        mq_id: queueId
-      , message_id: '1'
+        namespace
+      , id: '1'
       , hash: null
       , payload: null
       , priority: null
@@ -273,8 +273,8 @@ describe('rollbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
       , type: null
       })
       setRawMessage({
-        mq_id: queueId
-      , message_id: '2'
+        namespace
+      , id: '2'
       , hash: null
       , payload: null
       , priority: null
@@ -283,7 +283,7 @@ describe('rollbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
       , type: null
       })
       setRawStats({
-        mq_id: queueId
+        namespace
       , drafting: 0
       , waiting: 0
       , ordered: 0
@@ -292,10 +292,10 @@ describe('rollbackOutdatedActiveMessages(queueId: string, timestamp: number): vo
       , failed: 0
       })
 
-      const result = DAO.rollbackOutdatedActiveMessages(queueId, 1)
-      const rawMessage1Result = getRawMessage(queueId, '1')
-      const rawMessage2Result = getRawMessage(queueId, '2')
-      const rawStatsResult = getRawStats(queueId)
+      const result = DAO.rollbackOutdatedActiveMessages(namespace, 1)
+      const rawMessage1Result = getRawMessage(namespace, '1')
+      const rawMessage2Result = getRawMessage(namespace, '2')
+      const rawStatsResult = getRawStats(namespace)
 
       expect(result).toBeTrue()
       expect(rawMessage1Result).toMatchObject({

@@ -1,57 +1,57 @@
 import { ConfigurationDAO } from '@dao/config-in-sqlite3/configuration'
 
-export function getAllIds(): Promise<string[]> {
-  return ConfigurationDAO.getAllIdsWithConfiguration()
+export function getAllNamespaces(): Promise<string[]> {
+  return ConfigurationDAO.getAllNamespacesWithConfiguration()
 }
 
-export function get(queueId: string): Promise<IConfiguration> {
-  return ConfigurationDAO.getConfiguration(queueId)
+export function get(namespace: string): Promise<IConfiguration> {
+  return ConfigurationDAO.getConfiguration(namespace)
 }
 
-export function setUnique(queueId: string, val: boolean): Promise<void> {
-  return ConfigurationDAO.setUnique(queueId, val)
+export function setUnique(namespace: string, val: boolean): Promise<void> {
+  return ConfigurationDAO.setUnique(namespace, val)
 }
 
-export function unsetUnique(queueId: string): Promise<void> {
-  return ConfigurationDAO.unsetUnique(queueId)
+export function unsetUnique(namespace: string): Promise<void> {
+  return ConfigurationDAO.unsetUnique(namespace)
 }
 
-export function setDraftingTimeout(queueId: string, val: number): Promise<void> {
-  return ConfigurationDAO.setDraftingTimeout(queueId, val)
+export function setDraftingTimeout(namespace: string, val: number): Promise<void> {
+  return ConfigurationDAO.setDraftingTimeout(namespace, val)
 }
 
-export function unsetDraftingTimeout(queueId: string): Promise<void> {
-  return ConfigurationDAO.unsetDraftingTimeout(queueId)
+export function unsetDraftingTimeout(namespace: string): Promise<void> {
+  return ConfigurationDAO.unsetDraftingTimeout(namespace)
 }
 
-export function setOrderedTimeout(queueId: string, val: number): Promise<void> {
-  return ConfigurationDAO.setOrderedTimeout(queueId, val)
+export function setOrderedTimeout(namespace: string, val: number): Promise<void> {
+  return ConfigurationDAO.setOrderedTimeout(namespace, val)
 }
 
-export function unsetOrderedTimeout(queueId: string): Promise<void> {
-  return ConfigurationDAO.unsetOrderedTimeout(queueId)
+export function unsetOrderedTimeout(namespace: string): Promise<void> {
+  return ConfigurationDAO.unsetOrderedTimeout(namespace)
 }
 
-export function setActiveTimeout(queueId: string, val: number): Promise<void> {
-  return ConfigurationDAO.setActiveTimeout(queueId, val)
+export function setActiveTimeout(namespace: string, val: number): Promise<void> {
+  return ConfigurationDAO.setActiveTimeout(namespace, val)
 }
 
-export function unsetActiveTimeout(queueId: string): Promise<void> {
-  return ConfigurationDAO.unsetActiveTimeout(queueId)
+export function unsetActiveTimeout(namespace: string): Promise<void> {
+  return ConfigurationDAO.unsetActiveTimeout(namespace)
 }
 
-export function setConcurrency(queueId: string, val: number): Promise<void> {
-  return ConfigurationDAO.setConcurrency(queueId, val)
+export function setConcurrency(namespace: string, val: number): Promise<void> {
+  return ConfigurationDAO.setConcurrency(namespace, val)
 }
 
-export function unsetConcurrency(queueId: string): Promise<void> {
-  return ConfigurationDAO.unsetConcurrency(queueId)
+export function unsetConcurrency(namespace: string): Promise<void> {
+  return ConfigurationDAO.unsetConcurrency(namespace)
 }
 
-export function setThrottle(queueId: string, val: Throttle): Promise<void> {
-  return ConfigurationDAO.setThrottle(queueId, val)
+export function setThrottle(namespace: string, val: Throttle): Promise<void> {
+  return ConfigurationDAO.setThrottle(namespace, val)
 }
 
-export function unsetThrottle(queueId: string): Promise<void> {
-  return ConfigurationDAO.unsetThrottle(queueId)
+export function unsetThrottle(namespace: string): Promise<void> {
+  return ConfigurationDAO.unsetThrottle(namespace)
 }

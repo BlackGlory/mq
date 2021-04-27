@@ -13,12 +13,12 @@ afterEach(stopService)
 
 describe('no access control', () => {
   it('200', async () => {
-    const mqId = 'mq-id'
+    const namespace = 'namespace'
     const payload = { priority: null }
 
     const res = await fetch(post(
       url(getAddress())
-    , pathname(`/mq/${mqId}/messages`)
+    , pathname(`/mq/${namespace}/messages`)
     , json(payload)
     ))
 

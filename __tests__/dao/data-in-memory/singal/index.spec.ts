@@ -6,11 +6,11 @@ const TIME_ERROR = 1
 
 describe('SignalDAO', () => {
   it('observe, emit', async () => {
-    const key = 'key'
+    const namespace = 'namespace'
 
     const start = getTimestamp()
-    setTimeout(() => SignalDAO.emit(key), 1000)
-    const result = SignalDAO.observe(key)
+    setTimeout(() => SignalDAO.emit(namespace), 1000)
+    const result = SignalDAO.observe(namespace)
     const proResult = await firstValueFrom(result)
     const elapsed = getTimestamp() - start
 

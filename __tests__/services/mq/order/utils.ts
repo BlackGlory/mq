@@ -1,6 +1,11 @@
 import { MQDAO } from '@dao'
 
-export async function prepareWaitingMessage(queueId: string, messageId: string, type: string, payload: string) {
-  await MQDAO.draftMessage(queueId, messageId)
-  await MQDAO.setMessage(queueId, messageId, type, payload)
+export async function prepareWaitingMessage(
+  namespace: string
+, id: string
+, type: string
+, payload: string
+) {
+  await MQDAO.draftMessage(namespace, id)
+  await MQDAO.setMessage(namespace, id, type, payload)
 }

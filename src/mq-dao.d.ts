@@ -1,57 +1,74 @@
 interface IMQDAO {
-  draftMessage(queueId: string, messageId: string, priority?: number): Promise<void>
+  draftMessage(namespace: string, messageId: string, priority?: number): Promise<void>
 
   /**
    * @throws {NotFound}
    * @throws {BadMessageState}
    * @throws {DuplicatePayload}
    */
-  setMessage(queueId: string, messageId: string, type: string, payload: string, unique?: boolean): Promise<void>
+  setMessage(
+    namespace: string
+  , messageId: string
+  , type: string
+  , payload: string
+  , unique?: boolean
+  ): Promise<void>
 
-  orderMessage(queueId: string, concurrency: number, duration: number, limit: number): Promise<string | null>
-
-  /**
-   * @throws {NotFound}
-   * @throws {BadMessageState}
-   */
-  getMessage(queueId: string, messageId: string): Promise<IMessage>
-
-  /**
-   * @throws {NotFound}
-   */
-  abandonMessage(queueId: string, messageId: string): Promise<void>
-
-  /**
-   * @throws {NotFound}
-   * @throws {BadMessageState}
-   */
-  completeMessage(queueId: string, messageId: string): Promise<void>
+  orderMessage(
+    namespace: string
+  , concurrency: number
+  , duration: number
+  , limit: number
+  ): Promise<string | null>
 
   /**
    * @throws {NotFound}
    * @throws {BadMessageState}
    */
-  failMessage(queueId: string, messageId: string): Promise<void>
+  getMessage(namespace: string, messageId: string): Promise<IMessage>
+
+  /**
+   * @throws {NotFound}
+   */
+  abandonMessage(namespace: string, messageId: string): Promise<void>
 
   /**
    * @throws {NotFound}
    * @throws {BadMessageState}
    */
-  renewMessage(queueId: string, messageId: string): Promise<void>
+  completeMessage(namespace: string, messageId: string): Promise<void>
 
-  abandonAllFailedMessages(queueId: string): Promise<void>
-  renewAllFailedMessages(queueId: string): Promise<void>
+  /**
+   * @throws {NotFound}
+   * @throws {BadMessageState}
+   */
+  failMessage(namespace: string, messageId: string): Promise<void>
 
-  stats(queueId: string): Promise<IStats>
-  clear(queueId: string): Promise<void>
+  /**
+   * @throws {NotFound}
+   * @throws {BadMessageState}
+   */
+  renewMessage(namespace: string, messageId: string): Promise<void>
 
-  getAllFailedMessageIds(queueId: string): AsyncIterable<string>
-  getAllWorkingQueueIds(): AsyncIterable<string>
-  getAllQueueIds(): AsyncIterable<string>
+  abandonAllFailedMessages(namespace: string): Promise<void>
+  renewAllFailedMessages(namespace: string): Promise<void>
 
-  rollbackOutdatedDraftingMessages(queueId: string, timestamp: number): Promise<boolean>
-  rollbackOutdatedOrderedMessages(queueId: string, timestamp: number): Promise<boolean>
-  rollbackOutdatedActiveMessages(queueId: string, timestamp: number): Promise<boolean>
+  stats(namespace: string): Promise<IStats>
+  clear(namespace: string): Promise<void>
+
+  getAllFailedMessageIds(namespace: string): AsyncIterable<string>
+  getAllWorkingNamespaces(): AsyncIterable<string>
+  getAllNamespaces(): AsyncIterable<string>
+
+  rollbackOutdatedDraftingMessages(
+    namespace: string
+  , timestamp: number
+  ): Promise<boolean>
+  rollbackOutdatedOrderedMessages(
+    namespace: string
+  , timestamp: number
+  ): Promise<boolean>
+  rollbackOutdatedActiveMessages(namespace: string, timestamp: number): Promise<boolean>
 
   NotFound: CustomErrorConstructor
   DuplicatePayload: CustomErrorConstructor

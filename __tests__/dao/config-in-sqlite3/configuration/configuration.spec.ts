@@ -12,28 +12,28 @@ afterEach(clearDatabases)
 describe('Configuration', () => {
   describe('getAllIdsWithConfiguration(): string[]', () => {
     it('return string[]', () => {
-      const id = 'id'
+      const namespace = 'namespace'
       setMinimalConfiguration({
-        mq_id: id
+        namespace
       , uniq: 1
       })
 
       const result = DAO.getAllIdsWithConfiguration()
 
-      expect(result).toEqual([id])
+      expect(result).toEqual([namespace])
     })
   })
 
-  describe('getConfiguration(mqId: string): Configuration', () => {
+  describe('getConfiguration(namespace: string): Configuration', () => {
     describe('exists', () => {
       it('return', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         setMinimalConfiguration({
-          mq_id: id
+          namespace
         , uniq: 1
         })
 
-        const result = DAO.getConfiguration(id)
+        const result = DAO.getConfiguration(namespace)
 
         expect(result).toEqual({
           unique: true
@@ -48,9 +48,9 @@ describe('Configuration', () => {
 
     describe('does not exist', () => {
       it('return', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.getConfiguration(id)
+        const result = DAO.getConfiguration(namespace)
 
         expect(result).toEqual({
           unique: null
@@ -64,29 +64,29 @@ describe('Configuration', () => {
     })
   })
 
-  describe('setUnique(mqId: string, val: boolean): void', () => {
+  describe('setUnique(namespace: string, val: boolean): vonamespace', () => {
     it('return undefined', () => {
-      const id = 'id'
+      const namespace = 'namespace'
 
-      const result = DAO.setUnique(id, true)
-      const row = getRawConfiguration(id)
+      const result = DAO.setUnique(namespace, true)
+      const row = getRawConfiguration(namespace)
 
       expect(result).toBeUndefined()
       expect(row).toMatchObject({ uniq: 1 })
     })
   })
 
-  describe('unsetUnique(mqId: string): void', () => {
+  describe('unsetUnique(namespace: string): vonamespace', () => {
     describe('exists', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         setMinimalConfiguration({
-          mq_id: id
+          namespace
         , drafting_timeout: 100
         })
 
-        const result = DAO.unsetUnique(id)
-        const row = getRawConfiguration(id)
+        const result = DAO.unsetUnique(namespace)
+        const row = getRawConfiguration(namespace)
 
         expect(result).toBeUndefined()
         expect(row).toMatchObject({ uniq: null })
@@ -95,39 +95,39 @@ describe('Configuration', () => {
 
     describe('does not exist', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.unsetUnique(id)
+        const result = DAO.unsetUnique(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawConfiguration(id)).toBeFalse()
+        expect(hasRawConfiguration(namespace)).toBeFalse()
       })
     })
   })
 
-  describe('setDraftingTimeout(mqId: string, val: number): void', () => {
+  describe('setDraftingTimeout(namespace: string, val: number): void', () => {
     it('return undefined', () => {
-      const id = 'id'
+      const namespace = 'namespace'
 
-      const result = DAO.setDraftingTimeout(id, 100)
-      const row = getRawConfiguration(id)
+      const result = DAO.setDraftingTimeout(namespace, 100)
+      const row = getRawConfiguration(namespace)
 
       expect(result).toBeUndefined()
       expect(row).toMatchObject({ drafting_timeout: 100 })
     })
   })
 
-  describe('unsetDraftingTimeout(id: string): void', () => {
+  describe('unsetDraftingTimeout(namespace: string): void', () => {
     describe('exists', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         setMinimalConfiguration({
-          mq_id: id
+          namespace
         , drafting_timeout: 100
         })
 
-        const result = DAO.unsetDraftingTimeout(id)
-        const row = getRawConfiguration(id)
+        const result = DAO.unsetDraftingTimeout(namespace)
+        const row = getRawConfiguration(namespace)
 
         expect(result).toBeUndefined()
         expect(row).toMatchObject({ drafting_timeout: null })
@@ -136,39 +136,39 @@ describe('Configuration', () => {
 
     describe('does not exist', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.unsetDraftingTimeout(id)
+        const result = DAO.unsetDraftingTimeout(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawConfiguration(id)).toBeFalse()
+        expect(hasRawConfiguration(namespace)).toBeFalse()
       })
     })
   })
 
-  describe('setOrderedTimeout(mqId: string, val: number): void', () => {
+  describe('setOrderedTimeout(namespace: string, val: number): void', () => {
     it('return undefined', () => {
-      const id = 'id'
+      const namespace = 'namespace'
 
-      const result = DAO.setOrderedTimeout(id, 100)
-      const row = getRawConfiguration(id)
+      const result = DAO.setOrderedTimeout(namespace, 100)
+      const row = getRawConfiguration(namespace)
 
       expect(result).toBeUndefined()
       expect(row).toMatchObject({ ordered_timeout: 100 })
     })
   })
 
-  describe('unsetOrderedTimeout(id: string): void', () => {
+  describe('unsetOrderedTimeout(namespace: string): void', () => {
     describe('exists', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         setMinimalConfiguration({
-          mq_id: id
+          namespace
         , ordered_timeout: 100
         })
 
-        const result = DAO.unsetOrderedTimeout(id)
-        const row = getRawConfiguration(id)
+        const result = DAO.unsetOrderedTimeout(namespace)
+        const row = getRawConfiguration(namespace)
 
         expect(result).toBeUndefined()
         expect(row).toMatchObject({ ordered_timeout: null })
@@ -177,39 +177,39 @@ describe('Configuration', () => {
 
     describe('does not exist', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.unsetOrderedTimeout(id)
+        const result = DAO.unsetOrderedTimeout(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawConfiguration(id)).toBeFalse()
+        expect(hasRawConfiguration(namespace)).toBeFalse()
       })
     })
   })
 
-  describe('setActiveTimeout(mqId: string, val: number): void', () => {
+  describe('setActiveTimeout(namespace: string, val: number): void', () => {
     it('return undefined', () => {
-      const id = 'id'
+      const namespace = 'namespace'
 
-      const result = DAO.setActiveTimeout(id, 100)
-      const row = getRawConfiguration(id)
+      const result = DAO.setActiveTimeout(namespace, 100)
+      const row = getRawConfiguration(namespace)
 
       expect(result).toBeUndefined()
       expect(row).toMatchObject({ active_timeout: 100 })
     })
   })
 
-  describe('unsetActiveTimeout(id: string): void', () => {
+  describe('unsetActiveTimeout(namespace: string): void', () => {
     describe('exists', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         setMinimalConfiguration({
-          mq_id: id
+          namespace
         , active_timeout: 100
         })
 
-        const result = DAO.unsetActiveTimeout(id)
-        const row = getRawConfiguration(id)
+        const result = DAO.unsetActiveTimeout(namespace)
+        const row = getRawConfiguration(namespace)
 
         expect(result).toBeUndefined()
         expect(row).toMatchObject({ active_timeout: null })
@@ -218,39 +218,39 @@ describe('Configuration', () => {
 
     describe('does not exist', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.unsetActiveTimeout(id)
+        const result = DAO.unsetActiveTimeout(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawConfiguration(id)).toBeFalse()
+        expect(hasRawConfiguration(namespace)).toBeFalse()
       })
     })
   })
 
-  describe('setConcurrency(mqId: string, val: number): void', () => {
+  describe('setConcurrency(namespace: string, val: number): void', () => {
     it('return undefined', () => {
-      const id = 'id'
+      const namespace = 'namespace'
 
-      const result = DAO.setConcurrency(id, 100)
-      const row = getRawConfiguration(id)
+      const result = DAO.setConcurrency(namespace, 100)
+      const row = getRawConfiguration(namespace)
 
       expect(result).toBeUndefined()
       expect(row).toMatchObject({ concurrency: 100 })
     })
   })
 
-  describe('unsetConcurrency(id: string): void', () => {
+  describe('unsetConcurrency(namespace: string): void', () => {
     describe('exists', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         setMinimalConfiguration({
-          mq_id: id
+          namespace
         , active_timeout: 100
         })
 
-        const result = DAO.unsetConcurrency(id)
-        const row = getRawConfiguration(id)
+        const result = DAO.unsetConcurrency(namespace)
+        const row = getRawConfiguration(namespace)
 
         expect(result).toBeUndefined()
         expect(row).toMatchObject({ concurrency: null })
@@ -259,25 +259,25 @@ describe('Configuration', () => {
 
     describe('does not exist', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.unsetConcurrency(id)
+        const result = DAO.unsetConcurrency(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawConfiguration(id)).toBeFalse()
+        expect(hasRawConfiguration(namespace)).toBeFalse()
       })
     })
   })
 
-  describe('setThrottle(mqId: string, val: Throttle): void', () => {
+  describe('setThrottle(namespace: string, val: Throttle): void', () => {
     it('return undefined', () => {
-      const id = 'id'
+      const namespace = 'namespace'
 
-      const result = DAO.setThrottle(id, {
+      const result = DAO.setThrottle(namespace, {
         duration: 100
       , limit: 200
       })
-      const row = getRawConfiguration(id)
+      const row = getRawConfiguration(namespace)
 
       expect(result).toBeUndefined()
       expect(row).toMatchObject({
@@ -287,18 +287,18 @@ describe('Configuration', () => {
     })
   })
 
-  describe('unsetThrottle(id: string): void', () => {
+  describe('unsetThrottle(namespace: string): void', () => {
     describe('exists', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         setMinimalConfiguration({
-          mq_id: id
+          namespace
         , throttle_duration: 100
         , throttle_limit: 200
         })
 
-        const result = DAO.unsetThrottle(id)
-        const row = getRawConfiguration(id)
+        const result = DAO.unsetThrottle(namespace)
+        const row = getRawConfiguration(namespace)
 
         expect(result).toBeUndefined()
         expect(row).toMatchObject({
@@ -310,12 +310,12 @@ describe('Configuration', () => {
 
     describe('does not exist', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.unsetThrottle(id)
+        const result = DAO.unsetThrottle(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawConfiguration(id)).toBeFalse()
+        expect(hasRawConfiguration(namespace)).toBeFalse()
       })
     })
   })

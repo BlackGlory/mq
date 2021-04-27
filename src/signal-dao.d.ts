@@ -1,4 +1,4 @@
 interface ISignalDAO {
-  emit(key: string): void
-  observe(key: string): import('rxjs').Observable<void>
+  emit(namespace: string): void
+  observe(namespace: string): import('rxjs').Observable<void>
 }

@@ -15,33 +15,33 @@ afterEach(stopService)
 
 describe('whitelist', () => {
   describe('enabled', () => {
-    describe('id in whitelist', () => {
+    describe('namespace in whitelist', () => {
       it('200', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'whitelist'
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
-        await prepareOrderedMessage(mqId, messageId, 'text/plain', 'payload')
-        await AccessControlDAO.addWhitelistItem(mqId)
+        const namespace = 'namespace'
+        const id = 'message-id'
+        await prepareOrderedMessage(namespace, id, 'text/plain', 'payload')
+        await AccessControlDAO.addWhitelistItem(namespace)
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}`)
+        , pathname(`/mq/${namespace}/messages/${id}`)
         ))
 
         expect(res.status).toBe(200)
       })
     })
 
-    describe('id not in whitelist', () => {
+    describe('namespace not in whitelist', () => {
       it('403', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'whitelist'
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
-        await prepareOrderedMessage(mqId, messageId, 'text/plain', 'payload')
+        const namespace = 'namespace'
+        const id = 'message-id'
+        await prepareOrderedMessage(namespace, id, 'text/plain', 'payload')
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}`)
+        , pathname(`/mq/${namespace}/messages/${id}`)
         ))
 
         expect(res.status).toBe(403)
@@ -50,15 +50,15 @@ describe('whitelist', () => {
   })
 
   describe('disabled', () => {
-    describe('id not in whitelist', () => {
+    describe('namespace not in whitelist', () => {
       it('200', async () => {
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
-        await prepareOrderedMessage(mqId, messageId, 'text/plain', 'payload')
+        const namespace = 'namespace'
+        const id = 'message-id'
+        await prepareOrderedMessage(namespace, id, 'text/plain', 'payload')
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}`)
+        , pathname(`/mq/${namespace}/messages/${id}`)
         ))
 
         expect(res.status).toBe(200)

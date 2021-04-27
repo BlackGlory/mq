@@ -1,6 +1,6 @@
 import { startService, stopService, getAddress } from '@test/utils'
 import { matchers } from 'jest-json-schema'
-import { prepareQueues } from './utils'
+import { prepareNamespaces } from './utils'
 import { fetch } from 'extra-fetch'
 import { get } from 'extra-request'
 import { url, pathname } from 'extra-request/lib/es2018/transformers'
@@ -15,8 +15,8 @@ afterEach(stopService)
 
 describe('no access control', () => {
   it('200', async () => {
-    const queueIds = ['queue-id']
-    await prepareQueues(queueIds)
+    const namespaces = ['namespace']
+    await prepareNamespaces(namespaces)
 
     const res = await fetch(get(
       url(getAddress())
@@ -24,6 +24,6 @@ describe('no access control', () => {
     ))
 
     expect(res.status).toBe(200)
-    expect(await toJSON(res)).toStrictEqual(queueIds)
+    expect(await toJSON(res)).toStrictEqual(namespaces)
   })
 })

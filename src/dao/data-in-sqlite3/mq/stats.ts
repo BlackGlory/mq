@@ -1,6 +1,6 @@
 import { getDatabase } from '../database'
 
-export function stats(id: string): IStats {
+export function stats(namespace: string): IStats {
   const row = getDatabase().prepare(`
     SELECT drafting
          , waiting
@@ -9,12 +9,12 @@ export function stats(id: string): IStats {
          , completed
          , failed
       FROM mq_stats
-     WHERE mq_id = $id;
-  `).get({ id })
+     WHERE namespace = $namespace;
+  `).get({ namespace })
 
   if (row) {
     return {
-      id
+      namespace
     , drafting: row['drafting']
     , waiting: row['waiting']
     , ordered: row['ordered']
@@ -24,7 +24,7 @@ export function stats(id: string): IStats {
     }
   } else {
     return {
-      id
+      namespace
     , drafting: 0
     , waiting: 0
     , ordered: 0

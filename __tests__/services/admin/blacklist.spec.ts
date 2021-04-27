@@ -58,15 +58,15 @@ describe('blacklist', () => {
     })
   })
 
-  describe('PUT /admin/blacklist/:id', () => {
+  describe('PUT /admin/blacklist/:namespace', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/blacklist/${id}`)
+        , pathname(`/admin/blacklist/${namespace}`)
         , headers(createAuthHeaders())
         ))
 
@@ -76,11 +76,11 @@ describe('blacklist', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/blacklist/${id}`)
+        , pathname(`/admin/blacklist/${namespace}`)
         ))
 
         expect(res.status).toBe(401)
@@ -90,11 +90,11 @@ describe('blacklist', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/blacklist/${id}`)
+        , pathname(`/admin/blacklist/${namespace}`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -103,15 +103,15 @@ describe('blacklist', () => {
     })
   })
 
-  describe('DELETE /admin/blacklist/:id', () => {
+  describe('DELETE /admin/blacklist/:namespace', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/blacklist/${id}`)
+        , pathname(`/admin/blacklist/${namespace}`)
         , headers(createAuthHeaders())
         ))
 
@@ -121,11 +121,11 @@ describe('blacklist', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/blacklist/${id}`)
+        , pathname(`/admin/blacklist/${namespace}`)
         ))
 
         expect(res.status).toBe(401)
@@ -135,11 +135,11 @@ describe('blacklist', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/blacklist/${id}`)
+        , pathname(`/admin/blacklist/${namespace}`)
         , headers(createAuthHeaders('bad'))
         ))
 

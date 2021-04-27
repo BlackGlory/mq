@@ -2,21 +2,21 @@ import { getDatabase } from '../database'
 import { getTimestamp } from './utils/get-timestamp'
 import { increaseDrafting } from './utils/stats'
 
-export function draftMessage(queueId: string, messageId: string, priority?: number): void {
+export function draftMessage(namespace: string, id: string, priority?: number): void {
   const timestamp = getTimestamp()
   const db = getDatabase()
 
   db.transaction(() => {
     db.prepare(`
-      INSERT INTO mq_message (mq_id, message_id, priority, state, state_updated_at)
-      VALUES ($mqId, $messageId, $priority, 'drafting', $stateUpdatedAt);
+      INSERT INTO mq_message (namespace, id, priority, state, state_updated_at)
+      VALUES ($namespace, $id, $priority, 'drafting', $stateUpdatedAt);
     `).run({
-      mqId: queueId
-    , messageId
+      namespace
+    , id
     , priority: priority === undefined ? null : priority
     , stateUpdatedAt: timestamp
     })
 
-    increaseDrafting(queueId)
+    increaseDrafting(namespace)
   })()
 }

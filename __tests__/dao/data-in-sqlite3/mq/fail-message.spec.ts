@@ -18,13 +18,13 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-describe('failMessage(queueId: string, messageId: string): void', () => {
+describe('failMessage(namespace: string, messageId: string): void', () => {
   describe('message does not exist', () => {
     it('throw NotFound', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
       const messageId = 'message-id'
 
-      const err = getError(() => DAO.failMessage(queueId, messageId))
+      const err = getError(() => DAO.failMessage(namespace, messageId))
 
       expect(err).toBeInstanceOf(NotFound)
     })
@@ -33,16 +33,16 @@ describe('failMessage(queueId: string, messageId: string): void', () => {
   describe('message exists', () => {
     describe('state: active', () => {
       it('convert state to failed', () => {
-        const queueId = 'queue-id'
+        const namespace = 'namespace'
         const messageId = 'message-id'
         setMinimalRawMessage({
-          mq_id: queueId
-        , message_id: messageId
+          namespace
+        , id: messageId
         , state: 'active'
         , state_updated_at: 0
         })
         setRawStats({
-          mq_id: queueId
+          namespace
         , drafting: 0
         , waiting: 0
         , ordered: 0
@@ -51,9 +51,9 @@ describe('failMessage(queueId: string, messageId: string): void', () => {
         , failed: 0
         })
 
-        const result = DAO.failMessage(queueId, messageId)
-        const exists = hasRawMessage(queueId, messageId)
-        const rawStatsResult = getRawStats(queueId)
+        const result = DAO.failMessage(namespace, messageId)
+        const exists = hasRawMessage(namespace, messageId)
+        const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
         expect(exists).toBeTrue()
@@ -70,16 +70,16 @@ describe('failMessage(queueId: string, messageId: string): void', () => {
 
     describe('other states', () => {
       it('throw BadMessageState', async () => {
-        const queueId = 'queue-id'
+        const namespace = 'namespace'
         const messageId = 'message-id'
         setMinimalRawMessage({
-          mq_id: queueId
-        , message_id: messageId
+          namespace
+        , id: messageId
         , state: 'waiting'
         , state_updated_at: 0
         })
         setRawStats({
-          mq_id: queueId
+          namespace
         , drafting: 0
         , waiting: 1
         , ordered: 0
@@ -88,7 +88,7 @@ describe('failMessage(queueId: string, messageId: string): void', () => {
         , failed: 0
         })
 
-        const err = getError(() => DAO.failMessage(queueId, messageId))
+        const err = getError(() => DAO.failMessage(namespace, messageId))
 
         expect(err).toBeInstanceOf(BadMessageState)
       })

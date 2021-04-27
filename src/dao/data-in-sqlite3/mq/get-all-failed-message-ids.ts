@@ -1,14 +1,14 @@
 import { getDatabase } from '../database'
 import { map } from 'iterable-operator'
 
-export function getAllFailedMessageIds(queueId: string): Iterable<string> {
+export function getAllFailedMessageIds(namespace: string): Iterable<string> {
   const iter = getDatabase().prepare(`
-    SELECT message_id
+    SELECT id
       FROM mq_message
-     WHERE mq_id = $mqId
+     WHERE namespace = $namespace
        AND state = 'failed'
      ORDER BY state_updated_at ASC;
-  `).iterate({ mqId: queueId })
+  `).iterate({ namespace })
 
-  return map(iter, x => x['message_id'])
+  return map(iter, x => x['id'])
 }

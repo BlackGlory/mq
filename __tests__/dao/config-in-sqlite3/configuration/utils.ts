@@ -2,7 +2,7 @@ import { MapNullablePropsToOptionalProps } from 'hotypes'
 import { getDatabase } from '@dao/config-in-sqlite3/database'
 
 interface IRawConfiguration {
-  mq_id: string
+  namespace: string
   uniq: number | null
   drafting_timeout: number | null
   ordered_timeout: number | null
@@ -12,10 +12,10 @@ interface IRawConfiguration {
   throttle_limit: number | null
 }
 
-export function setRawConfiguration<T extends IRawConfiguration>(item: T): T {
+export function setRawConfiguration<T extends IRawConfiguration>(raw: T): T {
   getDatabase().prepare(`
     INSERT INTO mq_configuration (
-      mq_id
+      namespace
     , uniq
     , drafting_timeout
     , ordered_timeout
@@ -25,7 +25,7 @@ export function setRawConfiguration<T extends IRawConfiguration>(item: T): T {
     , throttle_limit
     )
     VALUES (
-      $mq_id
+      $namespace
     , $uniq
     , $drafting_timeout
     , $ordered_timeout
@@ -34,32 +34,34 @@ export function setRawConfiguration<T extends IRawConfiguration>(item: T): T {
     , $throttle_duration
     , $throttle_limit
     );
-  `).run(item)
+  `).run(raw)
 
-  return item
+  return raw
 }
 
-export function setMinimalConfiguration(item: MapNullablePropsToOptionalProps<IRawConfiguration>): IRawConfiguration {
+export function setMinimalConfiguration(
+  raw: MapNullablePropsToOptionalProps<IRawConfiguration>
+): IRawConfiguration {
   return setRawConfiguration({
-    mq_id: item.mq_id
-  , drafting_timeout: item.drafting_timeout ?? null
-  , ordered_timeout: item.ordered_timeout ?? null
-  , active_timeout: item.active_timeout ?? null
-  , concurrency: item.concurrency ?? null
-  , throttle_duration: item.throttle_duration ?? null
-  , throttle_limit: item.throttle_limit ?? null
-  , uniq: item.uniq ?? null
+    namespace: raw.namespace
+  , drafting_timeout: raw.drafting_timeout ?? null
+  , ordered_timeout: raw.ordered_timeout ?? null
+  , active_timeout: raw.active_timeout ?? null
+  , concurrency: raw.concurrency ?? null
+  , throttle_duration: raw.throttle_duration ?? null
+  , throttle_limit: raw.throttle_limit ?? null
+  , uniq: raw.uniq ?? null
   })
 }
 
-export function hasRawConfiguration(id: string): boolean {
-  return !!getRawConfiguration(id)
+export function hasRawConfiguration(namespace: string): boolean {
+  return !!getRawConfiguration(namespace)
 }
 
-export function getRawConfiguration(id: string): IRawConfiguration | null {
+export function getRawConfiguration(namespace: string): IRawConfiguration | null {
   return getDatabase().prepare(`
     SELECT *
       FROM mq_configuration
-     WHERE mq_id = $id;
-  `).get({ id })
+     WHERE namespace = $namespace;
+  `).get({ namespace })
 }

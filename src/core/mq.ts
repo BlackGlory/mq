@@ -6,9 +6,9 @@ import { withAbortSignal, AbortError } from 'extra-promise'
 import { race, fromEvent, firstValueFrom } from 'rxjs'
 import { toArrayAsync } from 'iterable-operator'
 
-export async function draft(queueId: string, priority?: number): Promise<string> {
+export async function draft(namespace: string, priority?: number): Promise<string> {
   const messageId = nanoid()
-  await MQDAO.draftMessage(queueId, messageId, priority)
+  await MQDAO.draftMessage(namespace, messageId, priority)
   return messageId
 }
 
@@ -17,13 +17,18 @@ export async function draft(queueId: string, priority?: number): Promise<string>
  * @throws {BadMessageState}
  * @throws {DuplicatePayload}
  */
-export async function set(queueId: string, messageId: string, type: string, payload: string): Promise<void> {
-  const configurations = await ConfigurationDAO.getConfiguration(queueId)
+export async function set(
+  namespace: string
+, id: string
+, type: string
+, payload: string
+): Promise<void> {
+  const configurations = await ConfigurationDAO.getConfiguration(namespace)
   const unique = configurations.unique ?? UNIQUE()
 
   try {
-    await MQDAO.setMessage(queueId, messageId, type, payload, unique)
-    queueMicrotask(() => SignalDAO.emit(queueId))
+    await MQDAO.setMessage(namespace, id, type, payload, unique)
+    queueMicrotask(() => SignalDAO.emit(namespace))
   } catch (e) {
     if (e instanceof MQDAO.NotFound) throw new NotFound(e.message)
     if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)
@@ -36,27 +41,27 @@ export async function set(queueId: string, messageId: string, type: string, payl
  * 该函数是一个长时函数, 每个异步操作都应该可以响应AbortSignal以提前返回.
  * @throws {AbortError}
  */
-export async function order(queueId: string, abortSignal: AbortSignal): Promise<string> {
+export async function order(namespace: string, abortSignal: AbortSignal): Promise<string> {
   while (!abortSignal.aborted) {
     const configurations = await withAbortSignal(
       abortSignal
-    , () => ConfigurationDAO.getConfiguration(queueId)
+    , () => ConfigurationDAO.getConfiguration(namespace)
     )
     const concurrency = configurations.concurrency ?? CONCURRENCY()
     const throttle = THROTTLE()
     const duration = configurations.throttle?.duration ?? throttle.duration
     const limit = configurations.throttle?.limit ?? throttle.limit
 
-    const messageId = await withAbortSignal(
+    const id = await withAbortSignal(
       abortSignal
-    , () => MQDAO.orderMessage(queueId, concurrency, duration, limit)
+    , () => MQDAO.orderMessage(namespace, concurrency, duration, limit)
     )
-    if (messageId) return messageId
+    if (id) return id
 
     await firstValueFrom(
       // 其中一个Observable返回值时, 另一个Observable会被退订
       race(
-        SignalDAO.observe(queueId) // 如果入列信号先返回, 则进入下一轮循环
+        SignalDAO.observe(namespace) // 如果入列信号先返回, 则进入下一轮循环
       , fromEvent(abortSignal, 'abort') // 如果中断信号先返回, 则中断循环
       )
     )
@@ -68,9 +73,9 @@ export async function order(queueId: string, abortSignal: AbortSignal): Promise<
  * @throws {NotFound}
  * @throws {BadMessageState}
  */
-export async function get(queueId: string, messageId: string): Promise<IMessage> {
+export async function get(namespace: string, id: string): Promise<IMessage> {
   try {
-    const message = await MQDAO.getMessage(queueId, messageId)
+    const message = await MQDAO.getMessage(namespace, id)
     return message
   } catch (e) {
     if (e instanceof MQDAO.NotFound) throw new NotFound(e.message)
@@ -82,9 +87,9 @@ export async function get(queueId: string, messageId: string): Promise<IMessage>
 /**
  * @throws {NotFound}
  */
-export async function abandon(queueId: string, messageId: string): Promise<void> {
+export async function abandon(namespace: string, id: string): Promise<void> {
   try {
-    await MQDAO.abandonMessage(queueId, messageId)
+    await MQDAO.abandonMessage(namespace, id)
   } catch (e) {
     if (e instanceof MQDAO.NotFound) throw new NotFound(e.message)
     throw e
@@ -95,9 +100,9 @@ export async function abandon(queueId: string, messageId: string): Promise<void>
  * @throws {NotFound}
  * @throws {BadMessageState}
  */
-export async function complete(queueId: string, messageId: string): Promise<void> {
+export async function complete(namespace: string, id: string): Promise<void> {
   try {
-    await MQDAO.completeMessage(queueId, messageId)
+    await MQDAO.completeMessage(namespace, id)
   } catch (e) {
     if (e instanceof MQDAO.NotFound) throw new NotFound(e.message)
     if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)
@@ -109,9 +114,9 @@ export async function complete(queueId: string, messageId: string): Promise<void
  * @throws {NotFound}
  * @throws {BadMessageState}
  */
-export async function fail(queueId: string, messageId: string): Promise<void> {
+export async function fail(namespace: string, id: string): Promise<void> {
   try {
-    await MQDAO.failMessage(queueId, messageId)
+    await MQDAO.failMessage(namespace, id)
   } catch (e) {
     if (e instanceof MQDAO.NotFound) throw new NotFound(e.message)
     if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)
@@ -123,10 +128,10 @@ export async function fail(queueId: string, messageId: string): Promise<void> {
  * @throws {NotFound}
  * @throws {BadMessageState}
  */
-export async function renew(queueId: string, messageId: string): Promise<void> {
+export async function renew(namespace: string, id: string): Promise<void> {
   try {
-    await MQDAO.renewMessage(queueId, messageId)
-    queueMicrotask(() => SignalDAO.emit(queueId))
+    await MQDAO.renewMessage(namespace, id)
+    queueMicrotask(() => SignalDAO.emit(namespace))
   } catch (e) {
     if (e instanceof MQDAO.NotFound) throw new NotFound(e.message)
     if (e instanceof MQDAO.BadMessageState) throw new BadMessageState(e.message)
@@ -134,62 +139,62 @@ export async function renew(queueId: string, messageId: string): Promise<void> {
   }
 }
 
-export async function abandonAllFailedMessages(queueId: string): Promise<void> {
-  await MQDAO.abandonAllFailedMessages(queueId)
+export async function abandonAllFailedMessages(namespace: string): Promise<void> {
+  await MQDAO.abandonAllFailedMessages(namespace)
 }
 
-export async function renewAllFailedMessages(queueId: string): Promise<void> {
-  await MQDAO.renewAllFailedMessages(queueId)
-  queueMicrotask(() => SignalDAO.emit(queueId))
+export async function renewAllFailedMessages(namespace: string): Promise<void> {
+  await MQDAO.renewAllFailedMessages(namespace)
+  queueMicrotask(() => SignalDAO.emit(namespace))
 }
 
-export async function clear(queueId: string): Promise<void> {
-  await MQDAO.clear(queueId)
+export async function clear(namespace: string): Promise<void> {
+  await MQDAO.clear(namespace)
 }
 
-export async function stats(queueId: string): Promise<IStats> {
-  return await MQDAO.stats(queueId)
+export async function stats(namespace: string): Promise<IStats> {
+  return await MQDAO.stats(namespace)
 }
 
-export async function* getAllFailedMessageIds(queueId: string): AsyncIterable<string> {
-  yield* MQDAO.getAllFailedMessageIds(queueId)
+export async function* getAllFailedMessageIds(namespace: string): AsyncIterable<string> {
+  yield* MQDAO.getAllFailedMessageIds(namespace)
 }
 
-export async function* getAllQueueIds(): AsyncIterable<string> {
-  yield* MQDAO.getAllQueueIds()
+export async function* getAllNamespaces(): AsyncIterable<string> {
+  yield* MQDAO.getAllNamespaces()
 }
 
-export async function maintainAllQueues(): Promise<void> {
-  const ids = await toArrayAsync(MQDAO.getAllWorkingQueueIds())
+export async function nextTick(): Promise<void> {
+  const ids = await toArrayAsync(MQDAO.getAllWorkingNamespaces())
   for (const id of ids) {
-    await maintain(id)
-  }
-}
-
-async function maintain(queueId: string): Promise<void> {
-  let emit = false
-  const timestamp = Date.now()
-
-  const configurations = await ConfigurationDAO.getConfiguration(queueId)
-
-  const draftingTimeout = configurations.draftingTimeout ?? DRAFTING_TIMEOUT()
-  if (draftingTimeout !== Infinity) {
-    await MQDAO.rollbackOutdatedDraftingMessages(queueId, timestamp - draftingTimeout)
+    await nextTick(id)
   }
 
-  const orderedTimeout = configurations.orderedTimeout ?? ORDERED_TIMEOUT()
-  if (orderedTimeout !== Infinity) {
-    const changed = await MQDAO.rollbackOutdatedOrderedMessages(queueId, timestamp - orderedTimeout)
-    if (changed) emit = true
-  }
+  async function nextTick(namespace: string): Promise<void> {
+    let emit = false
+    const timestamp = Date.now()
 
-  const activeTimeout = configurations.activeTimeout ?? ACTIVE_TIMEOUT()
-  if (activeTimeout !== Infinity) {
-    const changed = await MQDAO.rollbackOutdatedActiveMessages(queueId, timestamp - activeTimeout)
-    if (changed) emit = true
-  }
+    const configurations = await ConfigurationDAO.getConfiguration(namespace)
 
-  if (emit) await SignalDAO.emit(queueId)
+    const draftingTimeout = configurations.draftingTimeout ?? DRAFTING_TIMEOUT()
+    if (draftingTimeout !== Infinity) {
+      await MQDAO.rollbackOutdatedDraftingMessages(namespace, timestamp - draftingTimeout)
+    }
+
+    const orderedTimeout = configurations.orderedTimeout ?? ORDERED_TIMEOUT()
+    if (orderedTimeout !== Infinity) {
+      const changed = await MQDAO.rollbackOutdatedOrderedMessages(namespace, timestamp - orderedTimeout)
+      if (changed) emit = true
+    }
+
+    const activeTimeout = configurations.activeTimeout ?? ACTIVE_TIMEOUT()
+    if (activeTimeout !== Infinity) {
+      const changed = await MQDAO.rollbackOutdatedActiveMessages(namespace, timestamp - activeTimeout)
+      if (changed) emit = true
+    }
+
+    if (emit) await SignalDAO.emit(namespace)
+  }
 }
 
 export class BadMessageState extends CustomError {}

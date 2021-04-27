@@ -1,16 +1,16 @@
 import { getDatabase } from '../database'
 import { downcreaseFailed } from './utils/stats'
 
-export function abandonAllFailedMessages(queueId: string): void {
+export function abandonAllFailedMessages(namespace: string): void {
   const db = getDatabase()
 
   db.transaction(() => {
     const result = db.prepare(`
       DELETE FROM mq_message
-       WHERE mq_id = $queueId
+       WHERE namespace = $namespace
          AND state = 'failed';
-    `).run({ queueId })
+    `).run({ namespace })
 
-    downcreaseFailed(queueId, result.changes)
+    downcreaseFailed(namespace, result.changes)
   })()
 }

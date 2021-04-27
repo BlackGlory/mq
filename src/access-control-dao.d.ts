@@ -13,49 +13,49 @@ interface ITokenPolicy {
 
 interface IBlacklistDAO {
   getAllBlacklistItems(): Promise<string[]>
-  inBlacklist(id: string): Promise<boolean>
-  addBlacklistItem(id: string): Promise<void>
-  removeBlacklistItem(id: string): Promise<void>
+  inBlacklist(namespace: string): Promise<boolean>
+  addBlacklistItem(namespace: string): Promise<void>
+  removeBlacklistItem(namespace: string): Promise<void>
 }
 
 interface IWhitelistDAO {
   getAllWhitelistItems(): Promise<string[]>
-  inWhitelist(id: string): Promise<boolean>
-  addWhitelistItem(id: string): Promise<void>
-  removeWhitelistItem(id: string): Promise<void>
+  inWhitelist(namespace: string): Promise<boolean>
+  addWhitelistItem(namespace: string): Promise<void>
+  removeWhitelistItem(namespace: string): Promise<void>
 }
 
 interface ITokenDAO {
-  getAllIdsWithTokens(): Promise<string[]>
-  getAllTokens(id: string): Promise<Array<ITokenInfo>>
+  getAllNamespacesWithTokens(): Promise<string[]>
+  getAllTokens(namespace: string): Promise<Array<ITokenInfo>>
 
-  hasProduceTokens(id: string): Promise<boolean>
-  matchProduceToken(props: { token: string; id: string }): Promise<boolean>
-  setProduceToken(props: { token: string; id: string }): Promise<void>
-  unsetProduceToken(props: { token: string; id: string }): Promise<void>
+  hasProduceTokens(namespace: string): Promise<boolean>
+  matchProduceToken(params: { token: string; namespace: string }): Promise<boolean>
+  setProduceToken(params: { token: string; namespace: string }): Promise<void>
+  unsetProduceToken(params: { token: string; namespace: string }): Promise<void>
 
-  hasConsumeTokens(id: string): Promise<boolean>
-  matchConsumeToken(props: { token: string; id: string }): Promise<boolean>
-  setConsumeToken(props: { token: string; id: string }): Promise<void>
-  unsetConsumeToken(props: { token: string; id: string }): Promise<void>
+  hasConsumeTokens(namespace: string): Promise<boolean>
+  matchConsumeToken(params: { token: string; namespace: string }): Promise<boolean>
+  setConsumeToken(params: { token: string; namespace: string }): Promise<void>
+  unsetConsumeToken(params: { token: string; namespace: string }): Promise<void>
 
-  matchClearToken(props: { token: string; id: string }): Promise<boolean>
-  setClearToken(props: { token: string; id: string }): Promise<void>
-  unsetClearToken(props: { token: string; id: string }): Promise<void>
+  matchClearToken(params: { token: string; namespace: string }): Promise<boolean>
+  setClearToken(params: { token: string; namespace: string }): Promise<void>
+  unsetClearToken(params: { token: string; namespace: string }): Promise<void>
 }
 
 interface ITokenPolicyDAO {
-  getAllIdsWithTokenPolicies(): Promise<string[]>
-  getTokenPolicies(id: string): Promise<ITokenPolicy>
+  getAllNamespacesWithTokenPolicies(): Promise<string[]>
+  getTokenPolicies(namespace: string): Promise<ITokenPolicy>
 
-  setProduceTokenRequired(id: string, val: boolean): Promise<void>
-  unsetProduceTokenRequired(id: string): Promise<void>
+  setProduceTokenRequired(namespace: string, val: boolean): Promise<void>
+  unsetProduceTokenRequired(namespace: string): Promise<void>
 
-  setConsumeTokenRequired(id: string, val: boolean): Promise<void>
-  unsetConsumeTokenRequired(id: string): Promise<void>
+  setConsumeTokenRequired(namespace: string, val: boolean): Promise<void>
+  unsetConsumeTokenRequired(namespace: string): Promise<void>
 
-  setClearTokenRequired(id: string, val: boolean): Promise<void>
-  unsetClearTokenRequired(id: string): Promise<void>
+  setClearTokenRequired(namespace: string, val: boolean): Promise<void>
+  unsetClearTokenRequired(namespace: string): Promise<void>
 }
 
 interface IAccessControlDAO extends

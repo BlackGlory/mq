@@ -14,14 +14,14 @@ afterEach(stopService)
 
 describe('no access control', () => {
   it('204', async () => {
-    const mqId = 'mq-id'
-    const messageId = 'message-id'
+    const namespace = 'namespace'
+    const id = 'message-id'
     const payload = 'payload'
-    await prepareDraftingMessage(mqId, messageId)
+    await prepareDraftingMessage(namespace, id)
 
     const res = await fetch(put(
       url(getAddress())
-    , pathname(`/mq/${mqId}/messages/${messageId}`)
+    , pathname(`/mq/${namespace}/messages/${id}`)
     , json(payload)
     ))
 

@@ -12,18 +12,18 @@ jest.mock('@dao/data-in-sqlite3/database')
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-describe('clear(queueId: string): void', () => {
+describe('clear(namespace: string): void', () => {
   it('return undefined', () => {
-    const queueId = 'queue-id'
+    const namespace = 'namespace'
     const messageId = 'message-id'
     setMinimalRawMessage({
-      mq_id: queueId
-    , message_id: messageId
+      namespace
+    , id: messageId
     , state: 'waiting'
     , state_updated_at: 0
     })
     setRawStats({
-      mq_id: queueId
+      namespace
     , drafting: 0
     , waiting: 1
     , ordered: 0
@@ -32,15 +32,15 @@ describe('clear(queueId: string): void', () => {
     , failed: 0
     })
     setRawThrottle({
-      mq_id: queueId
+      namespace
     , cycle_start_time: 0
     , count: 1
     })
 
-    const result = DAO.clear(queueId)
-    const messageExists = hasRawMessage(queueId, messageId)
-    const statsExists = hasRawStats(queueId)
-    const throttleExists = hasRawThrottle(queueId)
+    const result = DAO.clear(namespace)
+    const messageExists = hasRawMessage(namespace, messageId)
+    const statsExists = hasRawStats(namespace)
+    const throttleExists = hasRawThrottle(namespace)
 
     expect(result).toBeUndefined()
     expect(messageExists).toBeFalse()

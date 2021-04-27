@@ -3,7 +3,6 @@ import * as Whitelist from './whitelist'
 import * as Token from './token'
 import * as TokenPolicy from './token-policy'
 
-
 const BlacklistDAO: IBlacklistDAO = {
   addBlacklistItem: asyncify(Blacklist.addBlacklistItem)
 , getAllBlacklistItems: asyncify(Blacklist.getAllBlacklistItems)
@@ -19,7 +18,7 @@ const WhitelistDAO: IWhitelistDAO = {
 }
 
 const TokenDAO: ITokenDAO = {
-  getAllIdsWithTokens: asyncify(Token.getAllIdsWithTokens)
+  getAllNamespacesWithTokens: asyncify(Token.getAllIdsWithTokens)
 , getAllTokens: asyncify(Token.getAllTokens)
 
 , hasProduceTokens: asyncify(Token.hasProduceTokens)
@@ -38,7 +37,7 @@ const TokenDAO: ITokenDAO = {
 }
 
 const TokenPolicyDAO: ITokenPolicyDAO = {
-  getAllIdsWithTokenPolicies: asyncify(TokenPolicy.getAllIdsWithTokenPolicies)
+  getAllNamespacesWithTokenPolicies: asyncify(TokenPolicy.getAllIdsWithTokenPolicies)
 , getTokenPolicies: asyncify(TokenPolicy.getTokenPolicies)
 
 , setProduceTokenRequired: asyncify(TokenPolicy.setProduceTokenRequired)

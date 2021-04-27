@@ -14,13 +14,13 @@ afterEach(stopService)
 
 describe('no access control', () => {
   it('204', async () => {
-    const mqId = 'mq-id'
-    const messageId = 'message-id'
-    await MQDAO.draftMessage(mqId, messageId)
+    const namespace = 'namespace'
+    const id = 'message-id'
+    await MQDAO.draftMessage(namespace, id)
 
     const res = await fetch(del(
       url(getAddress())
-    , pathname(`/mq/${mqId}/messages/${messageId}`)
+    , pathname(`/mq/${namespace}/messages/${id}`)
     ))
 
     expect(res.status).toBe(204)

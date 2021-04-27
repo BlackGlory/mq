@@ -76,14 +76,14 @@ volumes:
 #+END_SRC
 
 ** API
-所有API中的id都需要满足此正则表达式: `^[a-zA-Z0-9\.\-_]{0,255}$`
+所有API中的namespace都需要满足此正则表达式: `^[a-zA-Z0-9\.\-_]{0,255}$`
 
 *** Public
 **** producer
 ***** draft
-=POST /mq/<mq-id>/messages=
+=POST /mq/<namespace>/messages=
 
-申请往特定消息队列放入消息, id用于标识消息队列.
+申请往特定消息队列放入消息, namespace用于标识消息队列.
 该动作创建一个drafting状态的message, 返回此message的id.
 
 需要按以下格式发送Payload:
@@ -102,12 +102,12 @@ curl \
   --request POST \
   --header 'Content-Type: application/json' \
   --data '{ "priority": null }' \
-  "http://localhost:8080/mq/$mqId/messages"
+  "http://localhost:8080/mq/$namespace/messages"
 #+END_SRC
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}/messages`, {
+await fetch(`http://localhost:8080/mq/${namespace}/messages`, {
   method: 'POST'
 , headers: { 'Content-Type': 'application/json' }
 , body: JSON.stringify({ priority: null })
@@ -115,7 +115,7 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages`, {
 #+END_SRC
 
 ***** <<set>>
-=PUT /mq/<mq-id>/messages/<msg-id>=
+=PUT /mq/<namespace>/messages/<id>=
 
 发送消息正文并确认入列, 当消息的状态是drafting时, 转为waiting状态.
 若消息的状态是waiting, 可以再次调用此操作对消息内容进行更新.
@@ -130,12 +130,12 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages`, {
   curl \
     --request PUT \
     --data "$msg" \
-    "http://localhost:8080/mq/$mqId/messages/$msgId"
+    "http://localhost:8080/mq/$namespace/messages/$id"
 #+END_SRC
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`, {
+await fetch(`http://localhost:8080/mq/${namespace}/messages/${id}`, {
   method: 'PUT'
 , body: msg
 })
@@ -143,7 +143,7 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`, {
 
 **** consumer
 ***** order
-=GET /mq/<mq-id>/messages=
+=GET /mq/<namespace>/messages=
 
 从特定消息队列取出消息, 优先级最高且最早的消息会先被取出.
 返回message id.
@@ -156,16 +156,16 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`, {
 ****** Example
 ******* curl
 #+BEGIN_SRC sh
-curl "http://localhost:8080/mq/$mqId/messages"
+curl "http://localhost:8080/mq/$namespace/messages"
 #+END_SRC
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}/messages`).then(res => res.text())
+await fetch(`http://localhost:8080/mq/${namespace}/messages`).then(res => res.text())
 #+END_SRC
 
 ***** <<get>>
-=GET /mq/<mq-id>/messages/<msg-id>=
+=GET /mq/<namespace>/messages/<id>=
 
 获取特定队列的指定消息, 仅当消息的状态为ordered时, 消息会从ordered状态转为active状态.
 一个处于active状态的消息会在设定的超时时间后以waiting状态重新入列, 优先级不会改变.
@@ -182,16 +182,16 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages`).then(res => res.text())
 ****** Example
 ******* curl
 #+BEGIN_SRC sh
-curl "http://localhost:8080/mq/$mqId/messages/$msgId"
+curl "http://localhost:8080/mq/$namespace/messages/$id"
 #+END_SRC
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`).then(res => res.text())
+await fetch(`http://localhost:8080/mq/${namespace}/messages/${id}`).then(res => res.text())
 #+END_SRC
 
 ***** <<abandon>>
-=DELETE /mq/<mq-id>/messages/<msg-id>=
+=DELETE /mq/<namespace>/messages/<id>=
 
 废弃此消息, 消息将不会纳入统计结果.
 
@@ -204,18 +204,18 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`).then(res => re
 #+BEGIN_SRC sh
 curl \
   --request DELETE \
-  "http://localhost:8080/mq/$mqId/messages/$msgId"
+  "http://localhost:8080/mq/$namespace/messages/$id"
 #+END_SRC
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`, {
+await fetch(`http://localhost:8080/mq/${namespace}/messages/${id}`, {
   method: 'DELETE'
 })
 #+END_SRC
 
 ***** <<complete>>
-=PATCH /mq/<mq-id>/messages/<msg-id>/complete=
+=PATCH /mq/<namespace>/messages/<id>/complete=
 
 当消息处于active状态时表示消息被消耗完毕, 消息将被统计为已完成的消息(completed).
 
@@ -229,18 +229,18 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}`, {
 #+BEGIN_SRC sh
 curl \
   --request PATCH \
-  "http://localhost:8080/mq/$mqId/messages/$msgId/complete"
+  "http://localhost:8080/mq/$namespace/messages/$id/complete"
 #+END_SRC
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/complete`, {
+await fetch(`http://localhost:8080/mq/${namespace}/messages/${id}/complete`, {
   method: 'PATCH'
 })
 #+END_SRC
 
 ***** <<fail>>
-=PATCH /mq/<mq_id>/messages/<msg-id>/fail=
+=PATCH /mq/<namespace>/messages/<id>/fail=
 
 当消息处于active状态时表示消息在消耗过程中失败,
 消息将从active状态转为failed状态, 同时被统计为已失败的消息(failed).
@@ -255,18 +255,18 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/complete`, {
 #+BEGIN_SRC sh
 curl \
   --request PATCH \
-  "http://localhost:8080/mq/$mqId/messages/$msgId/fail"
+  "http://localhost:8080/mq/$namespace/messages/$id/fail"
 #+END_SRC
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/fail`, {
+await fetch(`http://localhost:8080/mq/${namespace}/messages/${id}/fail`, {
   method: 'PATCH'
 })
 #+END_SRC
 
 ***** renew
-=PATCH /mq/<mq_id>/messages/<msg-id>/renew=
+=PATCH /mq/<namespace>/messages/<id>/renew=
 
 当消息处于failed状态时表示将消息重新入列, 消息将从failed状态转为waiting状态.
 
@@ -280,18 +280,18 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/fail`, {
 #+BEGIN_SRC sh
 curl \
   --request PATCH \
-  "http://localhost:8080/mq/$mqId/messages/$msgId/renew"
+  "http://localhost:8080/mq/$namespace/messages/$id/renew"
 #+END_SRC
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/renew`, {
+await fetch(`http://localhost:8080/mq/${namespace}/messages/${id}/renew`, {
   method: 'PATCH'
 })
 #+END_SRC
 
 ***** get all failed message ids
-=GET /mq/<mq_id>/failed-messages=
+=GET /mq/<namespace>/failed-messages=
 
 列出所有处于failed状态的消息id.
 返回 =Array<string>=.
@@ -301,16 +301,16 @@ await fetch(`http://localhost:8080/mq/${mqId}/messages/${msgId}/renew`, {
 ****** Example
 ******* curl
 #+BEGIN_SRC sh
-curl "http://localhost:8080/mq/$mqId/failed-messages"
+curl "http://localhost:8080/mq/$namespace/failed-messages"
 #+END_SRC
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}/failed-messages`).then(res => res.json())
+await fetch(`http://localhost:8080/mq/${namespace}/failed-messages`).then(res => res.json())
 #+END_SRC
 
 ***** abandon all failed messages
-=DELETE /mq/<mq_id>/failed-messages=
+=DELETE /mq/<namespace>/failed-messages=
 
 将所有failed状态的消息废弃.
 
@@ -319,18 +319,18 @@ await fetch(`http://localhost:8080/mq/${mqId}/failed-messages`).then(res => res.
 #+BEGIN_SRC sh
 curl \
   --request DELETE \
-  "http://localhost:8080/mq/$mqId/failed-messages"
+  "http://localhost:8080/mq/$namespace/failed-messages"
 #+END_SRC
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}/failed-messages`, {
+await fetch(`http://localhost:8080/mq/${namespace}/failed-messages`, {
   method: 'POST'
 })
 #+END_SRC
 
 ***** renew all failed messages
-=PATCH /mq/<mq_id>/failed-messages/renew=
+=PATCH /mq/<namespace>/failed-messages/renew=
 
 将所有failed状态的消息以FIFO的顺序转为waiting状态.
 
@@ -339,18 +339,18 @@ await fetch(`http://localhost:8080/mq/${mqId}/failed-messages`, {
 #+BEGIN_SRC sh
 curl \
   --request PATCH \
-  "http://localhost:8080/mq/$mqId/failed-messages/renew"
+  "http://localhost:8080/mq/$namespace/failed-messages/renew"
 #+END_SRC
 
 ******* JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${mqId}/failed-messages/renew`, {
+await fetch(`http://localhost:8080/mq/${namespace}/failed-messages/renew`, {
   method: 'POST'
 })
 #+END_SRC
 
 **** <<clear>>
-=DELETE /mq/<id>=
+=DELETE /mq/<namespace>=
 
 清空队列内的所有消息和统计信息.
 
@@ -359,18 +359,18 @@ await fetch(`http://localhost:8080/mq/${mqId}/failed-messages/renew`, {
 #+BEGIN_SRC sh
 curl \
   --request DELETE \
-  "http://localhost:8080/mq/$id"
+  "http://localhost:8080/mq/$namespace"
 #+END_SRC
 
 ****** JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${id}`, {
+await fetch(`http://localhost:8080/mq/${namespace}`, {
   method: 'DELETE'
 })
 #+END_SRC
 
 **** stats
-=GET /mq/<id>/stats=
+=GET /mq/<namespace>/stats=
 
 获取统计信息, 查看当前队列中对应状态的消息个数.
 由于completed状态的消息不会保留, 因此completed的值是由计数器统计的.
@@ -378,7 +378,7 @@ await fetch(`http://localhost:8080/mq/${id}`, {
 
 #+BEGIN_SRC ts
 {
-  id: string
+  namespace: string
   drafting: number
   waiting: number
   ordered: number
@@ -391,18 +391,18 @@ await fetch(`http://localhost:8080/mq/${id}`, {
 ***** Example
 ****** curl
 #+BEGIN_SRC sh
-curl "http://localhost:8080/mq/$id/stats"
+curl "http://localhost:8080/mq/$namespace/stats"
 #+END_SRC
 
 ****** JavaScript
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${id}/stats`).then(res => res.json())
+await fetch(`http://localhost:8080/mq/${namespace}/stats`).then(res => res.json())
 #+END_SRC
 
-**** get all queue ids
+**** get all namespaces
 =GET /mq=
 
-获取所有有统计信息的队列id.
+获取所有有统计信息的队列namespace.
 
 返回 =Array<string>=.
 
@@ -454,7 +454,7 @@ await fetch('http://localhost:8080/metrics').then(res => res.json())
 =MQ_CONCURRENCY=, 默认为无限.
 =MQ_THROTTLE=, 需满足JSON语法, 默认为无限制.
 
-***** 获取所有具有配置的MQ id
+***** 获取所有具有配置的namespace
 =GET /admin/mq-with-config=
 
 返回由JSON表示的字符串数组 =string[]=.
@@ -477,7 +477,7 @@ await fetch('http://localhost:8080/admin/mq-with-config', {
 #+END_SRC
 
 ***** 获取特定队列的配置
-=GET /admin/mq/<id>/config=
+=GET /admin/mq/<namespace>/config=
 
 返回JSON:
 #+BEGIN_SRC ts
@@ -499,12 +499,12 @@ await fetch('http://localhost:8080/admin/mq-with-config', {
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/config"
+  "http://localhost:8080/admin/mq/$namespace/config"
 #+END_SRC
 
 ******* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/config`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/config`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -512,12 +512,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/config`, {
 #+END_SRC
 
 ***** 设置配置
-=PUT /admin/mq/<mq-id>/config/unique=
-=PUT /admin/mq/<mq-id>/config/drafting-timeout=
-=PUT /admin/mq/<mq-id>/config/ordered-timeout=
-=PUT /admin/mq/<mq-id>/config/active-timeout=
-=PUT /admin/mq/<mq-id>/config/concurrency=
-=PUT /admin/mq/<mq-id>/config/throttle=
+=PUT /admin/mq/<namespace>/config/unique=
+=PUT /admin/mq/<namespace>/config/drafting-timeout=
+=PUT /admin/mq/<namespace>/config/ordered-timeout=
+=PUT /admin/mq/<namespace>/config/active-timeout=
+=PUT /admin/mq/<namespace>/config/concurrency=
+=PUT /admin/mq/<namespace>/config/throttle=
 
 Payload必须为对应的null以外的JSON值.
 
@@ -529,12 +529,12 @@ curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
   --header "Content-Type: application/json" \
   --data "$UNIQUE" \
-  "http://localhost:8080/admin/mq/$id/config/unique"
+  "http://localhost:8080/admin/mq/$namespace/config/unique"
 #+END_SRC
 
 ******* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/config/unique`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/config/unique`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -545,12 +545,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/config/unique`, {
 #+END_SRC
 
 ***** 移除配置
-=DELETE /admin/mq/<mq-id>/config/unique=
-=DELETE /admin/mq/<mq-id>/config/drafting-timeout=
-=DELETE /admin/mq/<mq-id>/config/ordered-timeout=
-=DELETE /admin/mq/<mq-id>/config/active-timeout=
-=DELETE /admin/mq/<mq-id>/config/concurrency=
-=DELETE /admin/mq/<mq-id>/config/throttle=
+=DELETE /admin/mq/<namespace>/config/unique=
+=DELETE /admin/mq/<namespace>/config/drafting-timeout=
+=DELETE /admin/mq/<namespace>/config/ordered-timeout=
+=DELETE /admin/mq/<namespace>/config/active-timeout=
+=DELETE /admin/mq/<namespace>/config/concurrency=
+=DELETE /admin/mq/<namespace>/config/throttle=
 
 ****** Example
 ******* curl
@@ -558,12 +558,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/config/unique`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/config/unique"
+  "http://localhost:8080/admin/mq/$namespace/config/unique"
 #+END_SRC
 
 ******* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/config/unique`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/config/unique`, {
   method: 'DELETE'
 })
 #+END_SRC
@@ -584,10 +584,10 @@ JSON验证仅用于验证, 不会重新序列化消息, 因此follow得到的pay
 ***** 为mq单独设置JSON Schema
 可单独为mq设置JSON Schema, 被设置的mq将仅接受 =Content-Type: application/json= 请求.
 
-****** 获取所有具有JSON Schema的mqId
+****** 获取所有具有JSON Schema的namespace
 =GET /admin/mq-with-json-schema=
 
-获取所有具有JSON Schema的mqId, 返回由JSON表示的字符串数组 =string[]=.
+获取所有具有JSON Schema的namespace, 返回由JSON表示的字符串数组 =string[]=.
 
 ******* Example
 ******** curl
@@ -607,19 +607,19 @@ await fetch('http://localhost:8080/admin/mq-with-json-schema', {
 #+END_SRC
 
 ****** 获取JSON Schema
-=GET /admin/mq/<id>/json-schema=
+=GET /admin/mq/<namespace>/json-schema=
 
 ******* Example
 ******** curl
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/json-schema"
+  "http://localhost:8080/admin/mq/$namespace/json-schema"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/json-schema`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/json-schema`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -627,7 +627,7 @@ await fetch(`http://localhost:8080/admin/mq/${id}/json-schema`, {
 #+END_SRC
 
 ****** 设置JSON Schema
-=PUT /admin/mq/<id>/json-schema=
+=PUT /admin/mq/<namespace>/json-schema=
 
 ******* Example
 ******** curl
@@ -637,12 +637,12 @@ curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
   --header "Content-Type: application/json" \
   --data "$JSON_SCHEMA" \
-  "http://localhost:8080/admin/mq/$id/jsonschema"
+  "http://localhost:8080/admin/mq/$namespace/jsonschema"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/json-schema`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/json-schema`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -653,7 +653,7 @@ await fetch(`http://localhost:8080/admin/mq/${id}/json-schema`, {
 #+END_SRC
 
 ****** 移除JSON Schema
-=DELETE /admin/mq/<id>/json-schema=
+=DELETE /admin/mq/<namespace>/json-schema=
 
 ******* Example
 ******** curl
@@ -661,12 +661,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/json-schema`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/json-schema"
+  "http://localhost:8080/admin/mq/$namespace/json-schema"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/json-schema`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/json-schema`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -696,7 +696,7 @@ mq提供两种可以同时启用的访问控制策略.
 ******* 获取黑名单
 =GET /admin/blacklist=
 
-获取位于黑名单中的所有mqId, 返回JSON表示的字符串数组 =string[]=.
+获取位于黑名单中的所有namespace, 返回JSON表示的字符串数组 =string[]=.
 
 ******** Example
 ********* curl
@@ -716,7 +716,7 @@ await fetch('http://localhost:8080/admin/blacklist', {
 #+END_SRC
 
 ******* 添加黑名单
-=PUT /admin/blacklist/<id>=
+=PUT /admin/blacklist/<namespace>=
 
 将特定mq加入黑名单.
 
@@ -726,12 +726,12 @@ await fetch('http://localhost:8080/admin/blacklist', {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/blacklist/$id"
+  "http://localhost:8080/admin/blacklist/$namespace"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/blacklist/${id}`, {
+await fetch(`http://localhost:8080/admin/blacklist/${namespace}`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -740,7 +740,7 @@ await fetch(`http://localhost:8080/admin/blacklist/${id}`, {
 #+END_SRC
 
 ******* 移除黑名单
-=DELETE /admin/blacklist/<id>=
+=DELETE /admin/blacklist/<namespace>=
 
 将特定mq从黑名单中移除.
 
@@ -750,12 +750,12 @@ await fetch(`http://localhost:8080/admin/blacklist/${id}`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/blacklist/$id"
+  "http://localhost:8080/admin/blacklist/$namespace"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/blacklist/${id}`, {
+await fetch(`http://localhost:8080/admin/blacklist/${namespace}`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -767,7 +767,7 @@ await fetch(`http://localhost:8080/admin/blacklist/${id}`, {
 ******* 获取白名单
 =GET /admin/whitelist=
 
-获取位于黑名单中的所有mqId, 返回JSON表示的字符串数组 =string[]=.
+获取位于黑名单中的所有namespace, 返回JSON表示的字符串数组 =string[]=.
 
 ******** Example
 ********* curl
@@ -787,7 +787,7 @@ await fetch('http://localhost:8080/admin/whitelist', {
 #+END_SRC
 
 ******* 添加白名单
-=PUT /admin/whitelist/<id>=
+=PUT /admin/whitelist/<namespace>=
 
 将特定mq加入白名单.
 
@@ -797,12 +797,12 @@ await fetch('http://localhost:8080/admin/whitelist', {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/whitelist/$id"
+  "http://localhost:8080/admin/whitelist/$namespace"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/whitelist/${id}`, {
+await fetch(`http://localhost:8080/admin/whitelist/${namespace}`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -811,7 +811,7 @@ await fetch(`http://localhost:8080/admin/whitelist/${id}`, {
 #+END_SRC
 
 ******* 移除白名单
-=DELETE /admin/whitelist/<id>=
+=DELETE /admin/whitelist/<namespace>=
 
 将特定mq从白名单中移除.
 
@@ -821,12 +821,12 @@ await fetch(`http://localhost:8080/admin/whitelist/${id}`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/whitelist/$id"
+  "http://localhost:8080/admin/whitelist/$namespace"
 #+END_SRC
 
 ********* fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/whitelist/${id}`, {
+await fetch(`http://localhost:8080/admin/whitelist/${namespace}`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -850,10 +850,10 @@ await fetch(`http://localhost:8080/admin/whitelist/${id}`, {
 - token难以被猜测
 - token的意外泄露可以被迅速处理
 
-****** 获取所有具有token策略的频道id
+****** 获取所有具有token策略的队列namespace
 =GET /admin/mq-with-token-policies=
 
-获取所有具有token策略的频道id, 返回由JSON表示的字符串数组 =string[]=.
+获取所有具有token策略的队列namespace, 返回由JSON表示的字符串数组 =string[]=.
 
 ******* Example
 ******** curl
@@ -868,8 +868,8 @@ curl \
 await fetch('http://localhost:8080/admin/mq-with-token-policies')
 #+END_SRC
 
-****** 获取特定频道的token策略
-=GET /admin/mq/<id>/token-policies=
+****** 获取特定队列的token策略
+=GET /admin/mq/<namespace>/token-policies=
 
 返回JSON:
 #+BEGIN_SRC ts
@@ -886,12 +886,12 @@ await fetch('http://localhost:8080/admin/mq-with-token-policies')
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/token-policies"
+  "http://localhost:8080/admin/mq/$namespace/token-policies"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fethc(`http://localhost:8080/admin/mq/${id}/token-policies`, {
+await fethc(`http://localhost:8080/admin/mq/${namespace}/token-policies`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -899,9 +899,9 @@ await fethc(`http://localhost:8080/admin/mq/${id}/token-policies`, {
 #+END_SRC
 
 ****** 设置token策略
-=PUT /admin/mq/<id>/token-policies/produce-token-required=
-=PUT /admin/mq/<id>/token-policies/consume-token-required=
-=PUT /admin/mq/<id>/token-policies/clear-token-required=
+=PUT /admin/mq/<namespace>/token-policies/produce-token-required=
+=PUT /admin/mq/<namespace>/token-policies/consume-token-required=
+=PUT /admin/mq/<namespace>/token-policies/clear-token-required=
 
 Payload必须是一个布尔值.
 
@@ -913,12 +913,12 @@ curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
   --header "Content-Type: application/json" \
   --data "$PRODUCE_TOKEN_REQUIRED" \
-  "http://localhost:8080/admin/mq/$id/token-policies/produce-token-required"
+  "http://localhost:8080/admin/mq/$namespace/token-policies/produce-token-required"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/token-policies/produce-token-required`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/token-policies/produce-token-required`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -929,9 +929,9 @@ await fetch(`http://localhost:8080/admin/mq/${id}/token-policies/produce-token-r
 #+END_SRC
 
 ****** 移除token策略
-=DELETE /admin/mq/<id>/token-policies/produce-token-required=
-=DELETE /admin/mq/<id>/token-policies/consume-token-required=
-=DELETE /admin/mq/<id>/token-policies/clear-token-required=
+=DELETE /admin/mq/<namespace>/token-policies/produce-token-required=
+=DELETE /admin/mq/<namespace>/token-policies/consume-token-required=
+=DELETE /admin/mq/<namespace>/token-policies/clear-token-required=
 
 ******* Example
 ******** curl
@@ -939,12 +939,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/token-policies/produce-token-r
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/token-policies/produce-token-required"
+  "http://localhost:8080/admin/mq/$namespace/token-policies/produce-token-required"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/token-policies/produce-token-required`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/token-policies/produce-token-required`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -952,10 +952,10 @@ await fetch(`http://localhost:8080/admin/mq/${id}/token-policies/produce-token-r
 })
 #+END_SRC
 
-****** 获取所有具有token的mqId
+****** 获取所有具有token的namespace
 =GET /admin/mq-with-tokens=
 
-获取所有具有token的mqId, 返回由JSON表示的字符串数组 =string[]=
+获取所有具有token的namespace, 返回由JSON表示的字符串数组 =string[]=
 
 ******* Example
 ******** curl
@@ -975,7 +975,7 @@ await fetch(`http://localhost:8080/admin/mq-with-tokens`, {
 #+END_SRC
 
 ****** 获取特定mq的所有token信息
-=GET /admin/mq/<id>/tokens=
+=GET /admin/mq/<namespace>/tokens=
 
 获取特定mq的所有token信息, 返回JSON表示的token信息数组:
 #+BEGIN_SRC ts
@@ -992,12 +992,12 @@ Array<{
 #+BEGIN_SRC sh
 curl \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/tokens"
+  "http://localhost:8080/admin/mq/$namespace/tokens"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/tokens`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/tokens`, {
   headers: {
     'Authorization': `Bearer ${adminPassword}`
   }
@@ -1005,7 +1005,7 @@ await fetch(`http://localhost:8080/admin/mq/${id}/tokens`, {
 #+END_SRC
 
 ****** 为特定mq的token设置produce权限
-=PUT /admin/mq/<id>/tokens/<token>/produce=
+=PUT /admin/mq/<namespace>/tokens/<token>/produce=
 
 添加/更新token, 为token设置produce权限.
 
@@ -1015,12 +1015,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/tokens`, {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/tokens/$token/produce"
+  "http://localhost:8080/admin/mq/$namespace/tokens/$token/produce"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/produce`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/tokens/${token}/produce`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -1029,7 +1029,7 @@ await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/produce`, {
 #+END_SRC
 
 ****** 取消特定mq的token的produce权限
-=DELETE /admin/mq/<id>/tokens/<token>/produce=
+=DELETE /admin/mq/<namespace>/tokens/<token>/produce=
 
 取消token的produce权限.
 
@@ -1039,12 +1039,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/produce`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/tokens/$token/produce"
+  "http://localhost:8080/admin/mq/$namespace/tokens/$token/produce"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/produce`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/tokens/${token}/produce`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -1053,7 +1053,7 @@ await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/produce`, {
 #+END_SRC
 
 ****** 为特定mq的token设置consume权限
-=PUT /admin/mq/<id>/tokens/<token>/consume=
+=PUT /admin/mq/<namespace>/tokens/<token>/consume=
 
 添加/更新token, 为token设置consume权限.
 
@@ -1063,12 +1063,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/produce`, {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/tokens/$token/consume"
+  "http://localhost:8080/admin/mq/$namespace/tokens/$token/consume"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/consume`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/tokens/${token}/consume`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -1077,7 +1077,7 @@ await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/consume`, {
 #+END_SRC
 
 ****** 取消特定mq的token的consume权限
-=DELETE /admin/mq/<id>/tokens/<token>/consume=
+=DELETE /admin/mq/<namespace>/tokens/<token>/consume=
 
 取消token的consume权限.
 
@@ -1087,12 +1087,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/consume`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/tokens/$token/consume"
+  "http://localhost:8080/admin/mq/$namespace/tokens/$token/consume"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/consume`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/tokens/${token}/consume`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -1101,7 +1101,7 @@ await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/consume`, {
 #+END_SRC
 
 ****** 为特定mq的token设置clear权限
-=PUT /admin/mq/<id>/tokens/<token>/clear=
+=PUT /admin/mq/<namespace>/tokens/<token>/clear=
 
 添加/更新token, 为token设置clear权限.
 
@@ -1111,12 +1111,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/consume`, {
 curl \
   --request PUT \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/tokens/$token/clear"
+  "http://localhost:8080/admin/mq/$namespace/tokens/$token/clear"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/clear`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/tokens/${token}/clear`, {
   method: 'PUT'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`
@@ -1125,7 +1125,7 @@ await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/clear`, {
 #+END_SRC
 
 ****** 取消特定mq的token的clear权限
-=DELETE /admin/mq/<id>/tokens/<token>/clear=
+=DELETE /admin/mq/<namespace>/tokens/<token>/clear=
 
 取消token的clear权限.
 
@@ -1135,12 +1135,12 @@ await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/clear`, {
 curl \
   --request DELETE \
   --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$id/tokens/$token/clear"
+  "http://localhost:8080/admin/mq/$namespace/tokens/$token/clear"
 #+END_SRC
 
 ******** fetch
 #+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${id}/tokens/${token}/clear`, {
+await fetch(`http://localhost:8080/admin/mq/${namespace}/tokens/${token}/clear`, {
   method: 'DELETE'
 , headers: {
     'Authorization': `Bearer ${adminPassword}`

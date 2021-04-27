@@ -14,33 +14,33 @@ afterEach(stopService)
 
 describe('blacklist', () => {
   describe('enabled', () => {
-    describe('id in blacklist', () => {
+    describe('namespace in blacklist', () => {
       it('403', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
-        await MQDAO.draftMessage(mqId, messageId)
-        await AccessControlDAO.addBlacklistItem(mqId)
+        const namespace = 'namespace'
+        const id = 'message-id'
+        await MQDAO.draftMessage(namespace, id)
+        await AccessControlDAO.addBlacklistItem(namespace)
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}`)
+        , pathname(`/mq/${namespace}/messages/${id}`)
         ))
 
         expect(res.status).toBe(403)
       })
     })
 
-    describe('id not in blacklist', () => {
+    describe('namespace not in blacklist', () => {
       it('204', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
-        await MQDAO.draftMessage(mqId, messageId)
+        const namespace = 'namespace'
+        const id = 'message-id'
+        await MQDAO.draftMessage(namespace, id)
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}`)
+        , pathname(`/mq/${namespace}/messages/${id}`)
         ))
 
         expect(res.status).toBe(204)
@@ -49,16 +49,16 @@ describe('blacklist', () => {
   })
 
   describe('disabled', () => {
-    describe('id in blacklist', () => {
+    describe('namespace in blacklist', () => {
       it('204', async () => {
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
-        await MQDAO.draftMessage(mqId, messageId)
-        await AccessControlDAO.addBlacklistItem(mqId)
+        const namespace = 'namespace'
+        const id = 'message-id'
+        await MQDAO.draftMessage(namespace, id)
+        await AccessControlDAO.addBlacklistItem(namespace)
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}`)
+        , pathname(`/mq/${namespace}/messages/${id}`)
         ))
 
         expect(res.status).toBe(204)

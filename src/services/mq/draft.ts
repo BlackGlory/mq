@@ -1,16 +1,16 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema, tokenSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema } from '@src/schema'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.post<{
-    Params: { queueId: string }
+    Params: { namespace: string }
     Querystring: { token?: string }
     Body: { priority: number | null }
   }>(
-    '/mq/:queueId/messages'
+    '/mq/:namespace/messages'
   , {
       schema: {
-        params: { queueId: idSchema }
+        params: { namespace: namespaceSchema }
       , querystring: { token: tokenSchema }
       , body: {
           priority: {
@@ -26,13 +26,13 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const queueId = req.params.queueId
+      const namespace = req.params.namespace
       const token = req.query.token
 
       try {
-        await Core.Blacklist.check(queueId)
-        await Core.Whitelist.check(queueId)
-        await Core.TBAC.checkProducePermission(queueId, token)
+        await Core.Blacklist.check(namespace)
+        await Core.Whitelist.check(namespace)
+        await Core.TBAC.checkProducePermission(namespace, token)
       } catch (e) {
         if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
         if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
@@ -40,7 +40,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      const result = await Core.MQ.draft(queueId)
+      const result = await Core.MQ.draft(namespace)
       reply.status(200).send(result)
     }
   )

@@ -1,22 +1,22 @@
 import { getDatabase } from '../database'
 
-export function clear(queueId: string): void {
+export function clear(namespace: string): void {
   const db = getDatabase()
 
   db.transaction(() => {
     db.prepare(`
       DELETE FROM mq_message
-       WHERE mq_id = $queueId;
-    `).run({ queueId })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
 
     db.prepare(`
       DELETE FROM mq_stats
-       WHERE mq_id = $queueId;
-    `).run({ queueId })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
 
     db.prepare(`
       DELETE FROM mq_throttle
-       WHERE mq_id = $queueId;
-    `).run({ queueId })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
   })()
 }

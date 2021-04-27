@@ -16,18 +16,18 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-describe('abandonAllFailedMessages(queueId: string): void', () => {
+describe('abandonAllFailedMessages(namespace: string): void', () => {
   it('delete messages', () => {
-    const queueId = 'queue-id'
+    const namespace = 'namespace'
     const messageId = 'message-id'
     setMinimalRawMessage({
-      mq_id: queueId
-    , message_id: messageId
+      namespace
+    , id: messageId
     , state: 'failed'
     , state_updated_at: 0
     })
     setRawStats({
-      mq_id: queueId
+      namespace
     , drafting: 0
     , waiting: 0
     , ordered: 0
@@ -36,11 +36,11 @@ describe('abandonAllFailedMessages(queueId: string): void', () => {
     , failed: 1
     })
 
-    const result = DAO.abandonAllFailedMessages(queueId)
+    const result = DAO.abandonAllFailedMessages(namespace)
 
     expect(result).toBeUndefined()
-    expect(hasRawMessage(queueId, messageId)).toBeFalse()
-    expect(getRawStats(queueId)).toMatchObject({
+    expect(hasRawMessage(namespace, messageId)).toBeFalse()
+    expect(getRawStats(namespace)).toMatchObject({
       drafting: 0
     , waiting: 0
     , ordered: 0

@@ -12,32 +12,32 @@ import { State } from './utils/state'
 /**
  * @throws {NotFound}
  */
-export function abandonMessage(queueId: string, messageId: string): void {
+export function abandonMessage(namespace: string, id: string): void {
   const db = getDatabase()
 
   db.transaction(() => {
     const row = db.prepare(`
       SELECT state
         FROM mq_message
-       WHERE mq_id = $queueId
-         AND message_id = $messageId;
-    `).get({ queueId, messageId })
+       WHERE namespace = $namespace
+         AND id = $id;
+    `).get({ namespace, id })
     if (!row) throw new NotFound()
 
     const state = row['state'] as State
 
     db.prepare(`
       DELETE FROM mq_message
-       WHERE mq_id = $queueId
-         AND message_id = $messageId;
-    `).run({ queueId, messageId })
+       WHERE namespace = $namespace
+         AND id = $id;
+    `).run({ namespace, id })
 
     switch (state) {
-      case State.Drafting: downcreaseDrafting(queueId); break
-      case State.Waiting: downcreaseWaiting(queueId); break
-      case State.Ordered: downcreaseOrdered(queueId); break
-      case State.Active: downcreaseActive(queueId); break
-      case State.Failed: downcreaseFailed(queueId); break
+      case State.Drafting: downcreaseDrafting(namespace); break
+      case State.Waiting: downcreaseWaiting(namespace); break
+      case State.Ordered: downcreaseOrdered(namespace); break
+      case State.Active: downcreaseActive(namespace); break
+      case State.Failed: downcreaseFailed(namespace); break
     }
   })()
 }

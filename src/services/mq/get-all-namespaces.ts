@@ -9,7 +9,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   server.get(
     '/mq'
   , (req, reply) => {
-      const result = Core.MQ.getAllQueueIds()
+      const result = Core.MQ.getAllNamespaces()
 
       const accept = req.accepts().type(['application/json', 'application/x-ndjson'])
       if (accept === 'application/x-ndjson') {

@@ -18,13 +18,13 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-describe('abandonMessage(queueId: string, messageId: string): void', () => {
+describe('abandonMessage(namespace: string, messageId: string): void', () => {
   describe('message does not exist', () => {
     it('throw NotFound', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
       const messageId = 'message-id'
 
-      const err = getError(() => DAO.abandonMessage(queueId, messageId))
+      const err = getError(() => DAO.abandonMessage(namespace, messageId))
 
       expect(err).toBeInstanceOf(NotFound)
     })
@@ -33,16 +33,16 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
   describe('message exists', () => {
     describe('state: drafting', () => {
       it('delete message', () => {
-        const queueId = 'queue-id'
+        const namespace = 'namespace'
         const messageId = 'message-id'
         setMinimalRawMessage({
-          mq_id: queueId
-        , message_id: messageId
+          namespace
+        , id: messageId
         , state: 'drafting'
         , state_updated_at: 0
         })
         setRawStats({
-          mq_id: queueId
+          namespace
         , drafting: 1
         , waiting: 0
         , ordered: 0
@@ -51,9 +51,9 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
         , failed: 0
         })
 
-        const result = DAO.abandonMessage(queueId, messageId)
-        const exists = hasRawMessage(queueId, messageId)
-        const rawStatsResult = getRawStats(queueId)
+        const result = DAO.abandonMessage(namespace, messageId)
+        const exists = hasRawMessage(namespace, messageId)
+        const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
         expect(exists).toBeFalse()
@@ -70,16 +70,16 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
 
     describe('state: waiting', () => {
       it('delete message', () => {
-        const queueId = 'queue-id'
+        const namespace = 'namespace'
         const messageId = 'message-id'
         setMinimalRawMessage({
-          mq_id: queueId
-        , message_id: messageId
+          namespace
+        , id: messageId
         , state: 'waiting'
         , state_updated_at: 0
         })
         setRawStats({
-          mq_id: queueId
+          namespace
         , drafting: 0
         , waiting: 1
         , ordered: 0
@@ -88,9 +88,9 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
         , failed: 0
         })
 
-        const result = DAO.abandonMessage(queueId, messageId)
-        const exists = hasRawMessage(queueId, messageId)
-        const rawStatsResult = getRawStats(queueId)
+        const result = DAO.abandonMessage(namespace, messageId)
+        const exists = hasRawMessage(namespace, messageId)
+        const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
         expect(exists).toBeFalse()
@@ -107,16 +107,16 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
 
     describe('state: ordered', () => {
       it('delete message', () => {
-        const queueId = 'queue-id'
+        const namespace = 'namespace'
         const messageId = 'message-id'
         setMinimalRawMessage({
-          mq_id: queueId
-        , message_id: messageId
+          namespace
+        , id: messageId
         , state: 'ordered'
         , state_updated_at: 0
         })
         setRawStats({
-          mq_id: queueId
+          namespace
         , drafting: 0
         , waiting: 0
         , ordered: 1
@@ -125,9 +125,9 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
         , failed: 0
         })
 
-        const result = DAO.abandonMessage(queueId, messageId)
-        const exists = hasRawMessage(queueId, messageId)
-        const rawStatsResult = getRawStats(queueId)
+        const result = DAO.abandonMessage(namespace, messageId)
+        const exists = hasRawMessage(namespace, messageId)
+        const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
         expect(exists).toBeFalse()
@@ -144,16 +144,16 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
 
     describe('state: active', () => {
       it('delete message', () => {
-        const queueId = 'queue-id'
+        const namespace = 'namespace'
         const messageId = 'message-id'
         setMinimalRawMessage({
-          mq_id: queueId
-        , message_id: messageId
+          namespace
+        , id: messageId
         , state: 'active'
         , state_updated_at: 0
         })
         setRawStats({
-          mq_id: queueId
+          namespace
         , drafting: 0
         , waiting: 0
         , ordered: 0
@@ -162,9 +162,9 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
         , failed: 0
         })
 
-        const result = DAO.abandonMessage(queueId, messageId)
-        const exists = hasRawMessage(queueId, messageId)
-        const rawStatsResult = getRawStats(queueId)
+        const result = DAO.abandonMessage(namespace, messageId)
+        const exists = hasRawMessage(namespace, messageId)
+        const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
         expect(exists).toBeFalse()
@@ -181,16 +181,16 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
 
     describe('state: failed', () => {
       it('delete message', () => {
-        const queueId = 'queue-id'
+        const namespace = 'namespace'
         const messageId = 'message-id'
         setMinimalRawMessage({
-          mq_id: queueId
-        , message_id: messageId
+          namespace
+        , id: messageId
         , state: 'failed'
         , state_updated_at: 0
         })
         setRawStats({
-          mq_id: queueId
+          namespace
         , drafting: 0
         , waiting: 0
         , ordered: 0
@@ -199,9 +199,9 @@ describe('abandonMessage(queueId: string, messageId: string): void', () => {
         , failed: 1
         })
 
-        const result = DAO.abandonMessage(queueId, messageId)
-        const exists = hasRawMessage(queueId, messageId)
-        const rawStatsResult = getRawStats(queueId)
+        const result = DAO.abandonMessage(namespace, messageId)
+        const exists = hasRawMessage(namespace, messageId)
+        const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
         expect(exists).toBeFalse()

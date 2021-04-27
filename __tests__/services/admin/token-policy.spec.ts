@@ -58,15 +58,15 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('GET /admin/mq/:id/token-policies', () => {
+  describe('GET /admin/mq/:namespace/token-policies', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies`)
+        , pathname(`/admin/mq/${namespace}/token-policies`)
         , headers(createAuthHeaders())
         ))
 
@@ -93,11 +93,11 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies`)
+        , pathname(`/admin/mq/${namespace}/token-policies`)
         ))
 
         expect(res.status).toBe(401)
@@ -107,11 +107,11 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies`)
+        , pathname(`/admin/mq/${namespace}/token-policies`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -120,16 +120,16 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('PUT /admin/mq/:id/token-policies/produce-token-required', () => {
+  describe('PUT /admin/mq/:namespace/token-policies/produce-token-required', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const val = true
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/produce-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/produce-token-required`)
         , headers(createAuthHeaders())
         , json(val)
         ))
@@ -140,12 +140,12 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const val = true
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/produce-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/produce-token-required`)
         , json(val)
         ))
 
@@ -156,12 +156,12 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const val = true
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/produce-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/produce-token-required`)
         , headers(createAuthHeaders('bad'))
         , json(val)
         ))
@@ -171,16 +171,16 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('PUT /admin/mq/:id/token-policies/consume-token-required', () => {
+  describe('PUT /admin/mq/:namespace/token-policies/consume-token-required', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const val = true
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/consume-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/consume-token-required`)
         , headers(createAuthHeaders())
         , json(val)
         ))
@@ -191,12 +191,12 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const val = true
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/consume-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/consume-token-required`)
         , json(val)
         ))
 
@@ -207,12 +207,12 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const val = true
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/consume-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/consume-token-required`)
         , headers(createAuthHeaders('bad'))
         , json(val)
         ))
@@ -222,16 +222,16 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('PUT /admin/mq/:id/token-policies/clear-token-required', () => {
+  describe('PUT /admin/mq/:namespace/token-policies/clear-token-required', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const val = true
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/clear-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/clear-token-required`)
         , headers(createAuthHeaders())
         , json(val)
         ))
@@ -242,12 +242,12 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const val = true
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/clear-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/clear-token-required`)
         , json(val)
         ))
 
@@ -258,12 +258,12 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const val = true
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/clear-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/clear-token-required`)
         , headers(createAuthHeaders('bad'))
         , json(val)
         ))
@@ -273,15 +273,15 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('DELETE /admin/mq/:id/token-policies/produce-token-required', () => {
+  describe('DELETE /admin/mq/:namespace/token-policies/produce-token-required', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/produce-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/produce-token-required`)
         , headers(createAuthHeaders())
         ))
 
@@ -291,11 +291,11 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/produce-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/produce-token-required`)
         ))
 
         expect(res.status).toBe(401)
@@ -305,11 +305,11 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/produce-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/produce-token-required`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -318,15 +318,15 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('DELETE /admin/mq/:id/token-policies/consume-token-required', () => {
+  describe('DELETE /admin/mq/:namespace/token-policies/consume-token-required', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/consume-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/consume-token-required`)
         , headers(createAuthHeaders())
         ))
 
@@ -336,11 +336,11 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/consume-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/consume-token-required`)
         ))
 
         expect(res.status).toBe(401)
@@ -350,11 +350,11 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/consume-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/consume-token-required`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -363,15 +363,15 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('DELETE /admin/mq/:id/token-policies/clear-token-required', () => {
+  describe('DELETE /admin/mq/:namespace/token-policies/clear-token-required', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/clear-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/clear-token-required`)
         , headers(createAuthHeaders())
         ))
 
@@ -381,11 +381,11 @@ describe('TokenPolicy', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/clear-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/clear-token-required`)
         ))
 
         expect(res.status).toBe(401)
@@ -395,11 +395,11 @@ describe('TokenPolicy', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/token-policies/clear-token-required`)
+        , pathname(`/admin/mq/${namespace}/token-policies/clear-token-required`)
         , headers(createAuthHeaders('bad'))
         ))
 

@@ -2,7 +2,7 @@ import { getDatabase } from '../database'
 import { downcreaseFailed, increaseWaiting } from './utils/stats'
 import { getTimestamp } from './utils/get-timestamp'
 
-export function renewAllFailedMessages(queueId: string): void {
+export function renewAllFailedMessages(namespace: string): void {
   const timestamp = getTimestamp()
   const db = getDatabase()
 
@@ -11,14 +11,14 @@ export function renewAllFailedMessages(queueId: string): void {
       UPDATE mq_message
          SET state = 'waiting'
            , state_updated_at = $stateUpdatedAt
-       WHERE mq_id = $queueId
+       WHERE namespace = $namespace
          AND state = 'failed';
     `).run({
-      queueId
+      namespace
     , stateUpdatedAt: timestamp
     })
 
-    downcreaseFailed(queueId, result.changes)
-    increaseWaiting(queueId, result.changes)
+    downcreaseFailed(namespace, result.changes)
+    increaseWaiting(namespace, result.changes)
   })()
 }

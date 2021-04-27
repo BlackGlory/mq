@@ -12,30 +12,30 @@ afterEach(clearDatabases)
 describe('JSON Schema', () => {
   describe('getAllIdsWithJsonSchema(): string[]', () => {
     it('return string[]', () => {
-      const id = 'id-1'
+      const namespace = 'namespace'
       const schema = createSchema()
       setRawJsonSchema({
-        mq_id: id
+        namespace
       , json_schema: schema
       })
 
       const result = DAO.getAllIdsWithJsonSchema()
 
-      expect(result).toEqual([id])
+      expect(result).toEqual([namespace])
     })
   })
 
-  describe('getJsonSchema(id: string): string | null', () => {
+  describe('getJsonSchema(namespace: string): string | null', () => {
     describe('exist', () => {
       it('return schema', () => {
-        const id = 'id-1'
+        const namespace = 'namespace'
         const schema = createSchema()
         setRawJsonSchema({
-          mq_id: id
+          namespace
         , json_schema: schema
         })
 
-        const result = DAO.getJsonSchema(id)
+        const result = DAO.getJsonSchema(namespace)
 
         expect(result).toBe(schema)
       })
@@ -43,70 +43,70 @@ describe('JSON Schema', () => {
 
     describe('not exist', () => {
       it('return null', () => {
-        const id = 'id-1'
+        const namespace = 'namespace'
 
-        const result = DAO.getJsonSchema(id)
+        const result = DAO.getJsonSchema(namespace)
 
         expect(result).toBeNull()
       })
     })
   })
 
-  describe('setJsonSchema({ id: string; schema: string })', () => {
+  describe('setJsonSchema({ namespace: string; schema: string })', () => {
     describe('exist', () => {
       it('return undefined', () => {
-        const id = 'id-1'
+        const namespace = 'namespace'
         const schema = createSchema()
         setRawJsonSchema({
-          mq_id: id
+          namespace
         , json_schema: schema
         })
 
-        const result = DAO.setJsonSchema({ id, schema })
+        const result = DAO.setJsonSchema({ namespace, schema })
 
         expect(result).toBeUndefined()
-        expect(hasRawJsonSchema(id)).toBeTrue()
+        expect(hasRawJsonSchema(namespace)).toBeTrue()
       })
     })
 
     describe('not exist', () => {
       it('return undefined', () => {
-        const id = 'id-1'
+        const namespace = 'namespace'
         const schema = createSchema()
 
-        const result = DAO.setJsonSchema({ id, schema })
+        const result = DAO.setJsonSchema({ namespace, schema })
 
         expect(result).toBeUndefined()
-        expect(hasRawJsonSchema(id)).toBeTrue()
+        expect(hasRawJsonSchema(namespace)).toBeTrue()
       })
     })
   })
 
-  describe('removeJsonSchema(id: string)', () => {
+  describe('removeJsonSchema(namespace: string)', () => {
     describe('exist', () => {
       it('return undefined', () => {
-        const id = 'id-1'
+        const namespace = 'namespace'
         const schema = createSchema()
         setRawJsonSchema({
-          mq_id: id
+          namespace
         , json_schema: schema
         })
 
-        const result = DAO.removeJsonSchema(id)
+        const result = DAO.removeJsonSchema(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawJsonSchema(id)).toBeFalse()
+        expect(hasRawJsonSchema(namespace)).toBeFalse()
       })
     })
 
     describe('not exist', () => {
       it('return undefined', () => {
-        const id = 'id-1'
+        const namespace = 'namespace'
 
-        const result = DAO.removeJsonSchema(id)
+        const result = DAO.removeJsonSchema(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawJsonSchema(id)).toBeFalse()
+        expect(hasRawJsonSchema(namespace)).toBeFalse()
       })
     })
   })

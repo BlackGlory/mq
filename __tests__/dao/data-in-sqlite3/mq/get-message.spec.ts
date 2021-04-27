@@ -18,13 +18,13 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-describe('getMessage(queueId: string, messageId: string): IMessage', () => {
+describe('getMessage(namespace: string, messageId: string): IMessage', () => {
   describe('message does not exist', () => {
     it('throw NotFound', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
       const messageId = 'message-id'
 
-      const err = getError(() => DAO.getMessage(queueId, messageId))
+      const err = getError(() => DAO.getMessage(namespace, messageId))
 
       expect(err).toBeInstanceOf(NotFound)
     })
@@ -33,11 +33,11 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
   describe('message exists', () => {
     describe('state: ordered', () => {
       it('convert state to active and return IMessage', () => {
-        const queueId = 'queue-id'
+        const namespace = 'namespace'
         const messageId = 'message-id'
         setRawMessage({
-          mq_id: queueId
-        , message_id: messageId
+          namespace
+        , id: messageId
         , type: 'type'
         , payload: 'payload'
         , hash: 'hash'
@@ -46,7 +46,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , state_updated_at: 0
         })
         setRawStats({
-          mq_id: queueId
+          namespace
         , drafting: 0
         , waiting: 0
         , ordered: 1
@@ -55,9 +55,9 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , failed: 0
         })
 
-        const result = DAO.getMessage(queueId, messageId)
-        const rawMessageResult = getRawMessage(queueId, messageId)
-        const rawStatsResult = getRawStats(queueId)
+        const result = DAO.getMessage(namespace, messageId)
+        const rawMessageResult = getRawMessage(namespace, messageId)
+        const rawStatsResult = getRawStats(namespace)
 
         expect(result).toEqual({
           type: 'type'
@@ -81,11 +81,11 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
 
     describe('state: drafting', () => {
       it('throw BadMessageState', () => {
-        const queueId = 'queue-id'
+        const namespace = 'namespace'
         const messageId = 'message-id'
         setRawMessage({
-          mq_id: queueId
-        , message_id: messageId
+          namespace
+        , id: messageId
         , type: null
         , payload: null
         , hash: null
@@ -94,7 +94,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , state_updated_at: 0
         })
         setRawStats({
-          mq_id: queueId
+          namespace
         , drafting: 0
         , waiting: 0
         , ordered: 1
@@ -103,7 +103,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , failed: 0
         })
 
-        const err = getError(() => DAO.getMessage(queueId, messageId))
+        const err = getError(() => DAO.getMessage(namespace, messageId))
 
         expect(err).toBeInstanceOf(BadMessageState)
       })
@@ -111,11 +111,11 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
 
     describe('other states', () => {
       it('return IMessage', () => {
-        const queueId = 'queue-id'
+        const namespace = 'namespace'
         const messageId = 'message-id'
         setRawMessage({
-          mq_id: queueId
-        , message_id: messageId
+          namespace
+        , id: messageId
         , type: 'type'
         , payload: 'payload'
         , hash: 'hash'
@@ -124,7 +124,7 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , state_updated_at: 0
         })
         setRawStats({
-          mq_id: queueId
+          namespace
         , drafting: 0
         , waiting: 1
         , ordered: 0
@@ -133,9 +133,9 @@ describe('getMessage(queueId: string, messageId: string): IMessage', () => {
         , failed: 0
         })
 
-        const result = DAO.getMessage(queueId, messageId)
-        const rawMessageResult = getRawMessage(queueId, messageId)
-        const rawStatsResult = getRawStats(queueId)
+        const result = DAO.getMessage(namespace, messageId)
+        const rawMessageResult = getRawMessage(namespace, messageId)
+        const rawStatsResult = getRawStats(namespace)
 
         expect(result).toEqual({
           type: 'type'

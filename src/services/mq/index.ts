@@ -12,7 +12,7 @@ import { routes as renewAllFailedMessages } from './renew-all-failed-messages'
 import { routes as clearRoutes } from './clear'
 import { routes as statsRoutes } from './stats'
 import { routes as getAllFailedMessageIdsRoutes } from './get-all-failed-message-ids'
-import { routes as getAllQueueIdsRoutes } from './get-all-queue-ids'
+import { routes as getAllQueueIdsRoutes } from './get-all-namespaces'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.register(draftRoutes, { Core })

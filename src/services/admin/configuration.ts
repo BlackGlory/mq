@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema } from '@src/schema'
+import { namespaceSchema } from '@src/schema'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.get(
@@ -15,18 +15,18 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const result = await Core.Configuration.getAllIds()
+      const result = await Core.Configuration.getAllNamespaces()
       reply.send(result)
     }
   )
 
   server.get<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/mq/:id/config'
+    '/mq/:namespace/config'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           200: {
             unique: {
@@ -77,20 +77,20 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      const result = await Core.Configuration.get(id)
+      const namespace = req.params.namespace
+      const result = await Core.Configuration.get(namespace)
       reply.send(result)
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: boolean
   }>(
-    '/mq/:id/config/unique'
+    '/mq/:namespace/config/unique'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , body: { type: 'boolean' }
       , response: {
           204: { type: 'null' }
@@ -98,40 +98,40 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const val = req.body
-      await Core.Configuration.setUnique(id, val)
+      await Core.Configuration.setUnique(namespace, val)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/mq/:id/config/unique'
+    '/mq/:namespace/config/unique'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.Configuration.unsetUnique(id)
+      const namespace = req.params.namespace
+      await Core.Configuration.unsetUnique(namespace)
       reply.status(204).send()
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: number
   }>(
-    '/mq/:id/config/drafting-timeout'
+    '/mq/:namespace/config/drafting-timeout'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , body: { type: 'number' }
       , response: {
           204: { type: 'null' }
@@ -139,191 +139,191 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const val = req.body
-      await Core.Configuration.setDraftingTimeout(id, val)
+      await Core.Configuration.setDraftingTimeout(namespace, val)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/mq/:id/config/drafting-timeout'
+    '/mq/:namespace/config/drafting-timeout'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.Configuration.unsetDraftingTimeout(id)
+      const namespace = req.params.namespace
+      await Core.Configuration.unsetDraftingTimeout(namespace)
       reply.status(204).send()
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: number
   }>(
-    '/mq/:id/config/ordered-timeout'
+    '/mq/:namespace/config/ordered-timeout'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const val = req.body
-      await Core.Configuration.setOrderedTimeout(id, val)
+      await Core.Configuration.setOrderedTimeout(namespace, val)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/mq/:id/config/ordered-timeout'
+    '/mq/:namespace/config/ordered-timeout'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.Configuration.unsetOrderedTimeout(id)
+      const namespace = req.params.namespace
+      await Core.Configuration.unsetOrderedTimeout(namespace)
       reply.status(204).send()
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: number
   }>(
-    '/mq/:id/config/active-timeout'
+    '/mq/:namespace/config/active-timeout'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const val = req.body
-      await Core.Configuration.setActiveTimeout(id, val)
+      await Core.Configuration.setActiveTimeout(namespace, val)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/mq/:id/config/active-timeout'
+    '/mq/:namespace/config/active-timeout'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.Configuration.unsetActiveTimeout(id)
+      const namespace = req.params.namespace
+      await Core.Configuration.unsetActiveTimeout(namespace)
       reply.status(204).send()
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: number
   }>(
-    '/mq/:id/config/concurrency'
+    '/mq/:namespace/config/concurrency'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const val = req.body
-      await Core.Configuration.setConcurrency(id, val)
+      await Core.Configuration.setConcurrency(namespace, val)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/mq/:id/config/concurrency'
+    '/mq/:namespace/config/concurrency'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.Configuration.unsetConcurrency(id)
+      const namespace = req.params.namespace
+      await Core.Configuration.unsetConcurrency(namespace)
       reply.status(204).send()
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: {
       duration: number
       limit: number
     }
   }>(
-    '/mq/:id/config/throttle'
+    '/mq/:namespace/config/throttle'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const val = req.body
-      await Core.Configuration.setThrottle(id, val)
+      await Core.Configuration.setThrottle(namespace, val)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/mq/:id/config/throttle'
+    '/mq/:namespace/config/throttle'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.Configuration.unsetThrottle(id)
+      const namespace = req.params.namespace
+      await Core.Configuration.unsetThrottle(namespace)
       reply.status(204).send()
     }
   )

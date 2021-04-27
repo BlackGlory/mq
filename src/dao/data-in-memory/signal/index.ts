@@ -5,13 +5,13 @@ import { first, map } from 'rxjs/operators'
 const emitter = new EventEmitter()
 
 export const SignalDAO: ISignalDAO = {
-  emit(key: string): void {
-    emitter.emit(key, undefined)
+  emit(namespace: string): void {
+    emitter.emit(namespace, undefined)
   }
 
   // 使用Observable是因为操作可以退订, 从而避免event listener泄漏
-, observe(key: string): Observable<void> {
-    return fromEvent(emitter, key)
+, observe(namespace: string): Observable<void> {
+    return fromEvent(emitter, namespace)
       .pipe(
         first()
       , map(() => undefined)

@@ -11,7 +11,7 @@ import { renewAllFailedMessages } from './renew-all-failed-messages'
 import { stats } from './stats'
 import { clear } from './clear'
 import { getAllFailedMessageIds } from './get-all-failed-message-ids'
-import { getAllWorkingQueueIds } from './get-all-working-queue-ids'
+import { getAllWorkingNamespaces } from './get-all-working-namespaces'
 import { getAllQueueIds } from './get-all-queue-ids'
 import {
   rollbackOutdatedDraftingMessages
@@ -37,8 +37,8 @@ export const MQDAO: IMQDAO = {
 , stats: asyncify(stats)
 
 , getAllFailedMessageIds: asyncifyIterable(getAllFailedMessageIds)
-, getAllWorkingQueueIds: asyncifyIterable(getAllWorkingQueueIds)
-, getAllQueueIds: asyncifyIterable(getAllQueueIds)
+, getAllWorkingNamespaces: asyncifyIterable(getAllWorkingNamespaces)
+, getAllNamespaces: asyncifyIterable(getAllQueueIds)
 
 , rollbackOutdatedDraftingMessages: asyncify(rollbackOutdatedDraftingMessages)
 , rollbackOutdatedOrderedMessages: asyncify(rollbackOutdatedOrderedMessages)

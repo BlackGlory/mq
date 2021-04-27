@@ -8,7 +8,7 @@ import { State } from './utils/state'
  * @throws {NotFound}
  * @throws {BadMessageState}
  */
-export function failMessage(queueId: string, messageId: string): void {
+export function failMessage(namespace: string, id: string): void {
   const timestamp = getTimestamp()
   const db = getDatabase()
 
@@ -16,9 +16,9 @@ export function failMessage(queueId: string, messageId: string): void {
     const row = db.prepare(`
       SELECT state
         FROM mq_message
-       WHERE mq_id = $queueId
-         AND message_id = $messageId;
-    `).get({ queueId, messageId })
+       WHERE namespace = $namespace
+         AND id = $id;
+    `).get({ namespace, id })
     if (!row) throw new NotFound()
     if (row.state !== State.Active) throw new BadMessageState(State.Active)
 
@@ -26,15 +26,15 @@ export function failMessage(queueId: string, messageId: string): void {
       UPDATE mq_message
          SET state = 'failed'
            , state_updated_at = $stateUpdatedAt
-       WHERE mq_id = $queueId
-         AND message_id = $messageId;
+       WHERE namespace = $namespace
+         AND id = $id;
     `).run({
-      queueId
-    , messageId
+      namespace
+    , id
     , stateUpdatedAt: timestamp
     })
 
-    downcreaseActive(queueId)
-    increaseFailed(queueId)
+    downcreaseActive(namespace)
+    increaseFailed(namespace)
   })()
 }

@@ -1,16 +1,16 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema, tokenSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema } from '@src/schema'
 import { AbortController } from 'abort-controller'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.get<{
-    Params: { queueId: string }
+    Params: { namespace: string }
     Querystring: { token?: string }
   }>(
-    '/mq/:queueId/messages'
+    '/mq/:namespace/messages'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , querystring: { token: tokenSchema }
       , response: {
           200: { type: 'null' }
@@ -21,13 +21,13 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       const controller = new AbortController()
       req.raw.on('close', () => controller.abort())
 
-      const queueId = req.params.queueId
+      const namespace = req.params.namespace
       const token = req.query.token
 
       try {
-        await Core.Blacklist.check(queueId)
-        await Core.Whitelist.check(queueId)
-        await Core.TBAC.checkConsumePermission(queueId, token)
+        await Core.Blacklist.check(namespace)
+        await Core.Whitelist.check(namespace)
+        await Core.TBAC.checkConsumePermission(namespace, token)
       } catch (e) {
         if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
         if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
@@ -35,7 +35,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      const result = await Core.MQ.order(queueId, controller.signal)
+      const result = await Core.MQ.order(namespace, controller.signal)
       reply.status(200).send(result)
     }
   )

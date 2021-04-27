@@ -15,33 +15,33 @@ afterEach(stopService)
 
 describe('blacklist', () => {
   describe('enabled', () => {
-    describe('id in blacklist', () => {
+    describe('namespace in blacklist', () => {
       it('403', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
-        await prepareActiveMessage(mqId, messageId, 'text/plain', 'payload')
-        await AccessControlDAO.addBlacklistItem(mqId)
+        const namespace = 'namespace'
+        const id = 'message-id'
+        await prepareActiveMessage(namespace, id, 'text/plain', 'payload')
+        await AccessControlDAO.addBlacklistItem(namespace)
 
         const res = await fetch(patch(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}/complete`)
+        , pathname(`/mq/${namespace}/messages/${id}/complete`)
         ))
 
         expect(res.status).toBe(403)
       })
     })
 
-    describe('id not in blacklist', () => {
+    describe('namespace not in blacklist', () => {
       it('204', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
-        await prepareActiveMessage(mqId, messageId, 'text/plain', 'payload')
+        const namespace = 'namespace'
+        const id = 'message-id'
+        await prepareActiveMessage(namespace, id, 'text/plain', 'payload')
 
         const res = await fetch(patch(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}/complete`)
+        , pathname(`/mq/${namespace}/messages/${id}/complete`)
         ))
 
         expect(res.status).toBe(204)
@@ -50,16 +50,16 @@ describe('blacklist', () => {
   })
 
   describe('disabled', () => {
-    describe('id in blacklist', () => {
+    describe('namespace in blacklist', () => {
       it('204', async () => {
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
-        await prepareActiveMessage(mqId, messageId, 'text/plain', 'payload')
-        await AccessControlDAO.addBlacklistItem(mqId)
+        const namespace = 'namespace'
+        const id = 'message-id'
+        await prepareActiveMessage(namespace, id, 'text/plain', 'payload')
+        await AccessControlDAO.addBlacklistItem(namespace)
 
         const res = await fetch(patch(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}/complete`)
+        , pathname(`/mq/${namespace}/messages/${id}/complete`)
         ))
 
         expect(res.status).toBe(204)

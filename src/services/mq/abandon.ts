@@ -1,17 +1,17 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema, tokenSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema, idSchema } from '@src/schema'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.delete<{
-    Params: { queueId: string; messageId: string }
+    Params: { namespace: string; id: string }
     Querystring: { token?: string }
   }>(
-    '/mq/:queueId/messages/:messageId'
+    '/mq/:namespace/messages/:id'
   , {
       schema: {
         params: {
-          queueId: idSchema
-        , messageId: idSchema
+          namespace: namespaceSchema
+        , id: idSchema
         }
       , querystring: { token: tokenSchema }
       , response: {
@@ -20,14 +20,14 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const queueId = req.params.queueId
-      const messageId = req.params.messageId
+      const namespace = req.params.namespace
+      const id = req.params.id
       const token = req.query.token
 
       try {
-        await Core.Blacklist.check(queueId)
-        await Core.Whitelist.check(queueId)
-        await Core.TBAC.checkConsumePermission(queueId, token)
+        await Core.Blacklist.check(namespace)
+        await Core.Whitelist.check(namespace)
+        await Core.TBAC.checkConsumePermission(namespace, token)
       } catch (e) {
         if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
         if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
@@ -36,7 +36,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
 
       try {
-        await Core.MQ.abandon(queueId, messageId)
+        await Core.MQ.abandon(namespace, id)
         reply.status(204).send()
       } catch (e) {
         if (e instanceof Core.MQ.NotFound) return reply.status(404).send()

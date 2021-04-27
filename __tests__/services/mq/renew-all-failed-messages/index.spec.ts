@@ -14,13 +14,13 @@ afterEach(stopService)
 
 describe('no access control', () => {
   it('204', async () => {
-    const mqId = 'mq-id'
-    const messageId = 'message-id'
-    await prepareFailedMessage(mqId, messageId, 'text/plain', 'payload')
+    const namespace = 'namespace'
+    const id = 'message-id'
+    await prepareFailedMessage(namespace, id, 'text/plain', 'payload')
 
     const res = await fetch(patch(
       url(getAddress())
-    , pathname(`/mq/${mqId}/failed-messages/renew`)
+    , pathname(`/mq/${namespace}/failed-messages/renew`)
     ))
 
     expect(res.status).toBe(204)

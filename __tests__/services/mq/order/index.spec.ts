@@ -14,13 +14,13 @@ afterEach(stopService)
 
 describe('no access control', () => {
   it('200', async () => {
-    const mqId = 'mq-id'
-    const messageId = 'message-id'
-    await prepareWaitingMessage(mqId, messageId, 'text/plain', 'payload')
+    const namespace = 'namespace'
+    const id = 'message-id'
+    await prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
 
     const res = await fetch(get(
       url(getAddress())
-    , pathname(`/mq/${mqId}/messages`)
+    , pathname(`/mq/${namespace}/messages`)
     ))
 
     expect(res.status).toBe(200)

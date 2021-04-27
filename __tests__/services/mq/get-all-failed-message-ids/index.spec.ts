@@ -15,13 +15,13 @@ afterEach(stopService)
 
 describe('no access control', () => {
   it('200', async () => {
-    const queueId = 'queue-id'
+    const namespace = 'namespace'
     const messageIds = ['message-id']
-    prepareFailedMessages(queueId, messageIds)
+    prepareFailedMessages(namespace, messageIds)
 
     const res = await fetch(get(
       url(getAddress())
-    , pathname(`/mq/${queueId}/failed-messages`)
+    , pathname(`/mq/${namespace}/failed-messages`)
     ))
 
     expect(res.status).toBe(200)

@@ -16,14 +16,14 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-describe('draftMessage(queueId: string, messageId: string, priority?: number): void', () => {
+describe('draftMessage(namespace: string, messageId: string, priority?: number): void', () => {
   it('insert a drafting message', () => {
-    const queueId = 'queue-id'
+    const namespace = 'namespace'
     const messageId = 'message-id'
 
-    const result = DAO.draftMessage(queueId, messageId)
-    const rawMessageResult = getRawMessage(queueId, messageId)
-    const rawStatsResult = getRawStats(queueId)
+    const result = DAO.draftMessage(namespace, messageId)
+    const rawMessageResult = getRawMessage(namespace, messageId)
+    const rawStatsResult = getRawStats(namespace)
 
     expect(result).toBeUndefined()
     expect(rawMessageResult).toMatchObject({

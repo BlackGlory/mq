@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema } from '@src/schema'
+import { namespaceSchema } from '@src/schema'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.get(
@@ -15,18 +15,18 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const result = await Core.TBAC.TokenPolicy.getAllIds()
+      const result = await Core.TBAC.TokenPolicy.getAllNamespaces()
       reply.send(result)
     }
   )
 
   server.get<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/mq/:id/token-policies'
+    '/mq/:namespace/token-policies'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           200: {
             produceTokenRequired: {
@@ -52,20 +52,20 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      const result = await Core.TBAC.TokenPolicy.get(id)
+      const namespace = req.params.namespace
+      const result = await Core.TBAC.TokenPolicy.get(namespace)
       reply.send(result)
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: boolean
   }>(
-    '/mq/:id/token-policies/produce-token-required'
+    '/mq/:namespace/token-policies/produce-token-required'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , body: { type: 'boolean' }
       , response: {
           204: { type: 'null' }
@@ -73,40 +73,40 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const val = req.body
-      await Core.TBAC.TokenPolicy.setProduceTokenRequired(id, val)
+      await Core.TBAC.TokenPolicy.setProduceTokenRequired(namespace, val)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/mq/:id/token-policies/produce-token-required'
+    '/mq/:namespace/token-policies/produce-token-required'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.TBAC.TokenPolicy.unsetProduceTokenRequired(id)
+      const namespace = req.params.namespace
+      await Core.TBAC.TokenPolicy.unsetProduceTokenRequired(namespace)
       reply.status(204).send()
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: boolean
   }>(
-    '/mq/:id/token-policies/consume-token-required'
+    '/mq/:namespace/token-policies/consume-token-required'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , body: { type: 'boolean' }
       , response: {
           204: { type: 'null' }
@@ -114,40 +114,40 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const val = req.body
-      await Core.TBAC.TokenPolicy.setConsumeTokenRequired(id, val)
+      await Core.TBAC.TokenPolicy.setConsumeTokenRequired(namespace, val)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string }
+    Params: { namespace: string }
   }>(
-    '/mq/:id/token-policies/consume-token-required'
+    '/mq/:namespace/token-policies/consume-token-required'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.TBAC.TokenPolicy.unsetConsumeTokenRequired(id)
+      const namespace = req.params.namespace
+      await Core.TBAC.TokenPolicy.unsetConsumeTokenRequired(namespace)
       reply.status(204).send()
     }
   )
 
   server.put<{
-    Params: { id: string }
+    Params: { namespace: string }
     Body: boolean
   }>(
-    '/mq/:id/token-policies/clear-token-required'
+    '/mq/:namespace/token-policies/clear-token-required'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , body: { type: 'boolean' }
       , response: {
           204: { type: 'null' }
@@ -155,28 +155,28 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
+      const namespace = req.params.namespace
       const val = req.body
-      await Core.TBAC.TokenPolicy.setClearTokenRequired(id, val)
+      await Core.TBAC.TokenPolicy.setClearTokenRequired(namespace, val)
       reply.status(204).send()
     }
   )
 
   server.delete<{
-    Params: { id: string}
+    Params: { namespace: string}
   }>(
-    '/mq/:id/token-policies/clear-token-required'
+    '/mq/:namespace/token-policies/clear-token-required'
   , {
       schema: {
-        params: { id: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           204: { type: 'null' }
         }
       }
     }
   , async (req, reply) => {
-      const id = req.params.id
-      await Core.TBAC.TokenPolicy.unsetClearTokenRequired(id)
+      const namespace = req.params.namespace
+      await Core.TBAC.TokenPolicy.unsetClearTokenRequired(namespace)
       reply.status(204).send()
     }
   )

@@ -18,15 +18,15 @@ describe('token-based access control', () => {
       describe('token matched', () => {
         it('200', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
           const token = 'token'
           const payload = { priority: null }
-          await AccessControlDAO.setProduceTokenRequired(mqId, true)
-          await AccessControlDAO.setProduceToken({ id: mqId, token })
+          await AccessControlDAO.setProduceTokenRequired(namespace, true)
+          await AccessControlDAO.setProduceToken({ namespace, token })
 
           const res = await fetch(post(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages`)
+          , pathname(`/mq/${namespace}/messages`)
           , searchParam('token', token)
           , json(payload)
           ))
@@ -38,15 +38,15 @@ describe('token-based access control', () => {
       describe('token does not matched', () => {
         it('401', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
           const token = 'token'
           const payload = { priority: null }
-          await AccessControlDAO.setProduceTokenRequired(mqId, true)
-          await AccessControlDAO.setProduceToken({ id: mqId, token })
+          await AccessControlDAO.setProduceTokenRequired(namespace, true)
+          await AccessControlDAO.setProduceToken({ namespace, token })
 
           const res = await fetch(post(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages`)
+          , pathname(`/mq/${namespace}/messages`)
           , searchParam('token', 'bad')
           , json(payload)
           ))
@@ -58,15 +58,15 @@ describe('token-based access control', () => {
       describe('no token', () => {
         it('401', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
           const token = 'token'
           const payload = { priority: null }
-          await AccessControlDAO.setProduceTokenRequired(mqId, true)
-          await AccessControlDAO.setProduceToken({ id: mqId, token })
+          await AccessControlDAO.setProduceTokenRequired(namespace, true)
+          await AccessControlDAO.setProduceToken({ namespace, token })
 
           const res = await fetch(post(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages`)
+          , pathname(`/mq/${namespace}/messages`)
           , json(payload)
           ))
 
@@ -75,17 +75,17 @@ describe('token-based access control', () => {
       })
     })
 
-    describe('id does not need produce tokens', () => {
+    describe('namespace does not need produce tokens', () => {
       describe('PRODUCE_TOKEN_REQUIRED=true', () => {
         it('401', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.MQ_PRODUCE_TOKEN_REQUIRED = 'true'
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
           const payload = { priority: null }
 
           const res = await fetch(post(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages`)
+          , pathname(`/mq/${namespace}/messages`)
           , json(payload)
           ))
 
@@ -96,12 +96,12 @@ describe('token-based access control', () => {
       describe('PRODUCE_TOKEN_REQUIRED=false', () => {
         it('200', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
           const payload = { priority: null }
 
           const res = await fetch(post(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages`)
+          , pathname(`/mq/${namespace}/messages`)
           , json(payload)
           ))
 
@@ -115,15 +115,15 @@ describe('token-based access control', () => {
     describe('id need produce tokens', () => {
       describe('no token', () => {
         it('200', async () => {
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
           const token = 'token'
           const payload = { priority: null }
-          await AccessControlDAO.setProduceTokenRequired(mqId, true)
-          await AccessControlDAO.setProduceToken({ id: mqId, token })
+          await AccessControlDAO.setProduceTokenRequired(namespace, true)
+          await AccessControlDAO.setProduceToken({ namespace, token })
 
           const res = await fetch(post(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages`)
+          , pathname(`/mq/${namespace}/messages`)
           , json(payload)
           ))
 
@@ -132,19 +132,19 @@ describe('token-based access control', () => {
       })
     })
 
-    describe('id does not need produce tokens', () => {
+    describe('namespace does not need produce tokens', () => {
       describe('PRODUCE_TOKEN_REQUIRED=true', () => {
         it('200', async () => {
           process.env.MQ_PRODUCE_TOKEN_REQUIRED = 'true'
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
           const token = 'token'
           const payload = { priority: null }
-          await AccessControlDAO.setProduceTokenRequired(mqId, true)
-          await AccessControlDAO.setProduceToken({ id: mqId, token })
+          await AccessControlDAO.setProduceTokenRequired(namespace, true)
+          await AccessControlDAO.setProduceToken({ namespace, token })
 
           const res = await fetch(post(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages`)
+          , pathname(`/mq/${namespace}/messages`)
           , json(payload)
           ))
 

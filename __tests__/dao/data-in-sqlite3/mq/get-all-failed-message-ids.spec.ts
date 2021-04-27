@@ -18,19 +18,19 @@ jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-describe('getAllFailedMessageIds(queueId: string): Iterable<string>', () => {
+describe('getAllFailedMessageIds(namespace: string): Iterable<string>', () => {
   describe('exist', () => {
     it('return Iterable<string>', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
       const messageId = 'message-id'
       setMinimalRawMessage({
-        mq_id: queueId
-      , message_id: messageId
+        namespace
+      , id: messageId
       , state: 'failed'
       , state_updated_at: 0
       })
       setRawStats({
-        mq_id: queueId
+        namespace
       , active: 0
       , completed: 0
       , drafting: 0
@@ -39,7 +39,7 @@ describe('getAllFailedMessageIds(queueId: string): Iterable<string>', () => {
       , waiting: 0
       })
 
-      const result = DAO.getAllFailedMessageIds(queueId)
+      const result = DAO.getAllFailedMessageIds(namespace)
 
       expect(result).toBeIterable()
       expect(toArray(result)).toEqual([messageId])
@@ -48,9 +48,9 @@ describe('getAllFailedMessageIds(queueId: string): Iterable<string>', () => {
 
   describe('not exist', () => {
     it('return empty iterable', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
 
-      const result = DAO.getAllFailedMessageIds(queueId)
+      const result = DAO.getAllFailedMessageIds(namespace)
 
       expect(result).toBeIterable()
       expect(toArray(result)).toEqual([])

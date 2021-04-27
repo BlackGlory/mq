@@ -1,15 +1,15 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema } from '@src/schema'
+import { namespaceSchema } from '@src/schema'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
-  server.get<{ Params: { queueId: string }}>(
-    '/mq/:queueId/stats'
+  server.get<{ Params: { namespace: string }}>(
+    '/mq/:namespace/stats'
   , {
       schema: {
-        params: { queueId: idSchema }
+        params: { namespace: namespaceSchema }
       , response: {
           200: {
-            id: { type: 'string' }
+            namespace: { type: 'string' }
           , drafting: { type: 'integer', minimum: 0 }
           , waiting: { type: 'integer', minimum: 0 }
           , ordered: { type: 'integer', minimum: 0 }
@@ -21,8 +21,8 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const queueId = req.params.queueId
-      const result = await Core.MQ.stats(queueId)
+      const namespace = req.params.namespace
+      const result = await Core.MQ.stats(namespace)
       reply.send(result)
     }
   )

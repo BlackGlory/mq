@@ -1,33 +1,33 @@
 import { AccessControlDAO } from '@dao'
 
-export function getAllIds(): Promise<string[]> {
-  return AccessControlDAO.getAllIdsWithTokenPolicies()
+export function getAllNamespaces(): Promise<string[]> {
+  return AccessControlDAO.getAllNamespacesWithTokenPolicies()
 }
 
-export function get(id: string): Promise<ITokenPolicy> {
-  return AccessControlDAO.getTokenPolicies(id)
+export function get(namespace: string): Promise<ITokenPolicy> {
+  return AccessControlDAO.getTokenPolicies(namespace)
 }
 
-export function setProduceTokenRequired(id: string, val: boolean): Promise<void> {
-  return AccessControlDAO.setProduceTokenRequired(id, val)
+export function setProduceTokenRequired(namespace: string, val: boolean): Promise<void> {
+  return AccessControlDAO.setProduceTokenRequired(namespace, val)
 }
 
-export function unsetProduceTokenRequired(id: string): Promise<void> {
-  return AccessControlDAO.unsetProduceTokenRequired(id)
+export function unsetProduceTokenRequired(namespace: string): Promise<void> {
+  return AccessControlDAO.unsetProduceTokenRequired(namespace)
 }
 
-export function setConsumeTokenRequired(id: string, val: boolean): Promise<void> {
-  return AccessControlDAO.setConsumeTokenRequired(id, val)
+export function setConsumeTokenRequired(namespace: string, val: boolean): Promise<void> {
+  return AccessControlDAO.setConsumeTokenRequired(namespace, val)
 }
 
-export function unsetConsumeTokenRequired(id: string): Promise<void> {
-  return AccessControlDAO.unsetConsumeTokenRequired(id)
+export function unsetConsumeTokenRequired(namespace: string): Promise<void> {
+  return AccessControlDAO.unsetConsumeTokenRequired(namespace)
 }
 
-export function setClearTokenRequired(id: string, val: boolean): Promise<void> {
-  return AccessControlDAO.setClearTokenRequired(id, val)
+export function setClearTokenRequired(namespace: string, val: boolean): Promise<void> {
+  return AccessControlDAO.setClearTokenRequired(namespace, val)
 }
 
-export function unsetClearTokenRequired(id: string): Promise<void> {
-  return AccessControlDAO.unsetClearTokenRequired(id)
+export function unsetClearTokenRequired(namespace: string): Promise<void> {
+  return AccessControlDAO.unsetClearTokenRequired(namespace)
 }

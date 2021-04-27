@@ -1,8 +1,13 @@
 import { MQDAO } from '@dao'
 
-export async function prepareActiveMessage(queueId: string, messageId: string, type: string, payload: string) {
-  await MQDAO.draftMessage(queueId, messageId)
-  await MQDAO.setMessage(queueId, messageId, type, payload)
-  await MQDAO.orderMessage(queueId, Infinity, Infinity, Infinity)
-  await MQDAO.getMessage(queueId, messageId)
+export async function prepareActiveMessage(
+  namespace: string
+, id: string
+, type: string
+, payload: string
+) {
+  await MQDAO.draftMessage(namespace, id)
+  await MQDAO.setMessage(namespace, id, type, payload)
+  await MQDAO.orderMessage(namespace, Infinity, Infinity, Infinity)
+  await MQDAO.getMessage(namespace, id)
 }

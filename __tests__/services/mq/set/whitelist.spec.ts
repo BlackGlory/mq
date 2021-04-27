@@ -15,18 +15,18 @@ afterEach(stopService)
 
 describe('whitelist', () => {
   describe('enabled', () => {
-    describe('id in whitelist', () => {
+    describe('namespace in whitelist', () => {
       it('204', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'whitelist'
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
+        const namespace = 'namespace'
+        const id = 'message-id'
         const payload = 'payload'
-        await prepareDraftingMessage(mqId, messageId)
-        await AccessControlDAO.addWhitelistItem(mqId)
+        await prepareDraftingMessage(namespace, id)
+        await AccessControlDAO.addWhitelistItem(namespace)
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}`)
+        , pathname(`/mq/${namespace}/messages/${id}`)
         , json(payload)
         ))
 
@@ -34,17 +34,17 @@ describe('whitelist', () => {
       })
     })
 
-    describe('id not in whitelist', () => {
+    describe('namespace not in whitelist', () => {
       it('403', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'whitelist'
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
+        const namespace = 'namespace'
+        const id = 'message-id'
         const payload = 'payload'
-        await prepareDraftingMessage(mqId, messageId)
+        await prepareDraftingMessage(namespace, id)
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}`)
+        , pathname(`/mq/${namespace}/messages/${id}`)
         , json(payload)
         ))
 
@@ -54,16 +54,16 @@ describe('whitelist', () => {
   })
 
   describe('disabled', () => {
-    describe('id not in whitelist', () => {
+    describe('namespace not in whitelist', () => {
       it('204', async () => {
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
+        const namespace = 'namespace'
+        const id = 'message-id'
         const payload = 'payload'
-        await prepareDraftingMessage(mqId, messageId)
+        await prepareDraftingMessage(namespace, id)
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}`)
+        , pathname(`/mq/${namespace}/messages/${id}`)
         , json(payload)
         ))
 

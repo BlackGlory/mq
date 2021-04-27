@@ -18,14 +18,14 @@ describe('token-based access control', () => {
       describe('token matched', () => {
         it('204', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setClearTokenRequired(mqId, true)
-          await AccessControlDAO.setClearToken({ id: mqId, token })
+          await AccessControlDAO.setClearTokenRequired(namespace, true)
+          await AccessControlDAO.setClearToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}`)
+          , pathname(`/mq/${namespace}`)
           , searchParam('token', token)
           ))
 
@@ -36,14 +36,14 @@ describe('token-based access control', () => {
       describe('token does not matched', () => {
         it('401', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setClearTokenRequired(mqId, true)
-          await AccessControlDAO.setClearToken({ id: mqId, token })
+          await AccessControlDAO.setClearTokenRequired(namespace, true)
+          await AccessControlDAO.setClearToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}`)
+          , pathname(`/mq/${namespace}`)
           , searchParam('token', 'bad')
           ))
 
@@ -54,14 +54,14 @@ describe('token-based access control', () => {
       describe('no token', () => {
         it('401', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setClearTokenRequired(mqId, true)
-          await AccessControlDAO.setClearToken({ id: mqId, token })
+          await AccessControlDAO.setClearTokenRequired(namespace, true)
+          await AccessControlDAO.setClearToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}`)
+          , pathname(`/mq/${namespace}`)
           ))
 
           expect(res.status).toBe(401)
@@ -69,16 +69,16 @@ describe('token-based access control', () => {
       })
     })
 
-    describe('id does not need consume tokens', () => {
+    describe('namespace does not need consume tokens', () => {
       describe('CLEAR_TOKEN_REQUIRED=true', () => {
         it('401', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.MQ_CLEAR_TOKEN_REQUIRED = 'true'
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}`)
+          , pathname(`/mq/${namespace}`)
           ))
 
           expect(res.status).toBe(401)
@@ -88,11 +88,11 @@ describe('token-based access control', () => {
       describe('CLEAR_TOKEN_REQUIRED=false', () => {
         it('204', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}`)
+          , pathname(`/mq/${namespace}`)
           ))
 
           expect(res.status).toBe(204)
@@ -105,14 +105,14 @@ describe('token-based access control', () => {
     describe('id need consume tokens', () => {
       describe('no token', () => {
         it('204', async () => {
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setConsumeTokenRequired(mqId, true)
-          await AccessControlDAO.setConsumeToken({ id: mqId, token })
+          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
+          await AccessControlDAO.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}`)
+          , pathname(`/mq/${namespace}`)
           ))
 
           expect(res.status).toBe(204)
@@ -120,18 +120,18 @@ describe('token-based access control', () => {
       })
     })
 
-    describe('id does not need consume tokens', () => {
+    describe('namespace does not need consume tokens', () => {
       describe('CLEAR_TOKEN_REQUIRED=true', () => {
         it('204', async () => {
           process.env.MQ_CLEAR_TOKEN_REQUIRED = 'true'
-          const mqId = 'mq-id'
+          const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setConsumeTokenRequired(mqId, true)
-          await AccessControlDAO.setConsumeToken({ id: mqId, token })
+          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
+          await AccessControlDAO.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}`)
+          , pathname(`/mq/${namespace}`)
           ))
 
           expect(res.status).toBe(204)

@@ -15,18 +15,18 @@ afterEach(stopService)
 
 describe('blacklist', () => {
   describe('enabled', () => {
-    describe('id in blacklist', () => {
+    describe('namespace in blacklist', () => {
       it('403', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
+        const namespace = 'namespace'
+        const id = 'message-id'
         const payload = 'payload'
-        await prepareDraftingMessage(mqId, messageId)
-        await AccessControlDAO.addBlacklistItem(mqId)
+        await prepareDraftingMessage(namespace, id)
+        await AccessControlDAO.addBlacklistItem(namespace)
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}`)
+        , pathname(`/mq/${namespace}/messages/${id}`)
         , json(payload)
         ))
 
@@ -34,17 +34,17 @@ describe('blacklist', () => {
       })
     })
 
-    describe('id not in blacklist', () => {
+    describe('namespace not in blacklist', () => {
       it('204', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
+        const namespace = 'namespace'
+        const id = 'message-id'
         const payload = 'payload'
-        await prepareDraftingMessage(mqId, messageId)
+        await prepareDraftingMessage(namespace, id)
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}`)
+        , pathname(`/mq/${namespace}/messages/${id}`)
         , json(payload)
         ))
 
@@ -54,17 +54,17 @@ describe('blacklist', () => {
   })
 
   describe('disabled', () => {
-    describe('id in blacklist', () => {
+    describe('namespace in blacklist', () => {
       it('204', async () => {
-        const mqId = 'mq-id'
-        const messageId = 'message-id'
+        const namespace = 'namespace'
+        const id = 'message-id'
         const payload = 'payload'
-        await prepareDraftingMessage(mqId, messageId)
-        await AccessControlDAO.addBlacklistItem(mqId)
+        await prepareDraftingMessage(namespace, id)
+        await AccessControlDAO.addBlacklistItem(namespace)
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages/${messageId}`)
+        , pathname(`/mq/${namespace}/messages/${id}`)
         , json(payload)
         ))
 

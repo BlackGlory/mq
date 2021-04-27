@@ -8,7 +8,7 @@ import { State } from './utils/state'
  * @throws {NotFound}
  * @throws {BadMessageState}
  */
-export function getMessage(queueId: string, messageId: string): IMessage {
+export function getMessage(namespace: string, id: string): IMessage {
   const timestamp = getTimestamp()
   const db = getDatabase()
 
@@ -19,9 +19,9 @@ export function getMessage(queueId: string, messageId: string): IMessage {
            , state
            , priority
         FROM mq_message
-       WHERE mq_id = $queueId
-         AND message_id = $messageId;
-    `).get({ queueId, messageId })
+       WHERE namespace = $namespace
+         AND id = $id;
+    `).get({ namespace, id })
     if (!row) throw new NotFound()
 
     const state = row['state'] as State
@@ -38,16 +38,16 @@ export function getMessage(queueId: string, messageId: string): IMessage {
           UPDATE mq_message
              SET state = 'active'
                , state_updated_at = $stateUpdatedAt
-           WHERE mq_id = $queueId
-             AND message_id = $messageId;
+           WHERE namespace = $namespace
+             AND id = $id;
         `).run({
-          queueId
-        , messageId
+          namespace
+        , id
         , stateUpdatedAt: timestamp
         })
 
-        downcreaseOrdered(queueId)
-        increaseActive(queueId)
+        downcreaseOrdered(namespace)
+        increaseActive(namespace)
         break
     }
 

@@ -3,9 +3,9 @@ import { map } from 'iterable-operator'
 
 export function getAllQueueIds(): Iterable<string> {
   const iter = getDatabase().prepare(`
-    SELECT mq_id
+    SELECT namespace
       FROM mq_stats;
   `).iterate()
 
-  return map(iter, x => x['mq_id'])
+  return map(iter, x => x['namespace'])
 }

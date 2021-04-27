@@ -2,13 +2,13 @@ import { getDatabase } from '../database'
 
 export function getAllIdsWithTokenPolicies(): string[] {
   const result = getDatabase().prepare(`
-    SELECT mq_id
+    SELECT namespace
       FROM mq_token_policy;
   `).all()
-  return result.map(x => x['mq_id'])
+  return result.map(x => x['namespace'])
 }
 
-export function getTokenPolicies(id: string): ITokenPolicy {
+export function getTokenPolicies(namespace: string): ITokenPolicy {
   const row: {
     'produce_token_required': number | null
   , 'consume_token_required': number | null
@@ -18,22 +18,25 @@ export function getTokenPolicies(id: string): ITokenPolicy {
          , consume_token_required
          , clear_token_required
       FROM mq_token_policy
-     WHERE mq_id = $id;
-  `).get({ id })
+     WHERE namespace = $namespace;
+  `).get({ namespace })
   if (row) {
     const produceTokenRequired = row['produce_token_required']
     const consumeTokenRequired = row['consume_token_required']
     const clearTokenRequired = row['clear_token_required']
     return {
-      produceTokenRequired: produceTokenRequired === null
-                            ? null
-                            : numberToBoolean(produceTokenRequired)
-    , consumeTokenRequired: consumeTokenRequired === null
-                            ? null
-                            : numberToBoolean(consumeTokenRequired)
-    , clearTokenRequired: clearTokenRequired === null
-                          ? null
-                          : numberToBoolean(clearTokenRequired)
+      produceTokenRequired:
+        produceTokenRequired === null
+        ? null
+        : numberToBoolean(produceTokenRequired)
+    , consumeTokenRequired:
+        consumeTokenRequired === null
+        ? null
+        : numberToBoolean(consumeTokenRequired)
+    , clearTokenRequired:
+        clearTokenRequired === null
+        ? null
+        : numberToBoolean(clearTokenRequired)
     }
   } else {
     return {
@@ -44,80 +47,80 @@ export function getTokenPolicies(id: string): ITokenPolicy {
   }
 }
 
-export function setProduceTokenRequired(id: string, val: boolean): void {
+export function setProduceTokenRequired(namespace: string, val: boolean): void {
   getDatabase().prepare(`
-    INSERT INTO mq_token_policy (mq_id, produce_token_required)
-    VALUES ($id, $produceTokenRequired)
-        ON CONFLICT(mq_id)
+    INSERT INTO mq_token_policy (namespace, produce_token_required)
+    VALUES ($namespace, $produceTokenRequired)
+        ON CONFLICT(namespace)
         DO UPDATE SET produce_token_required = $produceTokenRequired;
-  `).run({ id, produceTokenRequired: booleanToNumber(val) })
+  `).run({ namespace, produceTokenRequired: booleanToNumber(val) })
 }
 
-export function unsetProduceTokenRequired(id: string): void {
+export function unsetProduceTokenRequired(namespace: string): void {
   const db = getDatabase()
   db.transaction(() => {
     db.prepare(`
       UPDATE mq_token_policy
          SET produce_token_required = NULL
-       WHERE mq_id = $id;
-    `).run({ id })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
 
-    deleteNoPoliciesRow(id)
+    deleteNoPoliciesRow(namespace)
   })()
 }
 
-export function setConsumeTokenRequired(id: string, val: boolean): void {
+export function setConsumeTokenRequired(namespace: string, val: boolean): void {
   getDatabase().prepare(`
-    INSERT INTO mq_token_policy (mq_id, consume_token_required)
-    VALUES ($id, $consumeTokenRequired)
-        ON CONFLICT(mq_id)
+    INSERT INTO mq_token_policy (namespace, consume_token_required)
+    VALUES ($namespace, $consumeTokenRequired)
+        ON CONFLICT(namespace)
         DO UPDATE SET consume_token_required = $consumeTokenRequired;
-  `).run({ id, consumeTokenRequired: booleanToNumber(val) })
+  `).run({ namespace, consumeTokenRequired: booleanToNumber(val) })
 }
 
-export function unsetConsumeTokenRequired(id: string): void {
+export function unsetConsumeTokenRequired(namespace: string): void {
   const db = getDatabase()
   db.transaction(() => {
     db.prepare(`
       UPDATE mq_token_policy
          SET consume_token_required = NULL
-       WHERE mq_id = $id;
-    `).run({ id })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
 
-    deleteNoPoliciesRow(id)
+    deleteNoPoliciesRow(namespace)
   })()
 }
 
-export function setClearTokenRequired(id: string, val: boolean): void {
+export function setClearTokenRequired(namespace: string, val: boolean): void {
   getDatabase().prepare(`
-    INSERT INTO mq_token_policy (mq_id, clear_token_required)
-    VALUES ($id, $clearTokenRequired)
-        ON CONFLICT(mq_id)
+    INSERT INTO mq_token_policy (namespace, clear_token_required)
+    VALUES ($namespace, $clearTokenRequired)
+        ON CONFLICT(namespace)
         DO UPDATE SET clear_token_required = $clearTokenRequired;
-  `).run({ id, clearTokenRequired: booleanToNumber(val) })
+  `).run({ namespace, clearTokenRequired: booleanToNumber(val) })
 }
 
-export function unsetClearTokenRequired(id: string): void {
+export function unsetClearTokenRequired(namespace: string): void {
   const db = getDatabase()
   db.transaction(() => {
     db.prepare(`
       UPDATE mq_token_policy
          SET clear_token_required = NULL
-       WHERE mq_id = $id;
-    `).run({ id })
+       WHERE namespace = $namespace;
+    `).run({ namespace })
 
-    deleteNoPoliciesRow(id)
+    deleteNoPoliciesRow(namespace)
   })()
 }
 
-function deleteNoPoliciesRow(id: string): void {
+function deleteNoPoliciesRow(namespace: string): void {
   getDatabase().prepare(`
     DELETE FROM mq_token_policy
-     WHERE mq_id = $id
+     WHERE namespace = $namespace
        AND produce_token_required = NULL
        AND consume_token_required = NULL
        AND clear_token_required = NULL
-  `).run({ id })
+  `).run({ namespace })
 }
 
 function numberToBoolean(val: number): boolean {

@@ -9,7 +9,7 @@ interface IMessage {
 }
 
 interface IStats {
-  id: string
+  namespace: string
   drafting: number
   waiting: number
   ordered: number
@@ -27,58 +27,63 @@ interface ICore {
   isAdmin(password: string): boolean
 
   MQ: {
-    draft(queueId: string, priority?: number): Promise<string>
+    draft(namespace: string, priority?: number): Promise<string>
 
     /**
      * @throws {NotFound}
      * @throws {BadMessageState}
      * @throws {DuplicatePayload}
      */
-    set(queueId: string, messageId: string, type: string, payload: string): Promise<void>
+    set(
+      namespace: string
+    , messageId: string
+    , type: string
+    , payload: string
+    ): Promise<void>
 
     /**
      * @throws {AbortError}
      */
-    order(queueId: string, abortSignal: AbortSignal): Promise<string>
+    order(namespace: string, abortSignal: AbortSignal): Promise<string>
 
     /**
      * @throws {NotFound}
      * @throws {BadMessageState}
      */
-    get(queueId: string, messageId: string): Promise<IMessage>
+    get(namespace: string, messageId: string): Promise<IMessage>
 
     /**
      * @throws {NotFound}
      */
-    abandon(queueId: string, messageId: string): Promise<void>
-
-    /**
-     * @throws {NotFound}
-     * @throws {BadMessageState}
-     */
-    complete(queueId: string, messageId: string): Promise<void>
+    abandon(namespace: string, messageId: string): Promise<void>
 
     /**
      * @throws {NotFound}
      * @throws {BadMessageState}
      */
-    fail(queueId: string, messageId: string): Promise<void>
+    complete(namespace: string, messageId: string): Promise<void>
 
     /**
      * @throws {NotFound}
      * @throws {BadMessageState}
      */
-    renew(queueId: string, messageId: string): Promise<void>
+    fail(namespace: string, messageId: string): Promise<void>
 
-    abandonAllFailedMessages(queueId: string): Promise<void>
-    renewAllFailedMessages(queueId: string): Promise<void>
+    /**
+     * @throws {NotFound}
+     * @throws {BadMessageState}
+     */
+    renew(namespace: string, messageId: string): Promise<void>
 
-    getAllFailedMessageIds(queueId: string): AsyncIterable<string>
-    getAllQueueIds(): AsyncIterable<string>
-    maintainAllQueues(): Promise<void>
+    abandonAllFailedMessages(namespace: string): Promise<void>
+    renewAllFailedMessages(namespace: string): Promise<void>
 
-    clear(queueId: string): Promise<void>
-    stats(queueId: string): Promise<IStats>
+    getAllFailedMessageIds(namespace: string): AsyncIterable<string>
+    getAllNamespaces(): AsyncIterable<string>
+    nextTick(): Promise<void>
+
+    clear(namespace: string): Promise<void>
+    stats(namespace: string): Promise<IStats>
 
     NotFound: CustomErrorConstructor
     BadMessageState: CustomErrorConstructor
@@ -87,67 +92,67 @@ interface ICore {
   }
 
   Configuration: {
-    getAllIds(): Promise<string[]>
-    get(id: string): Promise<IConfiguration>
+    getAllNamespaces(): Promise<string[]>
+    get(namespace: string): Promise<IConfiguration>
 
-    setUnique(queueId: string, val: boolean): Promise<void>
-    unsetUnique(queueId: string): Promise<void>
+    setUnique(namespace: string, val: boolean): Promise<void>
+    unsetUnique(namespace: string): Promise<void>
 
-    setDraftingTimeout(queueId: string, val: number): Promise<void>
-    unsetDraftingTimeout(queueId: string): Promise<void>
+    setDraftingTimeout(namespace: string, val: number): Promise<void>
+    unsetDraftingTimeout(namespace: string): Promise<void>
 
-    setOrderedTimeout(queueId: string, val: number): Promise<void>
-    unsetOrderedTimeout(queueId: string): Promise<void>
+    setOrderedTimeout(namespace: string, val: number): Promise<void>
+    unsetOrderedTimeout(namespace: string): Promise<void>
 
-    setActiveTimeout(queueId: string, val: number): Promise<void>
-    unsetActiveTimeout(queueId: string): Promise<void>
+    setActiveTimeout(namespace: string, val: number): Promise<void>
+    unsetActiveTimeout(namespace: string): Promise<void>
 
-    setConcurrency(queueId: string, val: number): Promise<void>
-    unsetConcurrency(queueId: string): Promise<void>
+    setConcurrency(namespace: string, val: number): Promise<void>
+    unsetConcurrency(namespace: string): Promise<void>
 
-    setThrottle(queueId: string, val: Throttle): Promise<void>
-    unsetThrottle(queueId: string): Promise<void>
+    setThrottle(namespace: string, val: Throttle): Promise<void>
+    unsetThrottle(namespace: string): Promise<void>
   }
 
   Blacklist: {
     isEnabled(): boolean
-    isBlocked(id: string): Promise<boolean>
+    isBlocked(namespace: string): Promise<boolean>
     getAll(): Promise<string[]>
-    add(id: string): Promise<void>
-    remove(id: string): Promise<void>
+    add(namespace: string): Promise<void>
+    remove(namespace: string): Promise<void>
 
     /**
      * @throws {Forbidden}
      */
-    check(id: string): Promise<void>
+    check(namespace: string): Promise<void>
     Forbidden: CustomErrorConstructor
   }
 
   Whitelist: {
     isEnabled(): boolean
-    isBlocked(id: string): Promise<boolean>
+    isBlocked(namespace: string): Promise<boolean>
     getAll(): Promise<string[]>
-    add(id: string): Promise<void>
-    remove(id: string): Promise<void>
+    add(namespace: string): Promise<void>
+    remove(namespace: string): Promise<void>
 
     /**
      * @throws {Forbidden}
      */
-    check(id: string): Promise<void>
+    check(namespace: string): Promise<void>
     Forbidden: CustomErrorConstructor
   }
 
   JsonSchema: {
     isEnabled(): boolean
-    getAllIds(): Promise<string[]>
-    get(id: string): Promise<string | null>
-    set(id: string, schema: Json): Promise<void>
-    remove(id: string): Promise<void>
+    getAllNamespaces(): Promise<string[]>
+    get(namespace: string): Promise<string | null>
+    set(namespace: string, schema: Json): Promise<void>
+    remove(namespace: string): Promise<void>
 
     /**
      * @throws {InvalidPayload}
      */
-    validate(id: string, payload: string): Promise<void>
+    validate(namespace: string, payload: string): Promise<void>
     InvalidPayload: CustomErrorConstructor
   }
 
@@ -157,46 +162,46 @@ interface ICore {
     /**
      * @throws {Unauthorized}
      */
-    checkProducePermission(id: string, token?: string): Promise<void>
+    checkProducePermission(namespace: string, token?: string): Promise<void>
 
     /**
      * @throws {Unauthorized}
      */
-    checkConsumePermission(id: string, token?: string): Promise<void>
+    checkConsumePermission(namespace: string, token?: string): Promise<void>
 
     /**
      * @throws {Unauthorized}
      */
-    checkClearPermission(id: string, token?: string): Promise<void>
+    checkClearPermission(namespace: string, token?: string): Promise<void>
 
     Unauthorized: CustomErrorConstructor
 
     Token: {
-      getAllIds(): Promise<string[]>
-      getAll(id: string): Promise<Array<ITokenInfo>>
+      getAllNamespaces(): Promise<string[]>
+      getAll(namespace: string): Promise<Array<ITokenInfo>>
 
-      setProduceToken(id: string, token: string): Promise<void>
-      unsetProduceToken(id: string, token: string): Promise<void>
+      setProduceToken(namespace: string, token: string): Promise<void>
+      unsetProduceToken(namespace: string, token: string): Promise<void>
 
-      setConsumeToken(id: string, token: string): Promise<void>
-      unsetConsumeToken(id: string, token: string): Promise<void>
+      setConsumeToken(namespace: string, token: string): Promise<void>
+      unsetConsumeToken(namespace: string, token: string): Promise<void>
 
-      setClearToken(id: string, token: string): Promise<void>
-      unsetClearToken(id: string, token: string): Promise<void>
+      setClearToken(namespace: string, token: string): Promise<void>
+      unsetClearToken(namespace: string, token: string): Promise<void>
     }
 
     TokenPolicy: {
-      getAllIds(): Promise<string[]>
-      get(id: string): Promise<ITokenPolicy>
+      getAllNamespaces(): Promise<string[]>
+      get(namespace: string): Promise<ITokenPolicy>
 
-      setProduceTokenRequired(id: string, val: boolean): Promise<void>
-      unsetProduceTokenRequired(id: string): Promise<void>
+      setProduceTokenRequired(namespace: string, val: boolean): Promise<void>
+      unsetProduceTokenRequired(namespace: string): Promise<void>
 
-      setConsumeTokenRequired(id: string, val: boolean): Promise<void>
-      unsetConsumeTokenRequired(id: string): Promise<void>
+      setConsumeTokenRequired(namespace: string, val: boolean): Promise<void>
+      unsetConsumeTokenRequired(namespace: string): Promise<void>
 
-      setClearTokenRequired(id: string, val: boolean): Promise<void>
-      unsetClearTokenRequired(id: string): Promise<void>
+      setClearTokenRequired(namespace: string, val: boolean): Promise<void>
+      unsetClearTokenRequired(namespace: string): Promise<void>
     }
   }
 }

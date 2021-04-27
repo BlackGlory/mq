@@ -14,16 +14,16 @@ afterEach(stopService)
 
 describe('blacklist', () => {
   describe('enabled', () => {
-    describe('id in blacklist', () => {
+    describe('namespace in blacklist', () => {
       it('403', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
-        const mqId = 'mq-id'
+        const namespace = 'namespace'
         const payload = { priority: null }
-        await AccessControlDAO.addBlacklistItem(mqId)
+        await AccessControlDAO.addBlacklistItem(namespace)
 
         const res = await fetch(post(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages`)
+        , pathname(`/mq/${namespace}/messages`)
         , json(payload)
         ))
 
@@ -31,15 +31,15 @@ describe('blacklist', () => {
       })
     })
 
-    describe('id not in blacklist', () => {
+    describe('namespace not in blacklist', () => {
       it('200', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
-        const mqId = 'mq-id'
+        const namespace = 'namespace'
         const payload = { priority: null }
 
         const res = await fetch(post(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages`)
+        , pathname(`/mq/${namespace}/messages`)
         , json(payload)
         ))
 
@@ -49,15 +49,15 @@ describe('blacklist', () => {
   })
 
   describe('disabled', () => {
-    describe('id in blacklist', () => {
+    describe('namespace in blacklist', () => {
       it('200', async () => {
-        const mqId = 'mq-id'
+        const namespace = 'namespace'
         const payload = { priority: null }
-        await AccessControlDAO.addBlacklistItem(mqId)
+        await AccessControlDAO.addBlacklistItem(namespace)
 
         const res = await fetch(post(
           url(getAddress())
-        , pathname(`/mq/${mqId}/messages`)
+        , pathname(`/mq/${namespace}/messages`)
         , json(payload)
         ))
 

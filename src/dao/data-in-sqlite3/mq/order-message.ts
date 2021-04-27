@@ -4,32 +4,32 @@ import { downcreaseWaiting, increaseOrdered } from './utils/stats'
 import { stats } from './stats'
 import { assert } from '@blackglory/errors'
 
-export function orderMessage(queueId: string, concurrency: number, duration: number, limit: number): string | null {
+export function orderMessage(namespace: string, concurrency: number, duration: number, limit: number): string | null {
   const db = getDatabase()
 
   return db.transaction(() => {
-    const { active, ordered } = stats(queueId)
+    const { active, ordered } = stats(namespace)
     if (active + ordered >= concurrency) return null
 
     const now = getTimestamp()
 
-    const throttle = getThrottle(queueId)
+    const throttle = getThrottle(namespace)
     if (throttle) {
       if (inThrottleCycle()) {
         if (overLimit()) return null
       } else {
-        updateThrottleCycle(queueId, {
+        updateThrottleCycle(namespace, {
           duration
         , now
         , oldCycleStartTime: throttle.cycleStartTime
         })
       }
-      countupThrottle(queueId)
-      return order(queueId, now)
+      countupThrottle(namespace)
+      return order(namespace, now)
     } else {
-      initThrottle(queueId, now)
-      countupThrottle(queueId)
-      return order(queueId, now)
+      initThrottle(namespace, now)
+      countupThrottle(namespace)
+      return order(namespace, now)
     }
 
     function overLimit(): boolean {
@@ -44,13 +44,13 @@ export function orderMessage(queueId: string, concurrency: number, duration: num
   })()
 }
 
-function getThrottle(queueId: string): IThrottle | null {
+function getThrottle(namespace: string): IThrottle | null {
   const row = getDatabase().prepare(`
     SELECT cycle_start_time
          , count
       FROM mq_throttle
-     WHERE mq_id = $queueId;
-  `).get({ queueId })
+     WHERE namespace = $namespace;
+  `).get({ namespace })
   if (!row) return null
 
   return {
@@ -59,40 +59,40 @@ function getThrottle(queueId: string): IThrottle | null {
   }
 }
 
-function order(queueId: string, now: number): string | null {
+function order(namespace: string, now: number): string | null {
   const db = getDatabase()
 
   const row = db.prepare(`
-    SELECT message_id
+    SELECT id
       FROM mq_message
-     WHERE mq_id = $queueId
+     WHERE namespace = $namespace
        AND state = 'waiting'
      ORDER BY priority         ASC NULLS LAST
             , state_updated_at ASC
      LIMIT 1;
-  `).get({ queueId })
+  `).get({ namespace })
   if (!row) return null
 
-  const messageId = row['message_id'] as string
+  const id = row['id'] as string
   db.prepare(`
     UPDATE mq_message
        SET state = 'ordered'
          , state_updated_at = $stateUpdatedAt
-     WHERE mq_id = $queueId
-       AND message_id = $messageId;
+     WHERE namespace = $namespace
+       AND id = $id;
   `).run({
-    queueId
-  , messageId
+    namespace
+  , id
   , stateUpdatedAt: now
   })
 
-  downcreaseWaiting(queueId)
-  increaseOrdered(queueId)
+  downcreaseWaiting(namespace)
+  increaseOrdered(namespace)
 
-  return messageId
+  return id
 }
 
-function updateThrottleCycle(queueId: string, { duration, now, oldCycleStartTime }: {
+function updateThrottleCycle(namespace: string, { duration, now, oldCycleStartTime }: {
   duration: number
   now: number
   oldCycleStartTime: number
@@ -102,23 +102,23 @@ function updateThrottleCycle(queueId: string, { duration, now, oldCycleStartTime
     UPDATE mq_throttle
        SET cycle_start_time = $cycleStartTime
          , count = 0
-     WHERE mq_id = $queueId;
-  `).run({ queueId, cycleStartTime })
+     WHERE namespace = $namespace;
+  `).run({ namespace, cycleStartTime })
 }
 
-function initThrottle(queueId: string, startTime: number): void {
+function initThrottle(namespace: string, startTime: number): void {
   getDatabase().prepare(`
-    INSERT INTO mq_throttle (mq_id, cycle_start_time)
-    VALUES ($queueId, $startTime);
-  `).run({ queueId, startTime })
+    INSERT INTO mq_throttle (namespace, cycle_start_time)
+    VALUES ($namespace, $startTime);
+  `).run({ namespace, startTime })
 }
 
-function countupThrottle(queueId: string): void {
+function countupThrottle(namespace: string): void {
   getDatabase().prepare(`
     UPDATE mq_throttle
        SET count = count + 1
-     WHERE mq_id = $queueId;
-  `).run({ queueId })
+     WHERE namespace = $namespace;
+  `).run({ namespace })
 }
 
 function newCycleStartTime({ now, duration, oldCycleStartTime }: {

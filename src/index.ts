@@ -2,7 +2,7 @@ import { go } from '@blackglory/go'
 import { AbortController } from 'abort-controller'
 import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database'
 import * as DataInSqlite3 from '@dao/data-in-sqlite3/database'
-import { maintainQueuesEverySecond } from './schedule'
+import { callNextTickEverySecond } from './schedule'
 import { buildServer } from './server'
 import { PORT, HOST, CI } from '@env'
 
@@ -30,7 +30,7 @@ go(async () => {
   await server.listen(PORT(), HOST())
   if (CI()) await process.exit()
 
-  maintainQueuesEverySecond(maintainController.signal)
+  callNextTickEverySecond(maintainController.signal)
 
   process.send?.('ready')
 })

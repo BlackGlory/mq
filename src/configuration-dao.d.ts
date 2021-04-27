@@ -16,24 +16,24 @@ interface Throttle {
 }
 
 interface IConfigurationDAO {
-  getAllIdsWithConfiguration(): Promise<string[]>
-  getConfiguration(queueId: string): Promise<IConfiguration>
+  getAllNamespacesWithConfiguration(): Promise<string[]>
+  getConfiguration(namespace: string): Promise<IConfiguration>
 
-  setUnique(queueId: string, val: boolean): Promise<void>
-  unsetUnique(queueId: string): Promise<void>
+  setUnique(namespace: string, val: boolean): Promise<void>
+  unsetUnique(namespace: string): Promise<void>
 
-  setDraftingTimeout(queueId: string, val: number): Promise<void>
-  unsetDraftingTimeout(queueId: string): Promise<void>
+  setDraftingTimeout(namespace: string, val: number): Promise<void>
+  unsetDraftingTimeout(namespace: string): Promise<void>
 
-  setOrderedTimeout(queueId: string, val: number): Promise<void>
-  unsetOrderedTimeout(queueId: string): Promise<void>
+  setOrderedTimeout(namespace: string, val: number): Promise<void>
+  unsetOrderedTimeout(namespace: string): Promise<void>
 
-  setActiveTimeout(queueId: string, val: number): Promise<void>
-  unsetActiveTimeout(queueId: string): Promise<void>
+  setActiveTimeout(namespace: string, val: number): Promise<void>
+  unsetActiveTimeout(namespace: string): Promise<void>
 
-  setConcurrency(queueId: string, val: number): Promise<void>
-  unsetConcurrency(queueId: string): Promise<void>
+  setConcurrency(namespace: string, val: number): Promise<void>
+  unsetConcurrency(namespace: string): Promise<void>
 
-  setThrottle(queueId: string, val: Throttle): Promise<void>
-  unsetThrottle(queueId: string): Promise<void>
+  setThrottle(namespace: string, val: Throttle): Promise<void>
+  unsetThrottle(namespace: string): Promise<void>
 }

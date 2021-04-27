@@ -59,15 +59,15 @@ describe('TBAC', () => {
     })
   })
 
-  describe('GET /admin/mq/:id/tokens', () => {
+  describe('GET /admin/mq/:namespace/tokens', () => {
     describe('auth', () => {
       it('200', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens`)
+        , pathname(`/admin/mq/${namespace}/tokens`)
         , headers(createAuthHeaders())
         ))
 
@@ -89,11 +89,11 @@ describe('TBAC', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens`)
+        , pathname(`/admin/mq/${namespace}/tokens`)
         ))
 
         expect(res.status).toBe(401)
@@ -103,11 +103,11 @@ describe('TBAC', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens`)
+        , pathname(`/admin/mq/${namespace}/tokens`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -116,16 +116,16 @@ describe('TBAC', () => {
     })
   })
 
-  describe('PUT /admin/mq/:id/tokens/:token/produce', () => {
+  describe('PUT /admin/mq/:namespace/tokens/:token/produce', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/produce`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/produce`)
         , headers(createAuthHeaders())
         ))
 
@@ -135,12 +135,12 @@ describe('TBAC', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/produce`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/produce`)
         ))
 
         expect(res.status).toBe(401)
@@ -150,12 +150,12 @@ describe('TBAC', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/produce`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/produce`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -164,16 +164,16 @@ describe('TBAC', () => {
     })
   })
 
-  describe('DELETE /admin/mq/:id/tokens/:token/produce', () => {
+  describe('DELETE /admin/mq/:namespace/tokens/:token/produce', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/produce`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/produce`)
         , headers(createAuthHeaders())
         ))
 
@@ -183,12 +183,12 @@ describe('TBAC', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/produce`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/produce`)
         ))
 
         expect(res.status).toBe(401)
@@ -198,12 +198,12 @@ describe('TBAC', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/produce`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/produce`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -212,16 +212,16 @@ describe('TBAC', () => {
     })
   })
 
-  describe('PUT /admin/mq/:id/tokens/:token/consume', () => {
+  describe('PUT /admin/mq/:namespace/tokens/:token/consume', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/consume`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/consume`)
         , headers(createAuthHeaders())
         ))
 
@@ -231,12 +231,12 @@ describe('TBAC', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/consume`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/consume`)
         ))
 
         expect(res.status).toBe(401)
@@ -246,12 +246,12 @@ describe('TBAC', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/consume`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/consume`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -260,16 +260,16 @@ describe('TBAC', () => {
     })
   })
 
-  describe('DELETE /admin/mq/:id/tokens/:token/consume', () => {
+  describe('DELETE /admin/mq/:namespace/tokens/:token/consume', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/consume`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/consume`)
         , headers(createAuthHeaders())
         ))
 
@@ -279,12 +279,12 @@ describe('TBAC', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/consume`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/consume`)
         ))
 
         expect(res.status).toBe(401)
@@ -294,12 +294,12 @@ describe('TBAC', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/consume`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/consume`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -308,16 +308,16 @@ describe('TBAC', () => {
     })
   })
 
-  describe('PUT /admin/mq/:id/tokens/:token/clear', () => {
+  describe('PUT /admin/mq/:namespace/tokens/:token/clear', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/clear`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/clear`)
         , headers(createAuthHeaders())
         ))
 
@@ -327,12 +327,12 @@ describe('TBAC', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/clear`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/clear`)
         ))
 
         expect(res.status).toBe(401)
@@ -342,12 +342,12 @@ describe('TBAC', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(put(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/clear`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/clear`)
         , headers(createAuthHeaders('bad'))
         ))
 
@@ -356,16 +356,16 @@ describe('TBAC', () => {
     })
   })
 
-  describe('DELETE /admin/mq/:id/tokens/:token/clear', () => {
+  describe('DELETE /admin/mq/:namespace/tokens/:token/clear', () => {
     describe('auth', () => {
       it('204', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/clear`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/clear`)
         , headers(createAuthHeaders())
         ))
 
@@ -375,12 +375,12 @@ describe('TBAC', () => {
 
     describe('no admin password', () => {
       it('401', async () => {
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/clear`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/clear`)
         ))
 
         expect(res.status).toBe(401)
@@ -390,12 +390,12 @@ describe('TBAC', () => {
     describe('bad auth', () => {
       it('401', async () => {
         process.env.MQ_ADMIN_PASSWORD = 'password'
-        const id = 'id'
+        const namespace = 'namespace'
         const token = 'token'
 
         const res = await fetch(del(
           url(getAddress())
-        , pathname(`/admin/mq/${id}/tokens/${token}/clear`)
+        , pathname(`/admin/mq/${namespace}/tokens/${token}/clear`)
         , headers(createAuthHeaders('bad'))
         ))
 

@@ -8,12 +8,12 @@ jest.mock('@dao/data-in-sqlite3/database')
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-describe('stats(queueId: string): IStats', () => {
+describe('stats(namespace: string): IStats', () => {
   describe('exist', () => {
     it('return IStats', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
       setRawStats({
-        mq_id: queueId
+        namespace
       , drafting: 1
       , waiting: 2
       , ordered: 3
@@ -22,10 +22,10 @@ describe('stats(queueId: string): IStats', () => {
       , failed: 6
       })
 
-      const result = DAO.stats(queueId)
+      const result = DAO.stats(namespace)
 
       expect(result).toEqual({
-        id: queueId
+        namespace
       , drafting: 1
       , waiting: 2
       , ordered: 3
@@ -38,12 +38,12 @@ describe('stats(queueId: string): IStats', () => {
 
   describe('not exist', () => {
     it('return IStats', () => {
-      const queueId = 'queue-id'
+      const namespace = 'namespace'
 
-      const result = DAO.stats(queueId)
+      const result = DAO.stats(namespace)
 
       expect(result).toEqual({
-        id: queueId
+        namespace
       , drafting: 0
       , waiting: 0
       , ordered: 0

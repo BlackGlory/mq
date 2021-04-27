@@ -14,29 +14,29 @@ afterEach(stopService)
 
 describe('whitelist', () => {
   describe('enabled', () => {
-    describe('id in whitelist', () => {
+    describe('namespace in whitelist', () => {
       it('200', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'whitelist'
-        const mqId = 'mq-id'
-        await AccessControlDAO.addWhitelistItem(mqId)
+        const namespace = 'namespace'
+        await AccessControlDAO.addWhitelistItem(namespace)
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/mq/${mqId}/failed-messages`)
+        , pathname(`/mq/${namespace}/failed-messages`)
         ))
 
         expect(res.status).toBe(200)
       })
     })
 
-    describe('id not in whitelist', () => {
+    describe('namespace not in whitelist', () => {
       it('403', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'whitelist'
-        const mqId = 'mq-id'
+        const namespace = 'namespace'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/mq/${mqId}/failed-messages`)
+        , pathname(`/mq/${namespace}/failed-messages`)
         ))
 
         expect(res.status).toBe(403)
@@ -45,13 +45,13 @@ describe('whitelist', () => {
   })
 
   describe('disabled', () => {
-    describe('id not in whitelist', () => {
+    describe('namespace not in whitelist', () => {
       it('200', async () => {
-        const mqId = 'mq-id'
+        const namespace = 'namespace'
 
         const res = await fetch(get(
           url(getAddress())
-        , pathname(`/mq/${mqId}/failed-messages`)
+        , pathname(`/mq/${namespace}/failed-messages`)
         ))
 
         expect(res.status).toBe(200)

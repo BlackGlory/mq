@@ -28,47 +28,47 @@ function isEnabled() {
 /**
  * @throws {Unauthorized}
  */
-async function checkProducePermission(id: string, token?: string) {
+async function checkProducePermission(namespace: string, token?: string) {
   if (!isEnabled()) return
 
   const tokenRequired =
-    (await TokenPolicy.get(id)).produceTokenRequired
+    (await TokenPolicy.get(namespace)).produceTokenRequired
   ?? PRODUCE_TOKEN_REQUIRED()
 
   if (tokenRequired) {
     if (!token) throw new Unauthorized()
-    if (!await AccessControlDAO.matchProduceToken({ token, id })) throw new Unauthorized()
+    if (!await AccessControlDAO.matchProduceToken({ token, namespace })) throw new Unauthorized()
   }
 }
 
 /**
  * @throws {Unauthorized}
  */
-async function checkConsumePermission(id: string, token?: string) {
+async function checkConsumePermission(namespace: string, token?: string) {
   if (!isEnabled()) return
 
   const tokenRequired =
-    (await TokenPolicy.get(id)).consumeTokenRequired
+    (await TokenPolicy.get(namespace)).consumeTokenRequired
   ?? CONSUME_TOKEN_REQUIRED()
 
   if (tokenRequired) {
     if (!token) throw new Unauthorized()
-    if (!await AccessControlDAO.matchConsumeToken({ token, id })) throw new Unauthorized()
+    if (!await AccessControlDAO.matchConsumeToken({ token, namespace })) throw new Unauthorized()
   }
 }
 
 /**
  * @throws {Unauthorized}
  */
-async function checkClearPermission(id: string, token?: string) {
+async function checkClearPermission(namespace: string, token?: string) {
   if (!isEnabled()) return
 
   const tokenRequired =
-    (await TokenPolicy.get(id)).clearTokenRequired
+    (await TokenPolicy.get(namespace)).clearTokenRequired
   ?? CLEAR_TOKEN_REQUIRED()
 
   if (tokenRequired) {
     if (!token) throw new Unauthorized()
-    if (!await AccessControlDAO.matchClearToken({ token, id })) throw new Unauthorized()
+    if (!await AccessControlDAO.matchClearToken({ token, namespace })) throw new Unauthorized()
   }
 }

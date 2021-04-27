@@ -10,7 +10,7 @@ import { State } from './utils/state'
  * @throws {BadMessageState}
  * @throws {DuplicatePayload}
  */
-export function setMessage(queueId: string, messageId: string, type: string, payload: string, unique: boolean = false): void {
+export function setMessage(namespace: string, id: string, type: string, payload: string, unique: boolean = false): void {
   const timestamp = getTimestamp()
   const db = getDatabase()
 
@@ -18,9 +18,9 @@ export function setMessage(queueId: string, messageId: string, type: string, pay
     const row = db.prepare(`
       SELECT state
         FROM mq_message
-       WHERE mq_id = $queueId
-         AND message_id = $messageId;
-    `).get({ queueId, messageId })
+       WHERE namespace = $namespace
+         AND id = $id;
+    `).get({ namespace, id })
     if (!row) throw new NotFound()
 
     if (row.state !== State.Drafting
@@ -31,7 +31,7 @@ export function setMessage(queueId: string, messageId: string, type: string, pay
     const oldState = row['state'] as State.Drafting | State.Waiting
 
     const payloadHash = hash(payload)
-    if (unique && hasDuplicatePayload(queueId, messageId, payloadHash)) {
+    if (unique && hasDuplicatePayload(namespace, id, payloadHash)) {
       throw new DuplicatePayload()
     }
 
@@ -43,30 +43,30 @@ export function setMessage(queueId: string, messageId: string, type: string, pay
              , hash = $hash
              , state = 'waiting'
              , state_updated_at = $stateUpdatedAt
-         WHERE mq_id = $queueId
-           AND message_id = $messageId;
+         WHERE namespace = $namespace
+           AND id = $id;
       `).run({
-        queueId
-      , messageId
+        namespace
+      , id
       , type
       , payload
       , hash: payloadHash
       , stateUpdatedAt: timestamp
       })
 
-      downcreaseDrafting(queueId)
-      increaseWaiting(queueId)
+      downcreaseDrafting(namespace)
+      increaseWaiting(namespace)
     } else {
       db.prepare(`
         UPDATE mq_message
            SET type = $type
              , payload = $payload
              , hash = $hash
-         WHERE mq_id = $queueId
-           AND message_id = $messageId;
+         WHERE namespace = $namespace
+           AND id = $id;
       `).run({
-        queueId
-      , messageId
+        namespace
+      , id
       , type
       , payload
       , hash: payloadHash
@@ -75,16 +75,16 @@ export function setMessage(queueId: string, messageId: string, type: string, pay
   })()
 }
 
-function hasDuplicatePayload(queueId: string, messageId: string, hash: string): boolean {
+function hasDuplicatePayload(namespace: string, id: string, hash: string): boolean {
   const result = getDatabase().prepare(`
     SELECT EXISTS(
-             SELECT *
+             SELECT 1
                FROM mq_message
-              WHERE mq_id = $queueId
-                AND message_id != $messageId
+              WHERE namespace = $namespace
+                AND id != $id
                 AND hash = $hash
            ) AS matched;
-  `).get({ queueId, messageId, hash })
+  `).get({ namespace, id, hash })
 
   return !!result['matched']
 }

@@ -18,16 +18,16 @@ describe('token-based access control', () => {
       describe('token matched', () => {
         it('204', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
+          const namespace = 'namespace'
+          const id = 'message-id'
           const token = 'token'
-          await MQDAO.draftMessage(mqId, messageId)
-          await AccessControlDAO.setConsumeTokenRequired(mqId, true)
-          await AccessControlDAO.setConsumeToken({ id: mqId, token })
+          await MQDAO.draftMessage(namespace, id)
+          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
+          await AccessControlDAO.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          , pathname(`/mq/${namespace}/messages/${id}`)
           , searchParam('token', token)
           ))
 
@@ -38,16 +38,16 @@ describe('token-based access control', () => {
       describe('token does not matched', () => {
         it('401', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
+          const namespace = 'namespace'
+          const id = 'message-id'
           const token = 'token'
-          await MQDAO.draftMessage(mqId, messageId)
-          await AccessControlDAO.setConsumeTokenRequired(mqId, true)
-          await AccessControlDAO.setConsumeToken({ id: mqId, token })
+          await MQDAO.draftMessage(namespace, id)
+          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
+          await AccessControlDAO.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          , pathname(`/mq/${namespace}/messages/${id}`)
           , searchParam('token', 'bad')
           ))
 
@@ -58,16 +58,16 @@ describe('token-based access control', () => {
       describe('no token', () => {
         it('401', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
+          const namespace = 'namespace'
+          const id = 'message-id'
           const token = 'token'
-          await MQDAO.draftMessage(mqId, messageId)
-          await AccessControlDAO.setConsumeTokenRequired(mqId, true)
-          await AccessControlDAO.setConsumeToken({ id: mqId, token })
+          await MQDAO.draftMessage(namespace, id)
+          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
+          await AccessControlDAO.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          , pathname(`/mq/${namespace}/messages/${id}`)
           ))
 
           expect(res.status).toBe(401)
@@ -75,18 +75,18 @@ describe('token-based access control', () => {
       })
     })
 
-    describe('id does not need consume tokens', () => {
+    describe('namespace does not need consume tokens', () => {
       describe('CONSUME_TOKEN_REQUIRED=true', () => {
         it('401', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           process.env.MQ_CONSUME_TOKEN_REQUIRED = 'true'
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
-          await MQDAO.draftMessage(mqId, messageId)
+          const namespace = 'namespace'
+          const id = 'message-id'
+          await MQDAO.draftMessage(namespace, id)
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          , pathname(`/mq/${namespace}/messages/${id}`)
           ))
 
           expect(res.status).toBe(401)
@@ -96,13 +96,13 @@ describe('token-based access control', () => {
       describe('CONSUME_TOKEN_REQUIRED=false', () => {
         it('204', async () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
-          await MQDAO.draftMessage(mqId, messageId)
+          const namespace = 'namespace'
+          const id = 'message-id'
+          await MQDAO.draftMessage(namespace, id)
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          , pathname(`/mq/${namespace}/messages/${id}`)
           ))
 
           expect(res.status).toBe(204)
@@ -115,16 +115,16 @@ describe('token-based access control', () => {
     describe('id need consume tokens', () => {
       describe('no token', () => {
         it('204', async () => {
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
+          const namespace = 'namespace'
+          const id = 'message-id'
           const token = 'token'
-          await MQDAO.draftMessage(mqId, messageId)
-          await AccessControlDAO.setConsumeTokenRequired(mqId, true)
-          await AccessControlDAO.setConsumeToken({ id: mqId, token })
+          await MQDAO.draftMessage(namespace, id)
+          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
+          await AccessControlDAO.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          , pathname(`/mq/${namespace}/messages/${id}`)
           ))
 
           expect(res.status).toBe(204)
@@ -132,20 +132,20 @@ describe('token-based access control', () => {
       })
     })
 
-    describe('id does not need consume tokens', () => {
+    describe('namespace does not need consume tokens', () => {
       describe('CONSUME_TOKEN_REQUIRED=true', () => {
         it('204', async () => {
           process.env.MQ_CONSUME_TOKEN_REQUIRED = 'true'
-          const mqId = 'mq-id'
-          const messageId = 'message-id'
+          const namespace = 'namespace'
+          const id = 'message-id'
           const token = 'token'
-          await MQDAO.draftMessage(mqId, messageId)
-          await AccessControlDAO.setConsumeTokenRequired(mqId, true)
-          await AccessControlDAO.setConsumeToken({ id: mqId, token })
+          await MQDAO.draftMessage(namespace, id)
+          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
+          await AccessControlDAO.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
-          , pathname(`/mq/${mqId}/messages/${messageId}`)
+          , pathname(`/mq/${namespace}/messages/${id}`)
           ))
 
           expect(res.status).toBe(204)

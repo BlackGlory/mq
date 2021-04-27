@@ -10,11 +10,11 @@ beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
 describe('TokenPolicy', () => {
-  describe('getAllIdsWithTokenPolicies(): string[]', () => {
+  describe('getAllNamespacesWithTokenPolicies(): string[]', () => {
     it('return string[]', () => {
-      const id = 'id'
+      const namespace = 'namespace'
       setRawTokenPolicy({
-        mq_id: id
+        namespace
       , produce_token_required: 1
       , consume_token_required: 1
       , clear_token_required: 1
@@ -22,22 +22,22 @@ describe('TokenPolicy', () => {
 
       const result = DAO.getAllIdsWithTokenPolicies()
 
-      expect(result).toEqual([id])
+      expect(result).toEqual([namespace])
     })
   })
 
-  describe('getTokenPolicies(id: string): TokenPolicy', () => {
+  describe('getTokenPolicies(namespace: string): TokenPolicy', () => {
     describe('exists', () => {
       it('return', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         setRawTokenPolicy({
-          mq_id: id
+          namespace
         , produce_token_required: 1
         , consume_token_required: 1
         , clear_token_required: 1
         })
 
-        const result = DAO.getTokenPolicies(id)
+        const result = DAO.getTokenPolicies(namespace)
 
         expect(result).toEqual({
           produceTokenRequired: true
@@ -49,9 +49,9 @@ describe('TokenPolicy', () => {
 
     describe('does not exist', () => {
       it('return', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.getTokenPolicies(id)
+        const result = DAO.getTokenPolicies(namespace)
 
         expect(result).toEqual({
           produceTokenRequired: null
@@ -62,12 +62,12 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('setProduceTokenRequired(id: string, val: boolean): void', () => {
+  describe('setProduceTokenRequired(namespace: string, val: boolean): void', () => {
     it('return undefined', () => {
-      const id = 'id'
+      const namespace = 'namespace'
 
-      const result = DAO.setProduceTokenRequired(id, true)
-      const row = getRawTokenPolicy(id)
+      const result = DAO.setProduceTokenRequired(namespace, true)
+      const row = getRawTokenPolicy(namespace)
 
       expect(result).toBeUndefined()
       expect(row).not.toBeNull()
@@ -75,19 +75,19 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('unsetProduceTokenRequired(id: string): void', () => {
+  describe('unsetProduceTokenRequired(namespace: string): void', () => {
     describe('exists', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         setRawTokenPolicy({
-          mq_id: id
+          namespace
         , consume_token_required: 1
         , produce_token_required: 1
         , clear_token_required: 1
         })
 
-        const result = DAO.unsetProduceTokenRequired(id)
-        const row = getRawTokenPolicy(id)
+        const result = DAO.unsetProduceTokenRequired(namespace)
+        const row = getRawTokenPolicy(namespace)
 
         expect(result).toBeUndefined()
         expect(row).not.toBeNull()
@@ -97,22 +97,22 @@ describe('TokenPolicy', () => {
 
     describe('does not exist', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.unsetProduceTokenRequired(id)
+        const result = DAO.unsetProduceTokenRequired(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawTokenPolicy(id)).toBeFalse()
+        expect(hasRawTokenPolicy(namespace)).toBeFalse()
       })
     })
   })
 
-  describe('setConsumeTokenRequired(id: string, val: boolean): void', () => {
+  describe('setConsumeTokenRequired(namespace: string, val: boolean): void', () => {
     it('return undefined', () => {
-      const id = 'id'
+      const namespace = 'namespace'
 
-      const result = DAO.setConsumeTokenRequired(id, true)
-      const row = getRawTokenPolicy(id)
+      const result = DAO.setConsumeTokenRequired(namespace, true)
+      const row = getRawTokenPolicy(namespace)
 
       expect(result).toBeUndefined()
       expect(row).not.toBeNull()
@@ -120,19 +120,19 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('unsetConsumeTokenRequired(id: string): void', () => {
+  describe('unsetConsumeTokenRequired(namespace: string): void', () => {
     describe('exists', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         setRawTokenPolicy({
-          mq_id: id
+          namespace
         , consume_token_required: 1
         , produce_token_required: 1
         , clear_token_required: 1
         })
 
-        const result = DAO.unsetConsumeTokenRequired(id)
-        const row = getRawTokenPolicy(id)
+        const result = DAO.unsetConsumeTokenRequired(namespace)
+        const row = getRawTokenPolicy(namespace)
 
         expect(result).toBeUndefined()
         expect(row).not.toBeNull()
@@ -142,22 +142,22 @@ describe('TokenPolicy', () => {
 
     describe('does not exist', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.unsetConsumeTokenRequired(id)
+        const result = DAO.unsetConsumeTokenRequired(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawTokenPolicy(id)).toBeFalse()
+        expect(hasRawTokenPolicy(namespace)).toBeFalse()
       })
     })
   })
 
-  describe('setClearTokenRequired(id: string, val: boolean): void', () => {
+  describe('setClearTokenRequired(namespace: string, val: boolean): void', () => {
     it('return undefined', () => {
-      const id = 'id'
+      const namespace = 'namespace'
 
-      const result = DAO.setClearTokenRequired(id, true)
-      const row = getRawTokenPolicy(id)
+      const result = DAO.setClearTokenRequired(namespace, true)
+      const row = getRawTokenPolicy(namespace)
 
       expect(result).toBeUndefined()
       expect(row).not.toBeNull()
@@ -165,19 +165,19 @@ describe('TokenPolicy', () => {
     })
   })
 
-  describe('unsetClearTokenRequired(id: string): void', () => {
+  describe('unsetClearTokenRequired(namespace: string): void', () => {
     describe('exists', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
         setRawTokenPolicy({
-          mq_id: id
+          namespace
         , consume_token_required: 1
         , produce_token_required: 1
         , clear_token_required: 1
         })
 
-        const result = DAO.unsetClearTokenRequired(id)
-        const row = getRawTokenPolicy(id)
+        const result = DAO.unsetClearTokenRequired(namespace)
+        const row = getRawTokenPolicy(namespace)
 
         expect(result).toBeUndefined()
         expect(row).not.toBeNull()
@@ -187,12 +187,12 @@ describe('TokenPolicy', () => {
 
     describe('does not exist', () => {
       it('return undefined', () => {
-        const id = 'id'
+        const namespace = 'namespace'
 
-        const result = DAO.unsetClearTokenRequired(id)
+        const result = DAO.unsetClearTokenRequired(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawTokenPolicy(id)).toBeFalse()
+        expect(hasRawTokenPolicy(namespace)).toBeFalse()
       })
     })
   })

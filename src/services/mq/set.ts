@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { idSchema, tokenSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema, idSchema } from '@src/schema'
 import { JSON_PAYLOAD_ONLY, SET_PAYLOAD_LIMIT } from '@env'
 import { CustomError } from '@blackglory/errors'
 
@@ -18,19 +18,23 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   )
 
   server.put<{
-    Params: { queueId: string; messageId: string }
+    Params: { namespace: string; id: string }
     Querystring: { token?: string }
     Body: string
   }>(
-    '/mq/:queueId/messages/:messageId'
+    '/mq/:namespace/messages/:id'
   , {
       schema: {
-        params: { id: idSchema }
+        params: {
+          namespace: namespaceSchema
+        , id: idSchema
+        }
       , querystring: { token: tokenSchema }
       , headers: {
-          'content-type': JSON_PAYLOAD_ONLY()
-                          ? { type: 'string', pattern: '^application/json' }
-                          : { type: 'string' }
+          'content-type':
+            JSON_PAYLOAD_ONLY()
+            ? { type: 'string', pattern: '^application/json' }
+            : { type: 'string' }
         }
       , body: { type: 'string' }
       , response: {
@@ -40,21 +44,21 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     , bodyLimit: SET_PAYLOAD_LIMIT()
     }
   , async (req, reply) => {
-      const queueId = req.params.queueId
-      const messageId = req.params.messageId
+      const namespace = req.params.namespace
+      const id = req.params.id
       const payload = req.body
       const token = req.query.token
       const type = req.headers['content-type'] ?? 'application/octet-stream'
 
       try {
-        await Core.Blacklist.check(queueId)
-        await Core.Whitelist.check(queueId)
-        await Core.TBAC.checkProducePermission(queueId, token)
+        await Core.Blacklist.check(namespace)
+        await Core.Whitelist.check(namespace)
+        await Core.TBAC.checkProducePermission(namespace, token)
         if (Core.JsonSchema.isEnabled()) {
           if (isJSONPayload()) {
-            await Core.JsonSchema.validate(queueId, payload)
+            await Core.JsonSchema.validate(namespace, payload)
           } else {
-            if (await Core.JsonSchema.get(queueId)) {
+            if (await Core.JsonSchema.get(namespace)) {
               throw new BadContentType('application/json')
             }
           }
@@ -69,7 +73,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
 
       try {
-        await Core.MQ.set(queueId, messageId, type, payload)
+        await Core.MQ.set(namespace, id, type, payload)
         reply.status(204).send()
       } catch (e) {
         if (e instanceof Core.MQ.NotFound) return reply.status(404).send()
