@@ -10,7 +10,13 @@ import { State } from './utils/state'
  * @throws {BadMessageState}
  * @throws {DuplicatePayload}
  */
-export function setMessage(namespace: string, id: string, type: string, payload: string, unique: boolean = false): void {
+export function setMessage(
+  namespace: string
+, id: string
+, type: string
+, payload: string
+, unique: boolean = false
+): void {
   const timestamp = getTimestamp()
   const db = getDatabase()
 
