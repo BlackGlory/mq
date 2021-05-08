@@ -1,5 +1,5 @@
 import { getDatabase } from '@dao/data-in-sqlite3/database'
-import { MapNullablePropsToOptionalProps } from 'hotypes'
+import { MapNullablePropsToOptional } from 'hotypes'
 
 type IState = 'drafting' | 'waiting' | 'ordered' | 'active' | 'completed' | 'failed'
 
@@ -78,7 +78,7 @@ export function setRawMessage<T extends IRawMessage>(raw: T): T {
   return raw
 }
 
-export function setMinimalRawMessage(raw: MapNullablePropsToOptionalProps<IRawMessage>): IRawMessage {
+export function setMinimalRawMessage(raw: MapNullablePropsToOptional<IRawMessage>): IRawMessage {
   return setRawMessage({
     namespace: raw.namespace
   , id: raw.id

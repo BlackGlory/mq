@@ -1,4 +1,4 @@
-import { MapNullablePropsToOptionalProps } from 'hotypes'
+import { MapNullablePropsToOptional } from 'hotypes'
 import { getDatabase } from '@dao/config-in-sqlite3/database'
 
 interface IRawConfiguration {
@@ -40,7 +40,7 @@ export function setRawConfiguration<T extends IRawConfiguration>(raw: T): T {
 }
 
 export function setMinimalConfiguration(
-  raw: MapNullablePropsToOptionalProps<IRawConfiguration>
+  raw: MapNullablePropsToOptional<IRawConfiguration>
 ): IRawConfiguration {
   return setRawConfiguration({
     namespace: raw.namespace
