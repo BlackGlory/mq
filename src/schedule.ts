@@ -1,7 +1,7 @@
 import { nextTick } from '@core/mq'
 import { AbortError, withAbortSignal } from 'extra-promise'
 import { setDynamicTimeoutLoop } from 'extra-timers'
-import ms = require('ms')
+import ms from 'ms'
 
 /**
  * 该函数是一个长时函数, 每个异步操作都应该可以响应AbortSignal以提前返回.
