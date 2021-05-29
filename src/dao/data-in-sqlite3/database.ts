@@ -29,5 +29,11 @@ export function getDatabase(): IDatabase {
 }
 
 export function closeDatabase(): void {
-  if (db) db.close()
+  if (db) {
+    db.exec(`
+      PRAGMA analysis_limit=400;
+      PRAGMA optimize;
+    `)
+    db.close()
+  }
 }
