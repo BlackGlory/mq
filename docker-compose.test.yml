@@ -1,3 +1,11 @@
-sut:
-  build: .
-  command: test
+version: '3.8'
+
+services:
+  test:
+    build:
+      dockerfile: Dockerfile.test
+      context: .
+      args:
+        - 'HTTP_PROXY'
+        - 'HTTPS_PROXY'
+    command: test
