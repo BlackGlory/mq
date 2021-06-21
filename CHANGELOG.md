@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://github.com/BlackGlory/mq/compare/v0.4.0...v0.4.1) (2021-06-21)
+
+
+### Features
+
+* add /health ([916dfb4](https://github.com/BlackGlory/mq/commit/916dfb441062e6dfedccb4cb8a0d8d4944fe85f2))
+
+
+### Bug Fixes
+
+* docker build ([b1cdea6](https://github.com/BlackGlory/mq/commit/b1cdea69fb6da13c88b5043b92be2957000e6233))
+* docker-compose test ([92b3f2a](https://github.com/BlackGlory/mq/commit/92b3f2a16be29d4e1a870e9897a3c8351a4d41ef))
+
 ## [0.4.0](https://github.com/BlackGlory/mq/compare/v0.3.3...v0.4.0) (2021-04-27)
 
 
