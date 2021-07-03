@@ -1,6 +1,6 @@
 import { ValueGetter } from 'value-getter'
 import { isNumber, isObject } from '@blackglory/types'
-import { Getter } from 'hotypes'
+import { Getter } from 'justypes'
 import { assert } from '@blackglory/errors'
 import { getCache } from '@env/cache'
 import { path as appRoot } from 'app-root-path'
@@ -192,7 +192,7 @@ export const THROTTLE: Getter<Throttle> =
     .get()
 
 function env(name: string): ValueGetter<string | undefined> {
-  return new ValueGetter(() => process.env[name])
+  return new ValueGetter(name, () => process.env[name])
 }
 
 function toBool(val: string | boolean | undefined): boolean | undefined {
