@@ -84,7 +84,7 @@
     "extra-filesystem": "^0.3.3",
     "extra-generator": "^0.2.7",
     "extra-promise": "^0.17.4",
-    "extra-tags": "^0.2.0",
+    "extra-tags": "^0.2.2",
     "extra-timers": "^0.2.1",
     "fastify": "^3.19.0",
     "fastify-accepts": "^2.0.1",
