@@ -34,5 +34,6 @@ COPY . ./
 ENV MQ_HOST=0.0.0.0
 ENV MQ_PORT=8080
 EXPOSE 8080
+HEALTHCHECK CMD curl --fail http://localhost:8080/health || exit 1
 ENTRYPOINT ["yarn"]
 CMD ["--silent", "start"]
