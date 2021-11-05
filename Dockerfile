@@ -27,7 +27,10 @@ RUN apk add --update --no-cache --virtual .build-deps \
  && yarn cache clean \
  && apk del .build-deps \
  && mkdir /data \
- && ln -s /data data
+ && ln -s /data data \
+ && apk add --update --no-cache \
+      # healthcheck
+      curl
 
 COPY . ./
 
