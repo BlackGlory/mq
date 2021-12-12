@@ -18,7 +18,7 @@ export async function isBlocked(namespace: string): Promise<boolean> {
   return !await AccessControlDAO.inWhitelist(namespace)
 }
 
-export function isEnabled() {
+export function isEnabled(): boolean {
   return LIST_BASED_ACCESS_CONTROL() === ListBasedAccessControl.Whitelist
 }
 

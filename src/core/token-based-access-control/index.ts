@@ -28,12 +28,12 @@ function isEnabled() {
 /**
  * @throws {Unauthorized}
  */
-async function checkProducePermission(namespace: string, token?: string) {
+async function checkProducePermission(namespace: string, token?: string): Promise<void> {
   if (!isEnabled()) return
 
   const tokenRequired =
-    (await TokenPolicy.get(namespace)).produceTokenRequired
-  ?? PRODUCE_TOKEN_REQUIRED()
+    (await TokenPolicy.get(namespace)).produceTokenRequired ??
+    PRODUCE_TOKEN_REQUIRED()
 
   if (tokenRequired) {
     if (!token) throw new Unauthorized()
@@ -44,12 +44,12 @@ async function checkProducePermission(namespace: string, token?: string) {
 /**
  * @throws {Unauthorized}
  */
-async function checkConsumePermission(namespace: string, token?: string) {
+async function checkConsumePermission(namespace: string, token?: string): Promise<void> {
   if (!isEnabled()) return
 
   const tokenRequired =
-    (await TokenPolicy.get(namespace)).consumeTokenRequired
-  ?? CONSUME_TOKEN_REQUIRED()
+    (await TokenPolicy.get(namespace)).consumeTokenRequired ??
+    CONSUME_TOKEN_REQUIRED()
 
   if (tokenRequired) {
     if (!token) throw new Unauthorized()
@@ -60,12 +60,12 @@ async function checkConsumePermission(namespace: string, token?: string) {
 /**
  * @throws {Unauthorized}
  */
-async function checkClearPermission(namespace: string, token?: string) {
+async function checkClearPermission(namespace: string, token?: string): Promise<void> {
   if (!isEnabled()) return
 
   const tokenRequired =
-    (await TokenPolicy.get(namespace)).clearTokenRequired
-  ?? CLEAR_TOKEN_REQUIRED()
+    (await TokenPolicy.get(namespace)).clearTokenRequired ??
+    CLEAR_TOKEN_REQUIRED()
 
   if (tokenRequired) {
     if (!token) throw new Unauthorized()

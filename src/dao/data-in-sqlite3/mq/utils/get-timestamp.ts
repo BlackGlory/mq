@@ -1,3 +1,3 @@
-export function getTimestamp() {
+export function getTimestamp(): number {
   return Date.now()
 }
