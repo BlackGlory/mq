@@ -398,6 +398,14 @@
     justypes "^0.1.6"
     lodash.isplainobject "^4.0.6"
 
+"@blackglory/types@^0.6.4":
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/@blackglory/types/-/types-0.6.4.tgz#ba511c58d4a8cf321bfc34c4b3c94e8a9b3341bd"
+  integrity sha512-QtiPJllbKOXHbX9S/h2NsUbP+vgm6J5w2oQI4N4IuoTdzBbQJZNkcHTf2FeD/1yi/xhzEVdR0L4ZKfLlcmAJbw==
+  dependencies:
+    justypes "^0.1.6"
+    lodash.isplainobject "^4.0.6"
+
 "@commitlint/cli@^15.0.0":
   version "15.0.0"
   resolved "https://registry.yarnpkg.com/@commitlint/cli/-/cli-15.0.0.tgz#8e78e86ee2b6955c1a5d140e734a6c171ce367ee"
@@ -3093,6 +3101,15 @@ extglob@^2.0.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
+extra-abort@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/extra-abort/-/extra-abort-0.1.0.tgz#7b566d7f68869b3c1fd01d751138412441579f84"
+  integrity sha512-JXfZ9aA2G7/plgHo49P3olxUDGDbjYCcaBCLBSRBgA08t9LhTzxITUATNih56+ydHtMo+5vjryz+pO+0SWKMMA==
+  dependencies:
+    "@blackglory/errors" "^1.1.2"
+    abort-controller "^3.0.0"
+    justypes "^0.1.6"
+
 extra-fetch@^1.8.4:
   version "1.8.4"
   resolved "https://registry.yarnpkg.com/extra-fetch/-/extra-fetch-1.8.4.tgz#18c2f45aba8ef0192bbe69480dee8f1dbd982b0d"
@@ -3170,13 +3187,13 @@ extra-rand@^0.1.0:
   resolved "https://registry.yarnpkg.com/extra-rand/-/extra-rand-0.1.0.tgz#dd663f2da116c15b5476646fa4025668cd2015b3"
   integrity sha512-Y3DBl2J8PGndKVCeELV0JtUBxHJLO1Yn8SBHabUgLOzddQdJYgOtTWs/xdiK4sc66pOwfFL8CNhTE7bPxu9vwA==
 
-extra-request@^3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/extra-request/-/extra-request-3.0.3.tgz#5418a6b6ae556d94c40c3fd50318766a35ae9737"
-  integrity sha512-jm/LnVW35wGJFBqpHJ1KdCg0MXS76JfHjSHWUSLIBnxHNFeiwuXd0WrcHttopIMNkzWO7YqGZz1H6o9SCSJ9ZQ==
+extra-request@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/extra-request/-/extra-request-4.0.0.tgz#a636f1be145c2623bb3fd5a5882d175572aff1d1"
+  integrity sha512-zaalxZW4DU3dKA6KLQ+pAzdXeW8+nF/et3nusZFknz0a8c0iQC0Fb7afksSJF2LklL0uw3nNsGiJ60bJbWcrQA==
   dependencies:
     "@blackglory/errors" "^1.1.2"
-    "@blackglory/types" "^0.5.2"
+    "@blackglory/types" "^0.6.4"
     js-base64 "^3.7.2"
     justypes "^0.1.6"
     papaparse "^5.3.1"

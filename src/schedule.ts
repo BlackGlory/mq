@@ -1,5 +1,5 @@
 import { nextTick } from '@core/mq'
-import { AbortError, withAbortSignal } from 'extra-promise'
+import { AbortError, withAbortSignal } from 'extra-abort'
 import { setDynamicTimeoutLoop } from 'extra-timers'
 import ms from 'ms'
 

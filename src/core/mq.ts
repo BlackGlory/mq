@@ -2,7 +2,7 @@ import { ConfigurationDAO, MQDAO, SignalDAO } from '@dao'
 import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, THROTTLE, UNIQUE, CONCURRENCY } from '@env'
 import { nanoid } from 'nanoid'
 import { CustomError } from '@blackglory/errors'
-import { withAbortSignal, AbortError } from 'extra-promise'
+import { withAbortSignal, AbortError } from 'extra-abort'
 import { race, fromEvent, firstValueFrom } from 'rxjs'
 import { toArrayAsync } from 'iterable-operator'
 
@@ -203,4 +203,4 @@ export class NotFound extends CustomError {}
 
 export class DuplicatePayload extends CustomError {}
 
-export { AbortError } from 'extra-promise'
+export { AbortError } from 'extra-abort'
