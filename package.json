@@ -82,7 +82,7 @@
     "extra-abort": "^0.1.0",
     "extra-filesystem": "^0.4.1",
     "extra-generator": "^0.2.15",
-    "extra-tags": "^0.2.3",
+    "extra-tags": "^0.2.4",
     "extra-timers": "^0.2.4",
     "fastify": "^3.25.0",
     "fastify-accepts": "^2.1.0",
