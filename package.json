@@ -53,7 +53,7 @@
     "extra-request": "^4.0.1",
     "extra-response": "^0.3.8",
     "husky": "4",
-    "is-stream": "^2.0.1",
+    "is-stream": "^3.0.0",
     "jest": "^27.4.5",
     "jest-extended": "^1.2.0",
     "jest-json-schema": "^6.0.0",
