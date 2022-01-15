@@ -5,7 +5,7 @@ import { ensureDirSync } from 'extra-filesystem'
 import { NODE_ENV, NodeEnv, DATA } from '@env'
 import { assert } from '@blackglory/errors'
 import { migrateDatabase } from './utils'
-assert(NODE_ENV() !== NodeEnv.Test)
+assert(NODE_ENV() !== NodeEnv.Test, 'Cannot run tests with real database')
 
 let db: IDatabase
 
@@ -18,12 +18,12 @@ export function openDatabase(): void {
 }
 
 export async function prepareDatabase(): Promise<void> {
-  assert(db)
+  assert(db, 'Database is not opened')
   await migrateDatabase(db)
 }
 
 export function getDatabase(): IDatabase {
-  assert(db)
+  assert(db, 'Database is not opened')
   return db
 }
 

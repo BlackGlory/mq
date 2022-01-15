@@ -11,12 +11,12 @@ export function openDatabase(): void {
 }
 
 export async function prepareDatabase(): Promise<void> {
-  assert(db)
+  assert(db, 'Database is not opened')
   await migrateDatabase(db)
 }
 
 export function getDatabase(): IDatabase {
-  assert(db)
+  assert(db, 'Database is not opened')
   return db
 }
 

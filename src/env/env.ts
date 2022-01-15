@@ -214,15 +214,21 @@ function toThrottle(val: string | undefined): Throttle | undefined {
 }
 
 function shouldBeThrottle(val: Throttle) {
-  assert(isObject(val))
+  assert(isObject(val), 'MQ_THROTTLE should be an object')
 
-  assert(Number.isInteger(val.duration) || val.duration === Infinity)
-  assert(val.duration > 0)
+  assert(
+    Number.isInteger(val.duration) || val.duration === Infinity
+  , 'MQ_THROTTLE.duration should be an integer or Infinity'
+  )
+  assert(val.duration > 0, 'MQ_THROTTLE.duration should be positive')
 
-  assert(Number.isInteger(val.limit) || val.limit === Infinity)
-  assert(val.limit > 0)
+  assert(
+    Number.isInteger(val.limit) || val.limit === Infinity
+  , 'MQ_THROTTLE.limit should be an integer or Infinity'
+  )
+  assert(val.limit > 0, 'MQ_THROTTLE.limit should be positive')
 }
 
 function shouldBePositive(val: number) {
-  assert(val > 0)
+  assert(val > 0, 'should be positive')
 }

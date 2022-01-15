@@ -33,12 +33,12 @@ export function orderMessage(namespace: string, concurrency: number, duration: n
     }
 
     function overLimit(): boolean {
-      assert(throttle)
+      assert(throttle, 'Throttle is not found')
       return throttle.count >= limit
     }
 
     function inThrottleCycle(): boolean {
-      assert(throttle)
+      assert(throttle, 'Throttle is not found')
       return now - duration <= throttle.cycleStartTime
     }
   })()
