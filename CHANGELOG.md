@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.6](https://github.com/BlackGlory/mq/compare/v0.4.5...v0.4.6) (2022-01-16)
+
+
+### Features
+
+* add accept-version support ([568bd2a](https://github.com/BlackGlory/mq/commit/568bd2ae7ece317c0d105110236b7d93c8b414f5))
+* add cache-control header ([5738170](https://github.com/BlackGlory/mq/commit/5738170224d740e7a9725029bbce6fffa0932251))
+
+
+### Bug Fixes
+
+* **docker:** healthcheck ([ddcda56](https://github.com/BlackGlory/mq/commit/ddcda560e28518983c72a726d27886eb876450f7))
+
 ### [0.4.5](https://github.com/BlackGlory/mq/compare/v0.4.4...v0.4.5) (2021-10-14)
 
 ### [0.4.4](https://github.com/BlackGlory/mq/compare/v0.4.3...v0.4.4) (2021-07-13)
