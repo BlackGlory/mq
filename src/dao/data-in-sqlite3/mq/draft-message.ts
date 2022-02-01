@@ -1,6 +1,7 @@
 import { getDatabase } from '../database'
 import { getTimestamp } from './utils/get-timestamp'
 import { increaseDrafting } from './utils/stats'
+import { isUndefined } from '@blackglory/types'
 
 export function draftMessage(namespace: string, id: string, priority?: number): void {
   const timestamp = getTimestamp()
@@ -13,7 +14,7 @@ export function draftMessage(namespace: string, id: string, priority?: number): 
     `).run({
       namespace
     , id
-    , priority: priority === undefined ? null : priority
+    , priority: isUndefined(priority) ? null : priority
     , stateUpdatedAt: timestamp
     })
 
