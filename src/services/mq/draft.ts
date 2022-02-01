@@ -27,6 +27,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
+      const priority = req.body.priority
       const token = req.query.token
 
       try {
@@ -40,7 +41,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      const result = await Core.MQ.draft(namespace)
+      const result = await Core.MQ.draft(namespace, priority ?? undefined)
       reply.status(200).send(result)
     }
   )
