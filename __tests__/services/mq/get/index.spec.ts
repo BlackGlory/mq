@@ -16,7 +16,7 @@ describe('no access control', () => {
   it('200', async () => {
     const namespace = 'namespace'
     const id = 'message-id'
-    await prepareOrderedMessage(namespace, id, 'text/plain', 'payload')
+    await prepareOrderedMessage(namespace, id, 'text/plain', 'payload', 1)
 
     const res = await fetch(get(
       url(getAddress())
@@ -24,5 +24,7 @@ describe('no access control', () => {
     ))
 
     expect(res.status).toBe(200)
+    expect(res.headers.get('Content-Type')).toBe('text/plain')
+    expect(res.headers.get('X-MQ-Priority')).toBe('1')
   })
 })
