@@ -29,48 +29,19 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         params: { namespace: namespaceSchema }
       , response: {
           200: {
-            unique: {
-              anyOf: [
-                { type: 'boolean' }
-              , { type: 'null' }
-              ]
-            }
-          , draftingTimeout: {
-              anyOf: [
-                { type: 'number' }
-              , { type: 'null' }
-              ]
-            }
-          , orderedTimeout: {
-              anyOf: [
-                { type: 'number' }
-              , { type: 'null' }
-              ]
-            }
-          , activeTimeout: {
-              anyOf: [
-                { type: 'number' }
-              , { type: 'null' }
-              ]
-            }
-          , concurrency: {
-              anyOf: [
-                { type: 'number' }
-              , { type: 'null' }
-              ]
-            }
+            unique: { type: 'boolean', nullable: true }
+          , draftingTimeout: { type: 'number', nullable: true }
+          , orderedTimeout: { type: 'number', nullable: true }
+          , activeTimeout: { type: 'number', nullable: true }
+          , concurrency: { type: 'number', nullable: true }
           , throttle: {
-              anyOf: [
-                {
-                  type: 'object'
-                , properties: {
-                    duration: { type: 'number' }
-                  , limit: { type: 'number' }
-                  }
-                , required: ['duration', 'limit']
-                }
-              , { type: 'null' }
-              ]
+              type: 'object'
+            , properties: {
+                duration: { type: 'number' }
+              , limit: { type: 'number' }
+              }
+            , required: ['duration', 'limit']
+            , nullable: true
             }
           }
         }

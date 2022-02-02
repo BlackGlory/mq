@@ -13,12 +13,15 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         params: { namespace: namespaceSchema }
       , querystring: { token: tokenSchema }
       , body: {
-          priority: {
-            anyOf: [
-              { type: 'integer', minimum: 0 }
-            , { type: 'null' }
-            ]
+          type: 'object'
+        , properties: {
+            priority: {
+              type: 'integer'
+            , minimum: 0
+            , nullable: true
+            }
           }
+        , required: ['priority']
         }
       , response: {
           200: { type: 'string' }

@@ -28,11 +28,6 @@ export function buildServer() {
     /* @ts-ignore */
   , http2: HTTP2()
   , bodyLimit: PAYLOAD_LIMIT()
-  , ajv: {
-      customOptions: {
-        coerceTypes: false
-      }
-    }
   })
   server.addHook('onRequest', async (req, reply) => {
     reply.headers({ 'Cache-Control': 'private, no-cache' })
