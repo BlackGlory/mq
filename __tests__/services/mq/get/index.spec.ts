@@ -13,7 +13,7 @@ beforeEach(startService)
 afterEach(stopService)
 
 describe('no access control', () => {
-  it('200', async () => {
+  test('custom priority', async () => {
     const namespace = 'namespace'
     const id = 'message-id'
     await prepareOrderedMessage(namespace, id, 'text/plain', 'payload', 1)
@@ -26,5 +26,20 @@ describe('no access control', () => {
     expect(res.status).toBe(200)
     expect(res.headers.get('Content-Type')).toBe('text/plain')
     expect(res.headers.get('X-MQ-Priority')).toBe('1')
+  })
+
+  test('default priority', async () => {
+    const namespace = 'namespace'
+    const id = 'message-id'
+    await prepareOrderedMessage(namespace, id, 'text/plain', 'payload')
+
+    const res = await fetch(get(
+      url(getAddress())
+    , pathname(`/mq/${namespace}/messages/${id}`)
+    ))
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('Content-Type')).toBe('text/plain')
+    expect(res.headers.get('X-MQ-Priority')).toBe('null')
   })
 })

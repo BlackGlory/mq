@@ -173,8 +173,8 @@ await fetch(`http://localhost:8080/mq/${namespace}/messages`).then(res => res.te
 
 此操作是幂等的, 可以多次调用.
 
-响应头 =X-MQ-Priority= 显示该消息的优先级, 可用于在手动重新入列时使用.
-响应头 =X-MQ-State= 显示该消息在此请求响应后的状态, 可能为drafting, waiting, active, failed中的一个.
+响应头 =X-MQ-Priority= 显示该消息的优先级(=number | null=), 可用于在手动重新入列时使用.
+响应头 =X-MQ-State= 显示该消息在此请求响应后的状态(=string=), 可能为drafting, waiting, active, failed中的一个.
 
 当消息不存在时, 会返回404状态码.
 当消息的状态不满足条件时(不是waiting, ordered, active, failed中的任何一个), 会返回409状态码.
