@@ -1359,11 +1359,6 @@
   resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.3.2.tgz#fc8c2825e4ed2142473b4a81064e6e081463d1b3"
   integrity sha512-eI5Yrz3Qv4KPUa/nSIAi0h+qX0XyewOliug5F2QAtuRg6Kjg6jfmxe1GIwoIRhZspD1A0RP8ANrPwvEXXtRFog==
 
-"@types/semver@^7.3.9":
-  version "7.3.9"
-  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.3.9.tgz#152c6c20a7688c30b967ec1841d31ace569863fc"
-  integrity sha512-L/TMpyURfBkf+o/526Zb6kd/tchUP3iBDEPjqjb+U2MAJhVRxxrmr2fwpe08E7QsV7YLcpq0tUaQ9O9x97ZIxQ==
-
 "@types/stack-utils@^2.0.0":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
@@ -3465,6 +3460,14 @@ extra-response@^0.3.9:
   dependencies:
     iterable-operator "^0.14.5"
     papaparse "^5.3.1"
+
+extra-semver@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/extra-semver/-/extra-semver-0.1.0.tgz#56e9d39b26e8765838e11368136fe9c333023fdc"
+  integrity sha512-P9nkliiFRyT1Ms2US5UHYHB0n1ylXiDYKayZFc74hpCOb0pTN8466pL+R1HJvKxG1c+NZNbcrLwZZElCv+O6FQ==
+  dependencies:
+    "@blackglory/errors" "^2.1.0"
+    semver "^7.3.5"
 
 extra-stream@^0.1.3:
   version "0.1.4"
