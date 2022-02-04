@@ -2952,10 +2952,10 @@ dot-prop@^5.1.0, dot-prop@^5.2.0:
   dependencies:
     is-obj "^2.0.0"
 
-dotenv@^15.0.0:
-  version "15.0.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-15.0.0.tgz#2a585639429bf2c2c62f387f0fffde9c75aafde0"
-  integrity sha512-/l1sXXm79ry34KwwS0y4oVZjB468iw/6u9g1W26dtexKcIJAnVL2pMF+hxQwzZ7LutxOwEgtym9eIxvX33CMKg==
+dotenv@^16.0.0:
+  version "16.0.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.0.tgz#c619001253be89ebb638d027b609c75c26e47411"
+  integrity sha512-qD9WU0MPM4SWLPJy/r2Be+2WgQj8plChsyrCNQzW/0WjvcJQiKQJ9mH3ZgB3fxbUUxgc/11ZJ0Fi5KiimWGz2Q==
 
 dotgitignore@^2.1.0:
   version "2.1.0"
@@ -3353,13 +3353,15 @@ extglob@^2.0.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-extra-abort@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/extra-abort/-/extra-abort-0.1.0.tgz#7b566d7f68869b3c1fd01d751138412441579f84"
-  integrity sha512-JXfZ9aA2G7/plgHo49P3olxUDGDbjYCcaBCLBSRBgA08t9LhTzxITUATNih56+ydHtMo+5vjryz+pO+0SWKMMA==
+extra-abort@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/extra-abort/-/extra-abort-0.1.1.tgz#7ea72249d8ec5ac47e114f1cdf607b51f70395a5"
+  integrity sha512-Sau7XBLGCCNFZKEqopgV9lQmiixRR6WbHObSSSbkbLz9n0dzDa7pLYkw50kOrUx99padIJBYAY14QyzevP5lFw==
   dependencies:
-    "@blackglory/errors" "^1.1.2"
+    "@blackglory/errors" "^2.1.0"
+    "@blackglory/types" "^0.6.5"
     abort-controller "^3.0.0"
+    iterable-operator "^0.14.5"
     justypes "^0.1.6"
 
 extra-fetch@^1.8.5:
@@ -3611,10 +3613,10 @@ fastify-warning@^0.2.0:
   resolved "https://registry.yarnpkg.com/fastify-warning/-/fastify-warning-0.2.0.tgz#e717776026a4493dc9a2befa44db6d17f618008f"
   integrity sha512-s1EQguBw/9qtc1p/WTY4eq9WMRIACkj+HTcOIK1in4MV5aFaQC9ZCIt0dJ7pr5bIf4lPpHvAtP2ywpTNgs7hqw==
 
-fastify@^3.27.0:
-  version "3.27.0"
-  resolved "https://registry.yarnpkg.com/fastify/-/fastify-3.27.0.tgz#636d5ece1a8ea81648270b60853e4d1f610fee15"
-  integrity sha512-p99Fd7xt4DFew39U5Wnp/Soy7jkpxpaqToekwQ3XWv+ECUPXd6bSF9l79EiwkutWALtEU/JiRlzS9qjP2gLHFg==
+fastify@^3.27.1:
+  version "3.27.1"
+  resolved "https://registry.yarnpkg.com/fastify/-/fastify-3.27.1.tgz#7e976473c15d7dc405ad624ffafb6612a6281d10"
+  integrity sha512-GLn3ow5BGqg/m+ztXvztp8Xp7SuH99vAm4zfbN7407Qzi4mB055SG/lWH/gYolz5Oq2K8LtUpZqt1Ccf/YkVmA==
   dependencies:
     "@fastify/ajv-compiler" "^1.0.0"
     abstract-logging "^2.0.0"
