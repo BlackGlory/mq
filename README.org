@@ -1,6 +1,6 @@
 * MQ
-一个受[[https://github.com/BlackGlory/chan][Chan]]启发的Web友好的自托管ad-hoc微服务,
-提供基于 HTTP 的持久化消息队列,
+一个Web友好的自托管ad-hoc微服务,
+提供基于HTTP的单接收者持久化消息队列,
 带有基于token和名单的访问控制策略,
 支持JSON Schema.
 
