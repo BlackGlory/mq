@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.8](https://github.com/BlackGlory/mq/compare/v0.4.7...v0.4.8) (2022-02-13)
+
+
+### Bug Fixes
+
+* fuck fastify ([cb79682](https://github.com/BlackGlory/mq/commit/cb79682ce08c17f70cbc6802868faa9d8ea7717e))
+
 ### [0.4.7](https://github.com/BlackGlory/mq/compare/v0.4.6...v0.4.7) (2022-02-01)
 
 
