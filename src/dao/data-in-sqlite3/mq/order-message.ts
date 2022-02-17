@@ -4,7 +4,12 @@ import { downcreaseWaiting, increaseOrdered } from './utils/stats'
 import { stats } from './stats'
 import { assert } from '@blackglory/errors'
 
-export function orderMessage(namespace: string, concurrency: number, duration: number, limit: number): string | null {
+export function orderMessage(
+  namespace: string
+, concurrency: number
+, throttleDuration: number
+, throttleLimit: number
+): string | null {
   const db = getDatabase()
 
   return db.transaction(() => {
@@ -19,7 +24,7 @@ export function orderMessage(namespace: string, concurrency: number, duration: n
         if (overLimit()) return null
       } else {
         updateThrottleCycle(namespace, {
-          duration
+          duration: throttleDuration
         , now
         , oldCycleStartTime: throttle.cycleStartTime
         })
@@ -34,12 +39,12 @@ export function orderMessage(namespace: string, concurrency: number, duration: n
 
     function overLimit(): boolean {
       assert(throttle, 'Throttle is not found')
-      return throttle.count >= limit
+      return throttle.count >= throttleLimit
     }
 
     function inThrottleCycle(): boolean {
       assert(throttle, 'Throttle is not found')
-      return now - duration <= throttle.cycleStartTime
+      return now - throttleDuration <= throttle.cycleStartTime
     }
   })()
 }
@@ -69,6 +74,7 @@ function order(namespace: string, now: number): string | null {
        AND state = 'waiting'
      ORDER BY priority         ASC NULLS LAST
             , state_updated_at ASC
+            , rowid            ASC
      LIMIT 1;
   `).get({ namespace })
   if (!row) return null
@@ -92,11 +98,14 @@ function order(namespace: string, now: number): string | null {
   return id
 }
 
-function updateThrottleCycle(namespace: string, { duration, now, oldCycleStartTime }: {
-  duration: number
-  now: number
-  oldCycleStartTime: number
-}): void {
+function updateThrottleCycle(
+  namespace: string
+, { duration, now, oldCycleStartTime }: {
+    duration: number
+    now: number
+    oldCycleStartTime: number
+  }
+): void {
   const cycleStartTime = newCycleStartTime({ duration, now, oldCycleStartTime })
   getDatabase().prepare(`
     UPDATE mq_throttle

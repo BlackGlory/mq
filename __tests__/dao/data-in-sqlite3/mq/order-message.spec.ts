@@ -63,7 +63,17 @@ describe('orderMessage(namespace: string, concurrency: number, duration: number,
           , id: '3'
           , type: 'type'
           , hash: 'hash'
-          , payload: 'payload-2'
+          , payload: 'payload-3'
+          , priority: null
+          , state: 'waiting'
+          , state_updated_at: 0
+          })
+          setRawMessage({
+            namespace
+          , id: '4'
+          , type: 'type'
+          , hash: 'hash'
+          , payload: 'payload-4'
           , priority: null
           , state: 'waiting'
           , state_updated_at: 0
@@ -71,7 +81,7 @@ describe('orderMessage(namespace: string, concurrency: number, duration: number,
           setRawStats({
             namespace
           , drafting: 0
-          , waiting: 1
+          , waiting: 2
           , ordered: 1
           , active: 1
           , completed: 0
@@ -89,7 +99,7 @@ describe('orderMessage(namespace: string, concurrency: number, duration: number,
           })
           expect(rawStatsResult).toMatchObject({
             drafting: 0
-          , waiting: 0
+          , waiting: 1
           , ordered: 2
           , active: 1
           , completed: 0
