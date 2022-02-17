@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.10](https://github.com/BlackGlory/mq/compare/v0.4.9...v0.4.10) (2022-02-17)
+
+
+### Bug Fixes
+
+* order by rowid ([ee79b0b](https://github.com/BlackGlory/mq/commit/ee79b0b8a017e3f3e624c4d94bf5ee1168ee9fa2))
+
 ### [0.4.9](https://github.com/BlackGlory/mq/compare/v0.4.8...v0.4.9) (2022-02-16)
 
 ### [0.4.8](https://github.com/BlackGlory/mq/compare/v0.4.7...v0.4.8) (2022-02-13)
