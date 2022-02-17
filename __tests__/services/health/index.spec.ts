@@ -6,7 +6,7 @@ import { url, pathname } from 'extra-request/lib/es2018/transformers'
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
 
-beforeEach(startService)
+beforeEach(startService, 30 * 1000)
 afterEach(stopService)
 
 describe('robots', () => {
