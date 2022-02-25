@@ -45,7 +45,7 @@ CREATE TABLE mq_message (
 , hash             VARCHAR(255)
 , state            VARCHAR(255) NOT NULL
 , state_updated_at DATETIME     NOT NULL
-, PRIMARY KEY (mq_id, message_id)
+, PRIMARY KEY (namespace, id)
 , FOREIGN KEY (state) REFERENCES mq_message_state(state)
 , CHECK ((priority IS NULL) OR (priority >= 0))
 , CHECK (
