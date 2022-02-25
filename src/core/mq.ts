@@ -6,6 +6,26 @@ import { withAbortSignal, AbortError } from 'extra-abort'
 import { race, fromEvent, firstValueFrom } from 'rxjs'
 import { toArrayAsync } from 'iterable-operator'
 
+export class PendingOrderControllerRegistry {
+  private static controllers: Map<string, Set<AbortController>> = new Map()
+
+  static register(namespace: string, controller: AbortController): void {
+    if (!this.controllers.has(namespace)) {
+      this.controllers.set(namespace, new Set())
+    }
+    this.controllers.get(namespace)!.add(controller)
+  }
+
+  static unregister(namespace: string, controller: AbortController): void {
+    this.controllers.get(namespace)?.delete(controller)
+  }
+
+  static abortAll(namespace: string): void {
+    this.controllers.get(namespace)?.forEach(controller => controller.abort())
+    this.controllers.set(namespace, new Set())
+  }
+}
+
 export async function draft(namespace: string, priority?: number): Promise<string> {
   const messageId = nanoid()
   await MQDAO.draftMessage(namespace, messageId, priority)
@@ -150,6 +170,7 @@ export async function renewAllFailedMessages(namespace: string): Promise<void> {
 
 export async function clear(namespace: string): Promise<void> {
   await MQDAO.clear(namespace)
+  PendingOrderControllerRegistry.abortAll(namespace)
 }
 
 export async function stats(namespace: string): Promise<IStats> {

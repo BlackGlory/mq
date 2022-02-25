@@ -27,6 +27,12 @@ interface ICore {
   isAdmin(password: string): boolean
 
   MQ: {
+    PendingOrderControllerRegistry: {
+      register(namespace: string, controller: AbortController): void
+      unregister(namespace: string, controller: AbortController): void
+      abortAll(namespace: string): void
+    }
+
     draft(namespace: string, priority?: number): Promise<string>
 
     /**

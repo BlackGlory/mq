@@ -148,6 +148,7 @@ await fetch(`http://localhost:8080/mq/${namespace}/messages/${id}`, {
 从特定消息队列取出消息, 优先级最高且最早的消息会先被取出.
 返回message id.
 如果没有可用的消息, 则会阻塞直到有可用的消息返回.
+如果消息队列遭到clear, 则会以404状态码中断阻塞.
 
 该操作会使消息从waiting状态转为ordered状态.
 一个处于ordered状态的消息会在设定的超时时间后以waiting状态重新入列, 优先级不会改变.

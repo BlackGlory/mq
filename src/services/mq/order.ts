@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify'
 import { namespaceSchema, tokenSchema } from '@src/schema'
-import { AbortController } from 'abort-controller'
+import { AbortController, AbortError } from 'extra-abort'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.get<{
@@ -18,11 +18,14 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const controller = new AbortController()
-      req.raw.on('close', () => controller.abort())
-
       const namespace = req.params.namespace
       const token = req.query.token
+      const controller = new AbortController()
+
+      req.raw.on('close', () => {
+        controller.abort()
+        Core.MQ.PendingOrderControllerRegistry.unregister(namespace, controller)
+      })
 
       try {
         await Core.Blacklist.check(namespace)
@@ -35,8 +38,16 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         throw e
       }
 
-      const result = await Core.MQ.order(namespace, controller.signal)
-      reply.status(200).send(result)
+      try {
+        Core.MQ.PendingOrderControllerRegistry.register(namespace, controller)
+        const result = await Core.MQ.order(namespace, controller.signal)
+        reply.status(200).send(result)
+      } catch (e) {
+        if (e instanceof AbortError) return reply.status(404).send()
+        throw e
+      } finally {
+        Core.MQ.PendingOrderControllerRegistry.unregister(namespace, controller)
+      }
     }
   )
 }
