@@ -2,7 +2,7 @@ import { ConfigurationDAO, MQDAO, SignalDAO } from '@dao'
 import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, UNIQUE, CONCURRENCY } from '@env'
 import { nanoid } from 'nanoid'
 import { CustomError } from '@blackglory/errors'
-import { withAbortSignal, AbortError } from 'extra-abort'
+import { AbortError } from 'extra-abort'
 import { race, fromEvent, firstValueFrom } from 'rxjs'
 import { toArrayAsync } from 'iterable-operator'
 
@@ -58,21 +58,14 @@ export async function set(
 }
 
 /**
- * 该函数是一个长时函数, 每个异步操作都应该可以响应AbortSignal以提前返回.
  * @throws {AbortError}
  */
 export async function order(namespace: string, abortSignal: AbortSignal): Promise<string> {
   while (!abortSignal.aborted) {
-    const configurations = await withAbortSignal(
-      abortSignal
-    , () => ConfigurationDAO.getConfiguration(namespace)
-    )
+    const configurations = await ConfigurationDAO.getConfiguration(namespace)
     const concurrency = configurations.concurrency ?? CONCURRENCY()
 
-    const id = await withAbortSignal(
-      abortSignal
-    , () => MQDAO.orderMessage(namespace, concurrency)
-    )
+    const id = await MQDAO.orderMessage(namespace, concurrency)
     if (id) return id
 
     await firstValueFrom(
