@@ -18,11 +18,6 @@ interface IStats {
   failed: number
 }
 
-interface IThrottle {
-  cycleStartTime: number
-  count: number
-}
-
 interface ICore {
   isAdmin(password: string): boolean
 
@@ -115,9 +110,6 @@ interface ICore {
 
     setConcurrency(namespace: string, val: number): Promise<void>
     unsetConcurrency(namespace: string): Promise<void>
-
-    setThrottle(namespace: string, val: Throttle): Promise<void>
-    unsetThrottle(namespace: string): Promise<void>
   }
 
   Blacklist: {

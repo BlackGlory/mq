@@ -24,33 +24,6 @@ interface IRawStats {
   failed: number
 }
 
-interface IRawThrottle {
-  namespace: string
-  cycle_start_time: number
-  count: number
-}
-
-export function setRawThrottle(raw: IRawThrottle): IRawThrottle {
-  getDatabase().prepare(`
-    INSERT INTO mq_throttle (namespace, cycle_start_time, count)
-    VALUES ($namespace, $cycle_start_time, $count)
-  `).run(raw)
-
-  return raw
-}
-
-export function hasRawThrottle(namespace: string): boolean {
-  return !!getRawThrottle(namespace)
-}
-
-export function getRawThrottle(namespace: string): IRawThrottle | null {
-  return getDatabase().prepare(`
-    SELECT *
-      FROM mq_throttle
-     WHERE namespace = $namespace;
-  `).get({ namespace })
-}
-
 export function setRawMessage<T extends IRawMessage>(raw: T): T {
   getDatabase().prepare(`
     INSERT INTO mq_message (

@@ -17,8 +17,6 @@ interface IMQDAO {
   orderMessage(
     namespace: string
   , concurrency: number
-  , duration: number
-  , limit: number
   ): Promise<string | null>
 
   /**

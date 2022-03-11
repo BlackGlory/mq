@@ -104,18 +104,6 @@ describe('Configuration', () => {
               , { type: 'null' }
               ]
             }
-          , throttle: {
-              oneOf: [
-                {
-                  type: 'object'
-                , properties: {
-                    duration: { type: 'number' }
-                  , limit: { type: 'number' }
-                  }
-                }
-              , { type: 'null' }
-              ]
-            }
           }
         })
       })
@@ -623,102 +611,6 @@ describe('Configuration', () => {
         const res = await fetch(del(
           url(getAddress())
         , pathname(`/admin/mq/${namespace}/config/concurrency`)
-        , headers(createAuthHeaders('bad'))
-        ))
-
-        expect(res.status).toBe(401)
-      })
-    })
-  })
-
-  describe('PUT /admin/mq/:namespace/config/throttle', () => {
-    describe('auth', () => {
-      it('204', async () => {
-        process.env.MQ_ADMIN_PASSWORD = 'password'
-        const namespace = 'namespace'
-        const val = { duration: 100, limit: 100 }
-
-        const res = await fetch(put(
-          url(getAddress())
-        , pathname(`/admin/mq/${namespace}/config/throttle`)
-        , headers(createAuthHeaders())
-        , json(val)
-        ))
-
-        expect(res.status).toBe(204)
-      })
-    })
-
-    describe('no admin password', () => {
-      it('401', async () => {
-        const namespace = 'namespace'
-        const val = { duration: 100, limit: 100 }
-
-        const res = await fetch(put(
-          url(getAddress())
-        , pathname(`/admin/mq/${namespace}/config/throttle`)
-        , json(val)
-        ))
-
-        expect(res.status).toBe(401)
-      })
-    })
-
-    describe('bad auth', () => {
-      it('401', async () => {
-        process.env.MQ_ADMIN_PASSWORD = 'password'
-        const namespace = 'namespace'
-        const val = { duration: 100, limit: 100 }
-
-        const res = await fetch(put(
-          url(getAddress())
-        , pathname(`/admin/mq/${namespace}/config/throttle`)
-        , headers(createAuthHeaders('bad'))
-        , json(val)
-        ))
-
-        expect(res.status).toBe(401)
-      })
-    })
-  })
-
-  describe('DELETE /admin/mq/:namespace/config/throttle', () => {
-    describe('auth', () => {
-      it('204', async () => {
-        process.env.MQ_ADMIN_PASSWORD = 'password'
-        const namespace = 'namespace'
-
-        const res = await fetch(del(
-          url(getAddress())
-        , pathname(`/admin/mq/${namespace}/config/throttle`)
-        , headers(createAuthHeaders())
-        ))
-
-        expect(res.status).toBe(204)
-      })
-    })
-
-    describe('no admin password', () => {
-      it('401', async () => {
-        const namespace = 'namespace'
-
-        const res = await fetch(del(
-          url(getAddress())
-        , pathname(`/admin/mq/${namespace}/config/throttle`)
-        ))
-
-        expect(res.status).toBe(401)
-      })
-    })
-
-    describe('bad auth', () => {
-      it('401', async () => {
-        process.env.MQ_ADMIN_PASSWORD = 'password'
-        const namespace = 'namespace'
-
-        const res = await fetch(del(
-          url(getAddress())
-        , pathname(`/admin/mq/${namespace}/config/throttle`)
         , headers(createAuthHeaders('bad'))
         ))
 

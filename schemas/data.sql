@@ -4,12 +4,6 @@ PRAGMA journal_mode = WAL;
 -- SQLite 会将VARCHAR(255)转换为TEXT, 将BOOLEAN转换为NUMERIC, 使用这些数据类型是出于可读性考虑
 -- mq资源本身是松散的, 没有自己的表
 
-CREATE TABLE mq_throttle (
-  namespace        VARCHAR(255) NOT NULL UNIQUE
-, cycle_start_time DATETIME     NOT NULL
-, count            INTEGER      NOT NULL DEFAULT 0
-);
-
 CREATE TABLE mq_stats (
   namespace VARCHAR(255) NOT NULL UNIQUE
 , drafting  INTEGER      NOT NULL DEFAULT 0

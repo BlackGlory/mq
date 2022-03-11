@@ -1,5 +1,5 @@
 import { ConfigurationDAO, MQDAO, SignalDAO } from '@dao'
-import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, THROTTLE, UNIQUE, CONCURRENCY } from '@env'
+import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, UNIQUE, CONCURRENCY } from '@env'
 import { nanoid } from 'nanoid'
 import { CustomError } from '@blackglory/errors'
 import { withAbortSignal, AbortError } from 'extra-abort'
@@ -68,20 +68,17 @@ export async function order(namespace: string, abortSignal: AbortSignal): Promis
     , () => ConfigurationDAO.getConfiguration(namespace)
     )
     const concurrency = configurations.concurrency ?? CONCURRENCY()
-    const throttle = THROTTLE()
-    const duration = configurations.throttle?.duration ?? throttle.duration
-    const limit = configurations.throttle?.limit ?? throttle.limit
 
     const id = await withAbortSignal(
       abortSignal
-    , () => MQDAO.orderMessage(namespace, concurrency, duration, limit)
+    , () => MQDAO.orderMessage(namespace, concurrency)
     )
     if (id) return id
 
     await firstValueFrom(
       // 其中一个Observable返回值时, 另一个Observable会被退订
       race(
-        SignalDAO.observe(namespace) // 如果入列信号先返回, 则进入下一轮循环
+        SignalDAO.observe(namespace) // 如果信号先返回, 则进入下一轮循环
       , fromEvent(abortSignal, 'abort') // 如果中断信号先返回, 则中断循环
       )
     )
@@ -214,14 +211,11 @@ export async function nextTick(): Promise<void> {
       if (changed) emit = true
     }
 
-    if (emit) await SignalDAO.emit(namespace)
+    if (emit) SignalDAO.emit(namespace)
   }
 }
 
 export class BadMessageState extends CustomError {}
-
 export class NotFound extends CustomError {}
-
 export class DuplicatePayload extends CustomError {}
-
 export { AbortError } from 'extra-abort'

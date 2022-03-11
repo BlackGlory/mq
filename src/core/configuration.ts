@@ -47,11 +47,3 @@ export function setConcurrency(namespace: string, val: number): Promise<void> {
 export function unsetConcurrency(namespace: string): Promise<void> {
   return ConfigurationDAO.unsetConcurrency(namespace)
 }
-
-export function setThrottle(namespace: string, val: Throttle): Promise<void> {
-  return ConfigurationDAO.setThrottle(namespace, val)
-}
-
-export function unsetThrottle(namespace: string): Promise<void> {
-  return ConfigurationDAO.unsetThrottle(namespace)
-}

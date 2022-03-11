@@ -41,7 +41,6 @@ describe('Configuration', () => {
         , orderedTimeout: null
         , activeTimeout: null
         , concurrency: null
-        , throttle: null
         })
       })
     })
@@ -58,7 +57,6 @@ describe('Configuration', () => {
         , orderedTimeout: null
         , activeTimeout: null
         , concurrency: null
-        , throttle: null
         })
       })
     })
@@ -262,57 +260,6 @@ describe('Configuration', () => {
         const namespace = 'namespace'
 
         const result = DAO.unsetConcurrency(namespace)
-
-        expect(result).toBeUndefined()
-        expect(hasRawConfiguration(namespace)).toBeFalse()
-      })
-    })
-  })
-
-  describe('setThrottle(namespace: string, val: Throttle): void', () => {
-    it('return undefined', () => {
-      const namespace = 'namespace'
-
-      const result = DAO.setThrottle(namespace, {
-        duration: 100
-      , limit: 200
-      })
-      const row = getRawConfiguration(namespace)
-
-      expect(result).toBeUndefined()
-      expect(row).toMatchObject({
-        throttle_duration: 100
-      , throttle_limit: 200
-      })
-    })
-  })
-
-  describe('unsetThrottle(namespace: string): void', () => {
-    describe('exists', () => {
-      it('return undefined', () => {
-        const namespace = 'namespace'
-        setMinimalConfiguration({
-          namespace
-        , throttle_duration: 100
-        , throttle_limit: 200
-        })
-
-        const result = DAO.unsetThrottle(namespace)
-        const row = getRawConfiguration(namespace)
-
-        expect(result).toBeUndefined()
-        expect(row).toMatchObject({
-          throttle_duration: null
-        , throttle_limit: null
-        })
-      })
-    })
-
-    describe('does not exist', () => {
-      it('return undefined', () => {
-        const namespace = 'namespace'
-
-        const result = DAO.unsetThrottle(namespace)
 
         expect(result).toBeUndefined()
         expect(hasRawConfiguration(namespace)).toBeFalse()

@@ -8,8 +8,6 @@ interface IRawConfiguration {
   ordered_timeout: number | null
   active_timeout: number | null
   concurrency: number | null
-  throttle_duration: number | null
-  throttle_limit: number | null
 }
 
 export function setRawConfiguration<T extends IRawConfiguration>(raw: T): T {
@@ -21,8 +19,6 @@ export function setRawConfiguration<T extends IRawConfiguration>(raw: T): T {
     , ordered_timeout
     , active_timeout
     , concurrency
-    , throttle_duration
-    , throttle_limit
     )
     VALUES (
       $namespace
@@ -31,8 +27,6 @@ export function setRawConfiguration<T extends IRawConfiguration>(raw: T): T {
     , $ordered_timeout
     , $active_timeout
     , $concurrency
-    , $throttle_duration
-    , $throttle_limit
     );
   `).run(raw)
 
@@ -48,8 +42,6 @@ export function setMinimalConfiguration(
   , ordered_timeout: raw.ordered_timeout ?? null
   , active_timeout: raw.active_timeout ?? null
   , concurrency: raw.concurrency ?? null
-  , throttle_duration: raw.throttle_duration ?? null
-  , throttle_limit: raw.throttle_limit ?? null
   , uniq: raw.uniq ?? null
   })
 }

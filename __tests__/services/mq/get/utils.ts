@@ -9,5 +9,5 @@ export async function prepareOrderedMessage(
 ) {
   await MQDAO.draftMessage(namespace, id, priority)
   await MQDAO.setMessage(namespace, id, type, payload)
-  await MQDAO.orderMessage(namespace, Infinity, Infinity, Infinity)
+  await MQDAO.orderMessage(namespace, Infinity)
 }

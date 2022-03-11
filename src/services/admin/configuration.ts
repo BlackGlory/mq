@@ -34,15 +34,6 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
           , orderedTimeout: { type: 'number', nullable: true }
           , activeTimeout: { type: 'number', nullable: true }
           , concurrency: { type: 'number', nullable: true }
-          , throttle: {
-              type: 'object'
-            , properties: {
-                duration: { type: 'number' }
-              , limit: { type: 'number' }
-              }
-            , required: ['duration', 'limit']
-            , nullable: true
-            }
           }
         }
       }
@@ -252,49 +243,6 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       await Core.Configuration.unsetConcurrency(namespace)
-      reply.status(204).send()
-    }
-  )
-
-  server.put<{
-    Params: { namespace: string }
-    Body: {
-      duration: number
-      limit: number
-    }
-  }>(
-    '/mq/:namespace/config/throttle'
-  , {
-      schema: {
-        params: { namespace: namespaceSchema }
-      , response: {
-          204: { type: 'null' }
-        }
-      }
-    }
-  , async (req, reply) => {
-      const namespace = req.params.namespace
-      const val = req.body
-      await Core.Configuration.setThrottle(namespace, val)
-      reply.status(204).send()
-    }
-  )
-
-  server.delete<{
-    Params: { namespace: string }
-  }>(
-    '/mq/:namespace/config/throttle'
-  , {
-      schema: {
-        params: { namespace: namespaceSchema }
-      , response: {
-          204: { type: 'null' }
-        }
-      }
-    }
-  , async (req, reply) => {
-      const namespace = req.params.namespace
-      await Core.Configuration.unsetThrottle(namespace)
       reply.status(204).send()
     }
   )

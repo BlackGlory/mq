@@ -8,7 +8,7 @@ export async function prepareFailedMessage(
 ) {
   await MQDAO.draftMessage(namespace, id)
   await MQDAO.setMessage(namespace, id, type, payload)
-  await MQDAO.orderMessage(namespace, Infinity, Infinity, Infinity)
+  await MQDAO.orderMessage(namespace, Infinity)
   await MQDAO.getMessage(namespace, id)
   await MQDAO.failMessage(namespace, id)
 }

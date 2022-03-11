@@ -1,9 +1,6 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/clear'
 import { initializeDatabases, clearDatabases } from '@test/utils'
-import {
-  setRawThrottle, setMinimalRawMessage, setRawStats
-, hasRawThrottle, hasRawStats, hasRawMessage
-} from './utils'
+import { setMinimalRawMessage, setRawStats, hasRawStats, hasRawMessage } from './utils'
 import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
@@ -31,20 +28,13 @@ describe('clear(namespace: string): void', () => {
     , completed: 0
     , failed: 0
     })
-    setRawThrottle({
-      namespace
-    , cycle_start_time: 0
-    , count: 1
-    })
 
     const result = DAO.clear(namespace)
     const messageExists = hasRawMessage(namespace, messageId)
     const statsExists = hasRawStats(namespace)
-    const throttleExists = hasRawThrottle(namespace)
 
     expect(result).toBeUndefined()
     expect(messageExists).toBeFalse()
     expect(statsExists).toBeFalse()
-    expect(throttleExists).toBeFalse()
   })
 })

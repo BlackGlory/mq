@@ -183,14 +183,6 @@ export const CONCURRENCY: Getter<number> =
     .memoize(getCache)
     .get()
 
-export const THROTTLE: Getter<Throttle> =
-  env('MQ_THROTTLE')
-    .convert(toThrottle)
-    .default({ duration: Infinity, limit: Infinity })
-    .assert(shouldBeThrottle)
-    .memoize(getCache)
-    .get()
-
 function env(name: string): ValueGetter<string | undefined> {
   return new ValueGetter(name, () => process.env[name])
 }
@@ -207,26 +199,6 @@ function toInteger(val: string | number | undefined ): number | undefined {
 
 function toJsonObject(val: string | undefined): object | undefined {
   if (val) return JSON.parse(val)
-}
-
-function toThrottle(val: string | undefined): Throttle | undefined {
-  if (val) return JSON.parse(val)
-}
-
-function shouldBeThrottle(val: Throttle) {
-  assert(isObject(val), 'MQ_THROTTLE should be an object')
-
-  assert(
-    Number.isInteger(val.duration) || val.duration === Infinity
-  , 'MQ_THROTTLE.duration should be an integer or Infinity'
-  )
-  assert(val.duration > 0, 'MQ_THROTTLE.duration should be positive')
-
-  assert(
-    Number.isInteger(val.limit) || val.limit === Infinity
-  , 'MQ_THROTTLE.limit should be an integer or Infinity'
-  )
-  assert(val.limit > 0, 'MQ_THROTTLE.limit should be positive')
 }
 
 function shouldBePositive(val: number) {

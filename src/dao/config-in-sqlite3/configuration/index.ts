@@ -18,9 +18,6 @@ export const ConfigurationDAO: IConfigurationDAO = {
 
 , setConcurrency: asyncify(Configuration.setConcurrency)
 , unsetConcurrency: asyncify(Configuration.unsetConcurrency)
-
-, setThrottle: asyncify(Configuration.setThrottle)
-, unsetThrottle: asyncify(Configuration.unsetThrottle)
 }
 
 function asyncify<T extends any[], U>(fn: (...args: T) => U): (...args: T) => Promise<U> {

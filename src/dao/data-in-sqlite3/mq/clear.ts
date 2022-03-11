@@ -13,10 +13,5 @@ export function clear(namespace: string): void {
       DELETE FROM mq_stats
        WHERE namespace = $namespace;
     `).run({ namespace })
-
-    db.prepare(`
-      DELETE FROM mq_throttle
-       WHERE namespace = $namespace;
-    `).run({ namespace })
   })()
 }

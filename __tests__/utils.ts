@@ -53,7 +53,6 @@ async function resetEnvironment() {
   delete process.env.MQ_DRAFTING_TIMEOUT
   delete process.env.MQ_ORDERED_TIMEOUT
   delete process.env.MQ_ACTIVE_TIMEOUT
-  delete process.env.MQ_THROTTLE
 
   // reset memoize
   resetCache()

@@ -15,16 +15,12 @@ export function getConfiguration(namespace: string): IConfiguration {
     'ordered_timeout': number | null
     'active_timeout': number | null
     'concurrency': number | null
-    'throttle_duration': number | null
-    'throttle_limit': number | null
   } = getDatabase().prepare(`
     SELECT uniq
          , drafting_timeout
          , ordered_timeout
          , active_timeout
          , concurrency
-         , throttle_duration
-         , throttle_limit
       FROM mq_configuration
      WHERE namespace = $namespace;
   `).get({ namespace })
@@ -39,12 +35,6 @@ export function getConfiguration(namespace: string): IConfiguration {
     , orderedTimeout: row['ordered_timeout']
     , activeTimeout: row['active_timeout']
     , concurrency: row['concurrency']
-    , throttle: (row['throttle_duration'] && row['throttle_limit'])
-                ? {
-                    duration: row['throttle_duration']
-                  , limit: row['throttle_limit']
-                  }
-                : null
     }
   } else {
     return {
@@ -53,7 +43,6 @@ export function getConfiguration(namespace: string): IConfiguration {
     , orderedTimeout: null
     , activeTimeout: null
     , concurrency: null
-    , throttle: null
     }
   }
 }
@@ -168,34 +157,6 @@ export function unsetConcurrency(namespace: string): void {
   })()
 }
 
-export function setThrottle(namespace: string, val: Throttle): void {
-  getDatabase().prepare(`
-    INSERT INTO mq_configuration (namespace, throttle_duration, throttle_limit)
-    VALUES ($namespace, $duration, $limit)
-        ON CONFLICT(namespace)
-        DO UPDATE SET throttle_duration = $duration
-                    , throttle_limit = $limit
-  `).run({
-    namespace
-  , duration: val.duration
-  , limit: val.limit
-  })
-}
-
-export function unsetThrottle(namespace: string): void {
-  const db = getDatabase()
-  db.transaction(() => {
-    db.prepare(`
-      UPDATE mq_configuration
-         SET throttle_duration = NULL
-           , throttle_limit = NULL
-       WHERE namespace = $namespace;
-    `).run({ namespace })
-
-    deleteNoConfigurationsRow(namespace)
-  })()
-}
-
 function deleteNoConfigurationsRow(namespace: string): void {
   getDatabase().prepare(`
     DELETE FROM mq_configuration
@@ -205,8 +166,6 @@ function deleteNoConfigurationsRow(namespace: string): void {
        AND ordered_timeout = NULL
        AND active_timeout = NULL
        AND concurrency = NULL
-       AND throttle_duration = NULL
-       AND throttle_limit = NULL
   `).run({ namespace })
 }
 
