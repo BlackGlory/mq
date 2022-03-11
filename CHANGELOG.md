@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/BlackGlory/mq/compare/v0.4.11...v0.5.0) (2022-03-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove throttle
+
+### Features
+
+* remove throttle ([926a631](https://github.com/BlackGlory/mq/commit/926a6311719d8b61b8228c3a6c2e666ff0c156bf))
+* use immediate transaction ([390cfd2](https://github.com/BlackGlory/mq/commit/390cfd277b47b41d0a043382956539ba65c2194b))
+
 ### [0.4.11](https://github.com/BlackGlory/mq/compare/v0.4.10...v0.4.11) (2022-02-25)
 
 
