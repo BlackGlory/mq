@@ -46,7 +46,7 @@ export function orderMessage(
       assert(throttle, 'Throttle is not found')
       return now - throttleDuration <= throttle.cycleStartTime
     }
-  })()
+  }).immediate()
 }
 
 function getThrottle(namespace: string): IThrottle | null {
