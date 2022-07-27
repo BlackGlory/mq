@@ -30,13 +30,6 @@ export const NODE_ENV: Getter<NodeEnv | undefined> =
     .memoize(getCache)
     .get()
 
-export const CI: Getter<boolean> =
-  env('CI')
-    .convert(toBool)
-    .default(false)
-    .memoize(getCache)
-    .get()
-
 export const DATA: Getter<string> =
   env('MQ_DATA')
     .default(path.join(appRoot, 'data'))
