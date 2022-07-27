@@ -4,7 +4,7 @@ import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database'
 import * as DataInSqlite3 from '@dao/data-in-sqlite3/database'
 import { callNextTickEverySecond } from './schedule'
 import { buildServer } from './server'
-import { PORT, HOST, CI } from '@env'
+import { PORT, HOST, NODE_ENV, NodeEnv } from '@env'
 
 const maintainController = new AbortController()
 
@@ -28,7 +28,7 @@ go(async () => {
 
   const server = buildServer()
   await server.listen(PORT(), HOST())
-  if (CI()) process.exit()
+  if (NODE_ENV() === NodeEnv.Test) process.exit()
 
   callNextTickEverySecond(maintainController.signal)
 

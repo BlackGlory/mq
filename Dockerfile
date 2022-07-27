@@ -12,11 +12,12 @@ RUN apk add --update --no-cache --virtual .build-deps \
 
 COPY . ./
 
-RUN yarn build
+RUN yarn build \
+ && yarn bundle
 
 FROM node:16-alpine
 WORKDIR /usr/src/app
-COPY --from=builder /usr/src/app/lib /usr/src/app/lib
+COPY --from=builder /usr/src/app/dist /usr/src/app/dist
 COPY package.json yarn.lock ./
 
 RUN apk add --update --no-cache --virtual .build-deps \
