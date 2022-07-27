@@ -1,5 +1,5 @@
 import { go } from '@blackglory/go'
-import { AbortController } from 'abort-controller'
+import { AbortController } from 'extra-abort'
 import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database'
 import * as DataInSqlite3 from '@dao/data-in-sqlite3/database'
 import { callNextTickEverySecond } from './schedule'
@@ -28,7 +28,7 @@ go(async () => {
 
   const server = buildServer()
   await server.listen(PORT(), HOST())
-  if (CI()) await process.exit()
+  if (CI()) process.exit()
 
   callNextTickEverySecond(maintainController.signal)
 
