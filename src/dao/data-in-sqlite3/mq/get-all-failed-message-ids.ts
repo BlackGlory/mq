@@ -1,14 +1,17 @@
 import { getDatabase } from '../database'
 import { map } from 'iterable-operator'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export function getAllFailedMessageIds(namespace: string): Iterable<string> {
-  const iter = getDatabase().prepare(`
+export const getAllFailedMessageIds = withLazyStatic(function (
+  namespace: string
+): Iterable<string> {
+  const iter = lazyStatic(() => getDatabase().prepare(`
     SELECT id
       FROM mq_message
      WHERE namespace = $namespace
        AND state = 'failed'
      ORDER BY state_updated_at ASC;
-  `).iterate({ namespace })
+  `), [getDatabase()]).iterate({ namespace })
 
   return map(iter, x => x['id'])
-}
+})

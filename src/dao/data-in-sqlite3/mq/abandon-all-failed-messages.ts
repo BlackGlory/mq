@@ -1,16 +1,15 @@
 import { getDatabase } from '../database'
 import { downcreaseFailed } from './utils/stats'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export function abandonAllFailedMessages(namespace: string): void {
-  const db = getDatabase()
-
-  db.transaction(() => {
-    const result = db.prepare(`
+export const abandonAllFailedMessages = withLazyStatic(function (namespace: string): void {
+  lazyStatic(() => getDatabase().transaction(() => {
+    const result = lazyStatic(() => getDatabase().prepare(`
       DELETE FROM mq_message
        WHERE namespace = $namespace
          AND state = 'failed';
-    `).run({ namespace })
+    `), [getDatabase()]).run({ namespace })
 
     downcreaseFailed(namespace, result.changes)
-  })()
-}
+  }), [getDatabase()])()
+})

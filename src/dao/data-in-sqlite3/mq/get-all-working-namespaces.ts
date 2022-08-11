@@ -1,13 +1,14 @@
 import { getDatabase } from '../database'
 import { map } from 'iterable-operator'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export function getAllWorkingNamespaces(): Iterable<string> {
-  const iter = getDatabase().prepare(`
+export const getAllWorkingNamespaces = withLazyStatic(function (): Iterable<string> {
+  const iter = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM mq_stats
      WHERE ordered > 0
         OR active > 0;
-  `).iterate()
+  `), [getDatabase()]).iterate()
 
   return map(iter, x => x['namespace'])
-}
+})

@@ -2,31 +2,30 @@ import { getDatabase } from '../database'
 import { BadMessageState, NotFound } from './error'
 import { downcreaseActive, increaseCompleted } from './utils/stats'
 import { State } from './utils/state'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
 /**
  * @throws {NotFound}
  * @throws {BadMessageState}
  */
-export function completeMessage(namespace: string, id: string): void {
-  const db = getDatabase()
-
-  db.transaction(() => {
-    const row = db.prepare(`
+export const completeMessage = withLazyStatic(function (namespace: string, id: string): void {
+  lazyStatic(() => getDatabase().transaction((namespace: string, id: string) => {
+    const row = lazyStatic(() => getDatabase().prepare(`
       SELECT state
         FROM mq_message
        WHERE namespace = $namespace
          AND id = $id;
-    `).get({ namespace, id })
+    `), [getDatabase()]).get({ namespace, id })
     if (!row) throw new NotFound()
     if (row.state !== State.Active) throw new BadMessageState(State.Active)
 
-    db.prepare(`
+    lazyStatic(() => getDatabase().prepare(`
       DELETE FROM mq_message
        WHERE namespace = $namespace
          AND id = $id;
-    `).run({ namespace, id })
+    `), [getDatabase()]).run({ namespace, id })
 
     downcreaseActive(namespace)
     increaseCompleted(namespace)
-  })()
-}
+  }), [getDatabase()])(namespace, id)
+})

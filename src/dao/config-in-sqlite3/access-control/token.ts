@@ -1,27 +1,28 @@
 import { getDatabase } from '../database'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export function getAllIdsWithTokens(): string[] {
-  const result = getDatabase().prepare(`
+export const getAllIdsWithTokens = withLazyStatic(function (): string[] {
+  const result = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM mq_token;
-  `).all()
+  `), [getDatabase()]).all()
   return result.map(x => x['namespace'])
-}
+})
 
-export function getAllTokens(namespace: string): Array<ITokenInfo> {
+export const getAllTokens = withLazyStatic(function (namespace: string): ITokenInfo[] {
   const result: Array<{
     token: string
     'produce_permission': number
     'consume_permission': number
     'clear_permission': number
-  }> = getDatabase().prepare(`
+  }> = lazyStatic(() => getDatabase().prepare(`
     SELECT token
          , produce_permission
          , consume_permission
          , clear_permission
       FROM mq_token
      WHERE namespace = $namespace;
-  `).all({ namespace })
+  `), [getDatabase()]).all({ namespace })
 
   return result.map(x => ({
     token: x['token']
@@ -29,23 +30,26 @@ export function getAllTokens(namespace: string): Array<ITokenInfo> {
   , consume: x['consume_permission'] === 1
   , clear: x['clear_permission'] === 1
   }))
-}
+})
 
-export function hasProduceTokens(namespace: string): boolean {
-  const result = getDatabase().prepare(`
+export const hasProduceTokens = withLazyStatic(function (namespace: string): boolean {
+  const result = lazyStatic(() => getDatabase().prepare(`
     SELECT EXISTS(
              SELECT *
                FROM mq_token
               WHERE namespace = $namespace
                 AND produce_permission = 1
            ) AS produce_tokens_exist;
-  `).get({ namespace })
+  `), [getDatabase()]).get({ namespace })
 
   return result['produce_tokens_exist'] === 1
-}
+})
 
-export function matchProduceToken(params: { token: string; namespace: string }): boolean {
-  const result = getDatabase().prepare(`
+export const matchProduceToken = withLazyStatic(function ({ token, namespace }: {
+  token: string
+  namespace: string
+}): boolean {
+  const result = lazyStatic(() => getDatabase().prepare(`
     SELECT EXISTS(
              SELECT *
                FROM mq_token
@@ -53,49 +57,60 @@ export function matchProduceToken(params: { token: string; namespace: string }):
                 AND token = $token
                 AND produce_permission = 1
            ) AS matched;
-  `).get(params)
+  `), [getDatabase()]).get({ token, namespace })
 
   return result['matched'] === 1
-}
+})
 
-export function setProduceToken(params: { token: string; namespace: string }) {
-  getDatabase().prepare(`
+export const setProduceToken = withLazyStatic(function ({ token, namespace }: {
+  token: string
+  namespace: string
+}): void {
+  lazyStatic(() => getDatabase().prepare(`
     INSERT INTO mq_token (token, namespace, produce_permission)
     VALUES ($token, $namespace, 1)
         ON CONFLICT (token, namespace)
         DO UPDATE SET produce_permission = 1;
-  `).run(params)
-}
+  `), [getDatabase()]).run({ token, namespace })
+})
 
-export function unsetProduceToken(params: { token: string; namespace: string }) {
-  const db = getDatabase()
-  db.transaction(() => {
-    db.prepare(`
+export const unsetProduceToken = withLazyStatic(function (params: {
+  token: string
+  namespace: string
+}): void {
+  lazyStatic(() => getDatabase().transaction(({ token, namespace }: {
+    token: string
+    namespace: string
+  }) => {
+    lazyStatic(() => getDatabase().prepare(`
       UPDATE mq_token
          SET produce_permission = 0
        WHERE token = $token
          AND namespace = $namespace;
-    `).run(params)
+    `), [getDatabase()]).run({ token, namespace })
 
-    deleteNoPermissionToken(params)
-  })()
-}
+    deleteNoPermissionToken({ token, namespace })
+  }), [getDatabase()])(params)
+})
 
-export function hasConsumeTokens(namespace: string): boolean {
-  const result = getDatabase().prepare(`
+export const hasConsumeTokens = withLazyStatic(function (namespace: string): boolean {
+  const result = lazyStatic(() => getDatabase().prepare(`
     SELECT EXISTS(
              SELECT *
                FROM mq_token
               WHERE namespace = $namespace
                 AND consume_permission = 1
            ) AS consume_tokens_exist
-  `).get({ namespace })
+  `), [getDatabase()]).get({ namespace })
 
   return result['consume_tokens_exist'] === 1
-}
+})
 
-export function matchConsumeToken(params: { token: string; namespace: string }): boolean {
-  const result = getDatabase().prepare(`
+export const matchConsumeToken = withLazyStatic(function ({ token, namespace }: {
+  token: string
+  namespace: string
+}): boolean {
+  const result = lazyStatic(() => getDatabase().prepare(`
     SELECT EXISTS(
              SELECT *
                FROM mq_token
@@ -103,36 +118,47 @@ export function matchConsumeToken(params: { token: string; namespace: string }):
                 AND token = $token
                 AND consume_permission = 1
            ) AS matched
-  `).get(params)
+  `), [getDatabase()]).get({ token, namespace })
 
   return result['matched'] === 1
-}
+})
 
-export function setConsumeToken(params: { token: string; namespace: string }) {
-  getDatabase().prepare(`
+export const setConsumeToken = withLazyStatic(function ({ token, namespace }: {
+  token: string
+  namespace: string
+}): void {
+  lazyStatic(() => getDatabase().prepare(`
     INSERT INTO mq_token (token, namespace, consume_permission)
     VALUES ($token, $namespace, 1)
         ON CONFLICT (token, namespace)
         DO UPDATE SET consume_permission = 1;
-  `).run(params)
-}
+  `), [getDatabase()]).run({ token, namespace })
+})
 
-export function unsetConsumeToken(params: { token: string; namespace: string }) {
-  const db = getDatabase()
-  db.transaction(() => {
-    db.prepare(`
+export const unsetConsumeToken = withLazyStatic(function ({ token, namespace }: {
+  token: string
+  namespace: string
+}): void {
+  lazyStatic(() => getDatabase().transaction(({ token, namespace }: {
+    token: string
+    namespace: string
+  }) => {
+    lazyStatic(() => getDatabase().prepare(`
       UPDATE mq_token
          SET consume_permission = 0
        WHERE token = $token
          AND namespace = $namespace;
-    `).run(params)
+    `), [getDatabase()]).run({ token, namespace })
 
-    deleteNoPermissionToken(params)
-  })()
-}
+    deleteNoPermissionToken({ token, namespace })
+  }), [getDatabase()])({ token, namespace })
+})
 
-export function matchClearToken(params: { token: string; namespace: string }): boolean {
-  const result = getDatabase().prepare(`
+export const matchClearToken = withLazyStatic(function ({ token, namespace }: {
+  token: string
+  namespace: string
+}): boolean {
+  const result = lazyStatic(() => getDatabase().prepare(`
     SELECT EXISTS(
              SELECT *
                FROM mq_token
@@ -140,41 +166,52 @@ export function matchClearToken(params: { token: string; namespace: string }): b
                 AND token = $token
                 AND clear_permission = 1
            ) AS matched
-  `).get(params)
+  `), [getDatabase()]).get({ token, namespace })
 
   return result['matched'] === 1
-}
+})
 
-export function setClearToken(params: { token: string; namespace: string }) {
-  getDatabase().prepare(`
+export const setClearToken = withLazyStatic(function ({ token, namespace }: {
+  token: string
+  namespace: string
+}): void {
+  lazyStatic(() => getDatabase().prepare(`
     INSERT INTO mq_token (token, namespace, clear_permission)
     VALUES ($token, $namespace, 1)
         ON CONFLICT (token, namespace)
         DO UPDATE SET clear_permission = 1;
-  `).run(params)
-}
+  `), [getDatabase()]).run({ token, namespace })
+})
 
-export function unsetClearToken(params: { token: string; namespace: string }) {
-  const db = getDatabase()
-  db.transaction(() => {
-    db.prepare(`
+export const unsetClearToken = withLazyStatic(function ({ token, namespace }: {
+  token: string
+  namespace: string
+}): void {
+  lazyStatic(() => getDatabase().transaction(({ token, namespace }: {
+    token: string
+    namespace: string
+  }) => {
+    lazyStatic(() => getDatabase().prepare(`
       UPDATE mq_token
          SET clear_permission = 0
        WHERE token = $token
          AND namespace = $namespace;
-    `).run(params)
+    `), [getDatabase()]).run({ token, namespace })
 
-    deleteNoPermissionToken(params)
-  })()
-}
+    deleteNoPermissionToken({ token, namespace })
+  }), [getDatabase()])({ token, namespace })
+})
 
-function deleteNoPermissionToken(params: { token: string, namespace: string }) {
-  getDatabase().prepare(`
+const deleteNoPermissionToken = withLazyStatic(function ({ token, namespace }: {
+  token: string
+  namespace: string
+}): void {
+  lazyStatic(() => getDatabase().prepare(`
     DELETE FROM mq_token
      WHERE token = $token
        AND namespace = $namespace
        AND produce_permission = 0
        AND consume_permission = 0
        AND clear_permission = 0;
-  `).run(params)
-}
+  `), [getDatabase()]).run({ token, namespace })
+})

@@ -3,17 +3,24 @@ import { NotFound, BadMessageState } from './error'
 import { getTimestamp } from './utils/get-timestamp'
 import { downcreaseOrdered, increaseActive } from './utils/stats'
 import { State } from './utils/state'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
 /**
  * @throws {NotFound}
  * @throws {BadMessageState}
  */
-export function getMessage(namespace: string, id: string): IMessage {
-  const timestamp = getTimestamp()
-  const db = getDatabase()
+export const getMessage = withLazyStatic(function (namespace: string, id: string): IMessage {
+  return lazyStatic(() => getDatabase().transaction((namespace: string, id: string) => {
+    const timestamp = getTimestamp()
+    const makeMessageActive = lazyStatic(() => getDatabase().prepare(`
+      UPDATE mq_message
+          SET state = 'active'
+            , state_updated_at = $stateUpdatedAt
+        WHERE namespace = $namespace
+          AND id = $id;
+    `), [getDatabase()])
 
-  return db.transaction(() => {
-    const row = db.prepare(`
+    const row = lazyStatic(() => getDatabase().prepare(`
       SELECT type
            , payload
            , state
@@ -21,7 +28,7 @@ export function getMessage(namespace: string, id: string): IMessage {
         FROM mq_message
        WHERE namespace = $namespace
          AND id = $id;
-    `).get({ namespace, id })
+    `), [getDatabase()]).get({ namespace, id })
     if (!row) throw new NotFound()
 
     const state = row['state'] as State
@@ -34,13 +41,7 @@ export function getMessage(namespace: string, id: string): IMessage {
         , State.Failed
         )
       case State.Ordered:
-        db.prepare(`
-          UPDATE mq_message
-             SET state = 'active'
-               , state_updated_at = $stateUpdatedAt
-           WHERE namespace = $namespace
-             AND id = $id;
-        `).run({
+        makeMessageActive.run({
           namespace
         , id
         , stateUpdatedAt: timestamp
@@ -56,5 +57,5 @@ export function getMessage(namespace: string, id: string): IMessage {
     , payload: row['payload']
     , priority: row['priority']
     }
-  })()
-}
+  }), [getDatabase()])(namespace, id)
+})

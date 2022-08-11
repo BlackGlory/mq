@@ -8,29 +8,28 @@ import {
 , downcreaseFailed
 } from './utils/stats'
 import { State } from './utils/state'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
 /**
  * @throws {NotFound}
  */
-export function abandonMessage(namespace: string, id: string): void {
-  const db = getDatabase()
-
-  db.transaction(() => {
-    const row = db.prepare(`
+export const abandonMessage = withLazyStatic(function (namespace: string, id: string): void {
+  lazyStatic(() => getDatabase().transaction((namespace: string, id: string) => {
+    const row = lazyStatic(() => getDatabase().prepare(`
       SELECT state
         FROM mq_message
        WHERE namespace = $namespace
          AND id = $id;
-    `).get({ namespace, id })
+    `), [getDatabase()]).get({ namespace, id })
     if (!row) throw new NotFound()
 
     const state = row['state'] as State
 
-    db.prepare(`
+    lazyStatic(() => getDatabase().prepare(`
       DELETE FROM mq_message
        WHERE namespace = $namespace
          AND id = $id;
-    `).run({ namespace, id })
+    `), [getDatabase()]).run({ namespace, id })
 
     switch (state) {
       case State.Drafting: downcreaseDrafting(namespace); break
@@ -39,5 +38,5 @@ export function abandonMessage(namespace: string, id: string): void {
       case State.Active: downcreaseActive(namespace); break
       case State.Failed: downcreaseFailed(namespace); break
     }
-  })()
-}
+  }), [getDatabase()])(namespace, id)
+})

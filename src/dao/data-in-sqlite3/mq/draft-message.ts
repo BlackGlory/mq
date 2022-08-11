@@ -2,16 +2,24 @@ import { getDatabase } from '../database'
 import { getTimestamp } from './utils/get-timestamp'
 import { increaseDrafting } from './utils/stats'
 import { isUndefined } from '@blackglory/types'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export function draftMessage(namespace: string, id: string, priority?: number): void {
-  const timestamp = getTimestamp()
-  const db = getDatabase()
+export const draftMessage = withLazyStatic(function (
+  namespace: string
+, id: string
+, priority?: number
+): void {
+  lazyStatic(() => getDatabase().transaction((
+    namespace: string
+  , id: string
+  , priority?: number
+  ) => {
+    const timestamp = getTimestamp()
 
-  db.transaction(() => {
-    db.prepare(`
+    lazyStatic(() => getDatabase().prepare(`
       INSERT INTO mq_message (namespace, id, priority, state, state_updated_at)
       VALUES ($namespace, $id, $priority, 'drafting', $stateUpdatedAt);
-    `).run({
+    `), [getDatabase()]).run({
       namespace
     , id
     , priority: isUndefined(priority) ? null : priority
@@ -19,5 +27,5 @@ export function draftMessage(namespace: string, id: string, priority?: number): 
     })
 
     increaseDrafting(namespace)
-  })()
-}
+  }), [getDatabase()])(namespace, id, priority)
+})

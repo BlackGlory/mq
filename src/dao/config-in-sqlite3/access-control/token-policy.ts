@@ -1,25 +1,27 @@
 import { getDatabase } from '../database'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export function getAllIdsWithTokenPolicies(): string[] {
-  const result = getDatabase().prepare(`
+export const getAllIdsWithTokenPolicies = withLazyStatic(function (): string[] {
+  const result = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM mq_token_policy;
-  `).all()
-  return result.map(x => x['namespace'])
-}
+  `), [getDatabase()]).all()
 
-export function getTokenPolicies(namespace: string): ITokenPolicy {
+  return result.map(x => x['namespace'])
+})
+
+export const getTokenPolicies = withLazyStatic(function (namespace: string): ITokenPolicy {
   const row: {
     'produce_token_required': number | null
   , 'consume_token_required': number | null
   , 'clear_token_required': number | null
-  } = getDatabase().prepare(`
+  } = lazyStatic(() => getDatabase().prepare(`
     SELECT produce_token_required
          , consume_token_required
          , clear_token_required
       FROM mq_token_policy
      WHERE namespace = $namespace;
-  `).get({ namespace })
+  `), [getDatabase()]).get({ namespace })
   if (row) {
     const produceTokenRequired = row['produce_token_required']
     const consumeTokenRequired = row['consume_token_required']
@@ -45,83 +47,89 @@ export function getTokenPolicies(namespace: string): ITokenPolicy {
     , clearTokenRequired: null
     }
   }
-}
+})
 
-export function setProduceTokenRequired(namespace: string, val: boolean): void {
-  getDatabase().prepare(`
+export const setProduceTokenRequired = withLazyStatic(function (
+  namespace: string
+, val: boolean
+): void {
+  lazyStatic(() => getDatabase().prepare(`
     INSERT INTO mq_token_policy (namespace, produce_token_required)
     VALUES ($namespace, $produceTokenRequired)
         ON CONFLICT(namespace)
         DO UPDATE SET produce_token_required = $produceTokenRequired;
-  `).run({ namespace, produceTokenRequired: booleanToNumber(val) })
-}
+  `), [getDatabase()]).run({ namespace, produceTokenRequired: booleanToNumber(val) })
+})
 
-export function unsetProduceTokenRequired(namespace: string): void {
-  const db = getDatabase()
-  db.transaction(() => {
-    db.prepare(`
+export const unsetProduceTokenRequired = withLazyStatic(function (namespace: string): void {
+  lazyStatic(() => getDatabase().transaction((namespace: string) => {
+    lazyStatic(() => getDatabase().prepare(`
       UPDATE mq_token_policy
          SET produce_token_required = NULL
        WHERE namespace = $namespace;
-    `).run({ namespace })
+    `), [getDatabase()]).run({ namespace })
 
     deleteNoPoliciesRow(namespace)
-  })()
-}
+  }), [getDatabase()])(namespace)
+})
 
-export function setConsumeTokenRequired(namespace: string, val: boolean): void {
-  getDatabase().prepare(`
+export const setConsumeTokenRequired = withLazyStatic(function (
+  namespace: string
+, val: boolean
+): void {
+  lazyStatic(() => getDatabase().prepare(`
     INSERT INTO mq_token_policy (namespace, consume_token_required)
     VALUES ($namespace, $consumeTokenRequired)
         ON CONFLICT(namespace)
         DO UPDATE SET consume_token_required = $consumeTokenRequired;
-  `).run({ namespace, consumeTokenRequired: booleanToNumber(val) })
-}
+  `), [getDatabase()]).run({ namespace, consumeTokenRequired: booleanToNumber(val) })
+})
 
-export function unsetConsumeTokenRequired(namespace: string): void {
-  const db = getDatabase()
-  db.transaction(() => {
-    db.prepare(`
+export const unsetConsumeTokenRequired = withLazyStatic(function (namespace: string): void {
+  lazyStatic(() => getDatabase().transaction((namespace: string) => {
+    lazyStatic(() => getDatabase().prepare(`
       UPDATE mq_token_policy
          SET consume_token_required = NULL
        WHERE namespace = $namespace;
-    `).run({ namespace })
+    `), [getDatabase()]).run({ namespace })
 
     deleteNoPoliciesRow(namespace)
-  })()
-}
+  }), [getDatabase()])(namespace)
+})
 
-export function setClearTokenRequired(namespace: string, val: boolean): void {
-  getDatabase().prepare(`
+export const setClearTokenRequired = withLazyStatic(function (
+  namespace: string
+, val: boolean
+): void {
+  lazyStatic(() => getDatabase().prepare(`
     INSERT INTO mq_token_policy (namespace, clear_token_required)
     VALUES ($namespace, $clearTokenRequired)
         ON CONFLICT(namespace)
         DO UPDATE SET clear_token_required = $clearTokenRequired;
-  `).run({ namespace, clearTokenRequired: booleanToNumber(val) })
-}
+  `), [getDatabase()]).run({ namespace, clearTokenRequired: booleanToNumber(val) })
+})
 
-export function unsetClearTokenRequired(namespace: string): void {
-  const db = getDatabase()
-  db.transaction(() => {
-    db.prepare(`
+export const unsetClearTokenRequired = withLazyStatic(function (namespace: string): void {
+  lazyStatic(() => getDatabase().transaction((namespace: string) => {
+    lazyStatic(() => getDatabase().prepare(`
       UPDATE mq_token_policy
          SET clear_token_required = NULL
        WHERE namespace = $namespace;
-    `).run({ namespace })
+    `), [getDatabase()]).run({ namespace })
 
     deleteNoPoliciesRow(namespace)
-  })()
-}
+  }), [getDatabase()])(namespace)
+})
 
-function deleteNoPoliciesRow(namespace: string): void {
-  getDatabase().prepare(`
+const deleteNoPoliciesRow = withLazyStatic(function (namespace: string): void {
+  lazyStatic(() => getDatabase().prepare(`
     DELETE FROM mq_token_policy
      WHERE namespace = $namespace
        AND produce_token_required = NULL
        AND consume_token_required = NULL
        AND clear_token_required = NULL
-  `).run({ namespace })
-}
+  `), [getDatabase()]).run({ namespace })
+})
 
 function numberToBoolean(val: number): boolean {
   if (val === 0) {

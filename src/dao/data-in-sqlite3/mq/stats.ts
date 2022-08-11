@@ -1,7 +1,8 @@
 import { getDatabase } from '../database'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export function stats(namespace: string): IStats {
-  const row = getDatabase().prepare(`
+export const stats = withLazyStatic(function (namespace: string): IStats {
+  const row = lazyStatic(() => getDatabase().prepare(`
     SELECT drafting
          , waiting
          , ordered
@@ -10,7 +11,7 @@ export function stats(namespace: string): IStats {
          , failed
       FROM mq_stats
      WHERE namespace = $namespace;
-  `).get({ namespace })
+  `), [getDatabase()]).get({ namespace })
 
   if (row) {
     return {
@@ -33,4 +34,4 @@ export function stats(namespace: string): IStats {
     , failed: 0
     }
   }
-}
+})

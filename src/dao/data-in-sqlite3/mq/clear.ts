@@ -1,17 +1,16 @@
 import { getDatabase } from '../database'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export function clear(namespace: string): void {
-  const db = getDatabase()
-
-  db.transaction(() => {
-    db.prepare(`
+export const clear = withLazyStatic(function (namespace: string): void {
+  lazyStatic(() => getDatabase().transaction((namespace: string) => {
+    lazyStatic(() => getDatabase().prepare(`
       DELETE FROM mq_message
        WHERE namespace = $namespace;
-    `).run({ namespace })
+    `), [getDatabase()]).run({ namespace })
 
-    db.prepare(`
+    lazyStatic(() => getDatabase().prepare(`
       DELETE FROM mq_stats
        WHERE namespace = $namespace;
-    `).run({ namespace })
-  })()
-}
+    `), [getDatabase()]).run({ namespace })
+  }), [getDatabase()])(namespace)
+})

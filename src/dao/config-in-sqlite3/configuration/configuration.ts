@@ -1,21 +1,23 @@
 import { getDatabase } from '../database'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export function getAllIdsWithConfiguration(): string[] {
-  const result = getDatabase().prepare(`
+export const getAllIdsWithConfiguration = withLazyStatic(function (): string[] {
+  const result = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM mq_configuration;
-  `).all()
-  return result.map(x => x['namespace'])
-}
+  `), [getDatabase()]).all()
 
-export function getConfiguration(namespace: string): IConfiguration {
+  return result.map(x => x['namespace'])
+})
+
+export const getConfiguration = withLazyStatic(function (namespace: string): IConfiguration {
   const row: {
     'uniq': number | null
     'drafting_timeout': number | null
     'ordered_timeout': number | null
     'active_timeout': number | null
     'concurrency': number | null
-  } = getDatabase().prepare(`
+  } = lazyStatic(() => getDatabase().prepare(`
     SELECT uniq
          , drafting_timeout
          , ordered_timeout
@@ -23,7 +25,7 @@ export function getConfiguration(namespace: string): IConfiguration {
          , concurrency
       FROM mq_configuration
      WHERE namespace = $namespace;
-  `).get({ namespace })
+  `), [getDatabase()]).get({ namespace })
 
   if (row) {
     const unique = row['uniq']
@@ -45,120 +47,124 @@ export function getConfiguration(namespace: string): IConfiguration {
     , concurrency: null
     }
   }
-}
+})
 
-export function setUnique(namespace: string, val: boolean): void {
-  getDatabase().prepare(`
+export const setUnique = withLazyStatic(function (namespace: string, val: boolean): void {
+  lazyStatic(() => getDatabase().prepare(`
     INSERT INTO mq_configuration (namespace, uniq)
     VALUES ($namespace, $unique)
         ON CONFLICT(namespace)
         DO UPDATE SET uniq = $unique;
-  `).run({ namespace, unique: booleanToNumber(val) })
-}
+  `), [getDatabase()]).run({ namespace, unique: booleanToNumber(val) })
+})
 
-export function unsetUnique(namespace: string): void {
-  const db = getDatabase()
-  db.transaction(() => {
-    db.prepare(`
+export const unsetUnique = withLazyStatic(function (namespace: string): void {
+  lazyStatic(() => getDatabase().transaction((namespace: string) => {
+    lazyStatic(() => getDatabase().prepare(`
       UPDATE mq_configuration
          SET uniq = NULL
        WHERE namespace = $namespace;
-    `).run({ namespace })
+    `), [getDatabase()]).run({ namespace })
 
     deleteNoConfigurationsRow(namespace)
-  })()
-}
+  }), [getDatabase()])(namespace)
+})
 
-export function setDraftingTimeout(namespace: string, val: number): void {
-  getDatabase().prepare(`
+export const setDraftingTimeout = withLazyStatic(function (namespace: string, val: number): void {
+  lazyStatic(() => getDatabase().prepare(`
     INSERT INTO mq_configuration (namespace, drafting_timeout)
     VALUES ($namespace, $draftingTimeout)
         ON CONFLICT(namespace)
         DO UPDATE SET drafting_timeout = $draftingTimeout;
-  `).run({ namespace, draftingTimeout: val })
-}
+  `), [getDatabase()]).run({ namespace, draftingTimeout: val })
+})
 
-export function unsetDraftingTimeout(namespace: string): void {
-  const db = getDatabase()
-  db.transaction(() => {
-    db.prepare(`
+export const unsetDraftingTimeout = withLazyStatic(function (namespace: string): void {
+  lazyStatic(() => getDatabase().transaction((namespace: string) => {
+    lazyStatic(() => getDatabase().prepare(`
       UPDATE mq_configuration
          SET drafting_timeout = NULL
        WHERE namespace = $namespace;
-    `).run({ namespace })
+    `), [getDatabase()]).run({ namespace })
 
     deleteNoConfigurationsRow(namespace)
-  })()
-}
+  }), [getDatabase()])(namespace)
+})
 
-export function setOrderedTimeout(namespace: string, val: number): void {
-  getDatabase().prepare(`
+export const setOrderedTimeout = withLazyStatic(function (
+  namespace: string
+, val: number
+): void {
+  lazyStatic(() => getDatabase().prepare(`
     INSERT INTO mq_configuration (namespace, ordered_timeout)
     VALUES ($namespace, $orderedTimeout)
         ON CONFLICT(namespace)
         DO UPDATE SET ordered_timeout = $orderedTimeout;
-  `).run({ namespace, orderedTimeout: val })
-}
+  `), [getDatabase()]).run({ namespace, orderedTimeout: val })
+})
 
-export function unsetOrderedTimeout(namespace: string): void {
-  const db = getDatabase()
-  db.transaction(() => {
-    db.prepare(`
+export const unsetOrderedTimeout = withLazyStatic(function (namespace: string): void {
+  lazyStatic(() => getDatabase().transaction((namespace: string) => {
+    lazyStatic(() => getDatabase().prepare(`
       UPDATE mq_configuration
          SET ordered_timeout = NULL
        WHERE namespace = $namespace;
-    `).run({ namespace })
+    `), [getDatabase()]).run({ namespace })
 
     deleteNoConfigurationsRow(namespace)
-  })()
-}
+  }), [getDatabase()])(namespace)
+})
 
-export function setActiveTimeout(namespace: string, val: number): void {
-  getDatabase().prepare(`
+export const setActiveTimeout = withLazyStatic(function (
+  namespace: string
+, val: number
+): void {
+  lazyStatic(() => getDatabase().prepare(`
     INSERT INTO mq_configuration (namespace, active_timeout)
     VALUES ($namespace, $activeTimeout)
         ON CONFLICT(namespace)
         DO UPDATE SET active_timeout = $activeTimeout;
-  `).run({ namespace, activeTimeout: val })
-}
+  `), [getDatabase()]).run({ namespace, activeTimeout: val })
+})
 
-export function unsetActiveTimeout(namespace: string): void {
-  const db = getDatabase()
-  db.transaction(() => {
-    db.prepare(`
+export const unsetActiveTimeout = withLazyStatic(function (namespace: string): void {
+  lazyStatic(() => getDatabase().transaction((namespace: string) => {
+    lazyStatic(() => getDatabase().prepare(`
       UPDATE mq_configuration
          SET active_timeout = NULL
        WHERE namespace = $namespace;
-    `).run({ namespace })
+    `), [getDatabase()]).run({ namespace })
 
     deleteNoConfigurationsRow(namespace)
-  })()
-}
+  }), [getDatabase()])(namespace)
+})
 
-export function setConcurrency(namespace: string, val: number): void {
-  getDatabase().prepare(`
+export const setConcurrency = withLazyStatic(function (
+  namespace: string
+, val: number
+): void {
+  lazyStatic(() => getDatabase().prepare(`
     INSERT INTO mq_configuration (namespace, concurrency)
     VALUES ($namespace, $concurrency)
         ON CONFLICT(namespace)
         DO UPDATE SET concurrency = $concurrency;
-  `).run({ namespace, concurrency: val })
-}
+  `), [getDatabase()]).run({ namespace, concurrency: val })
+})
 
-export function unsetConcurrency(namespace: string): void {
-  const db = getDatabase()
-  db.transaction(() => {
-    db.prepare(`
+export const unsetConcurrency = withLazyStatic(function (namespace: string): void {
+  lazyStatic(() => getDatabase().transaction((namespace: string) => {
+    lazyStatic(() => getDatabase().prepare(`
       UPDATE mq_configuration
          SET concurrency = NULL
        WHERE namespace = $namespace;
-    `).run({ namespace })
+    `), [getDatabase()]).run({ namespace })
 
     deleteNoConfigurationsRow(namespace)
-  })()
-}
+  }), [getDatabase()])(namespace)
+})
 
-function deleteNoConfigurationsRow(namespace: string): void {
-  getDatabase().prepare(`
+const deleteNoConfigurationsRow = withLazyStatic(function (namespace: string): void {
+  lazyStatic(() => getDatabase().prepare(`
     DELETE FROM mq_configuration
      WHERE namespace = $namespace
        AND uniq = NULL
@@ -166,8 +172,8 @@ function deleteNoConfigurationsRow(namespace: string): void {
        AND ordered_timeout = NULL
        AND active_timeout = NULL
        AND concurrency = NULL
-  `).run({ namespace })
-}
+  `), [getDatabase()]).run({ namespace })
+})
 
 function numberToBoolean(val: number): boolean {
   if (val === 0) {

@@ -1,11 +1,12 @@
 import { getDatabase } from '../database'
 import { map } from 'iterable-operator'
+import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
-export function getAllQueueIds(): Iterable<string> {
-  const iter = getDatabase().prepare(`
+export const getAllQueueIds = withLazyStatic(function (): Iterable<string> {
+  const iter = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM mq_stats;
-  `).iterate()
+  `), [getDatabase()]).iterate()
 
   return map(iter, x => x['namespace'])
-}
+})
