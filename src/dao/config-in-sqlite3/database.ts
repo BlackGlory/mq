@@ -18,7 +18,9 @@ export function openDatabase(): void {
 
 export async function prepareDatabase(): Promise<void> {
   assert(db, 'Database is not opened')
+
   await migrateDatabase(db)
+  db.unsafeMode(true)
 }
 
 export function getDatabase(): IDatabase {
