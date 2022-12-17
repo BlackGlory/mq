@@ -3,7 +3,6 @@ import { NotFound } from '@dao/data-in-sqlite3/mq/error'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
 import { getError } from 'return-style'
-import 'jest-extended'
 
 const timestamp = Date.now()
 
@@ -56,7 +55,7 @@ describe('abandonMessage(namespace: string, messageId: string): void', () => {
         const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
-        expect(exists).toBeFalse()
+        expect(exists).toBe(false)
         expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 0
@@ -93,7 +92,7 @@ describe('abandonMessage(namespace: string, messageId: string): void', () => {
         const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
-        expect(exists).toBeFalse()
+        expect(exists).toBe(false)
         expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 0
@@ -130,7 +129,7 @@ describe('abandonMessage(namespace: string, messageId: string): void', () => {
         const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
-        expect(exists).toBeFalse()
+        expect(exists).toBe(false)
         expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 0
@@ -167,7 +166,7 @@ describe('abandonMessage(namespace: string, messageId: string): void', () => {
         const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
-        expect(exists).toBeFalse()
+        expect(exists).toBe(false)
         expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 0
@@ -204,7 +203,7 @@ describe('abandonMessage(namespace: string, messageId: string): void', () => {
         const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
-        expect(exists).toBeFalse()
+        expect(exists).toBe(false)
         expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 0

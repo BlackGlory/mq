@@ -1,7 +1,6 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/clear'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setMinimalRawMessage, setRawStats, hasRawStats, hasRawMessage } from './utils'
-import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -34,7 +33,7 @@ describe('clear(namespace: string): void', () => {
     const statsExists = hasRawStats(namespace)
 
     expect(result).toBeUndefined()
-    expect(messageExists).toBeFalse()
-    expect(statsExists).toBeFalse()
+    expect(messageExists).toBe(false)
+    expect(statsExists).toBe(false)
   })
 })

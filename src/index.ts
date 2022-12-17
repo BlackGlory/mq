@@ -1,4 +1,4 @@
-import { go } from '@blackglory/go'
+import { go } from '@blackglory/prelude'
 import { AbortController } from 'extra-abort'
 import * as ConfigInSqlite3 from '@dao/config-in-sqlite3/database'
 import * as DataInSqlite3 from '@dao/data-in-sqlite3/database'

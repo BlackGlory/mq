@@ -3,7 +3,6 @@ import { BadMessageState, NotFound } from '@dao/data-in-sqlite3/mq/error'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
 import { getError } from 'return-style'
-import 'jest-extended'
 
 const timestamp = Date.now()
 
@@ -56,7 +55,7 @@ describe('failMessage(namespace: string, messageId: string): void', () => {
         const rawStatsResult = getRawStats(namespace)
 
         expect(result).toBeUndefined()
-        expect(exists).toBeTrue()
+        expect(exists).toBe(true)
         expect(rawStatsResult).toMatchObject({
           drafting: 0
         , waiting: 0

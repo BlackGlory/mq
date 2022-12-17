@@ -1,7 +1,6 @@
 import * as DAO from '@dao/config-in-sqlite3/json-schema/json-schema'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { hasRawJsonSchema, setRawJsonSchema } from './utils'
-import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -65,7 +64,7 @@ describe('JSON Schema', () => {
         const result = DAO.setJsonSchema({ namespace, schema })
 
         expect(result).toBeUndefined()
-        expect(hasRawJsonSchema(namespace)).toBeTrue()
+        expect(hasRawJsonSchema(namespace)).toBe(true)
       })
     })
 
@@ -77,7 +76,7 @@ describe('JSON Schema', () => {
         const result = DAO.setJsonSchema({ namespace, schema })
 
         expect(result).toBeUndefined()
-        expect(hasRawJsonSchema(namespace)).toBeTrue()
+        expect(hasRawJsonSchema(namespace)).toBe(true)
       })
     })
   })
@@ -95,7 +94,7 @@ describe('JSON Schema', () => {
         const result = DAO.removeJsonSchema(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawJsonSchema(namespace)).toBeFalse()
+        expect(hasRawJsonSchema(namespace)).toBe(false)
       })
     })
 
@@ -106,7 +105,7 @@ describe('JSON Schema', () => {
         const result = DAO.removeJsonSchema(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawJsonSchema(namespace)).toBeFalse()
+        expect(hasRawJsonSchema(namespace)).toBe(false)
       })
     })
   })

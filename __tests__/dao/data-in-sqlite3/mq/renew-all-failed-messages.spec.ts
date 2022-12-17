@@ -1,7 +1,6 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/renew-all-failed-messages'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
-import 'jest-extended'
 
 const timestamp = Date.now()
 
@@ -39,7 +38,7 @@ describe('renewAllFailedMessages(namespace: string): void', () => {
     const result = DAO.renewAllFailedMessages(namespace)
 
     expect(result).toBeUndefined()
-    expect(hasRawMessage(namespace, messageId)).toBeTrue()
+    expect(hasRawMessage(namespace, messageId)).toBe(true)
     expect(getRawStats(namespace)).toMatchObject({
       drafting: 0
     , waiting: 1

@@ -1,5 +1,4 @@
 import { startService, stopService, getAddress } from '@test/utils'
-import { matchers } from 'jest-json-schema'
 import { prepareWaitingMessage } from './utils'
 import { fetch } from 'extra-fetch'
 import { get } from 'extra-request'
@@ -9,7 +8,6 @@ import { delay } from 'extra-promise'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
-expect.extend(matchers)
 
 beforeEach(startService)
 afterEach(stopService)

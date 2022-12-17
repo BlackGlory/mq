@@ -3,7 +3,6 @@ import { NotFound, BadMessageState } from '@dao/data-in-sqlite3/mq/error'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setRawMessage, getRawMessage, setRawStats, getRawStats } from './utils'
 import { getError } from 'return-style'
-import 'jest-extended'
 
 const timestamp = Date.now()
 

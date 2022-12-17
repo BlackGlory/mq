@@ -1,7 +1,6 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/order-message'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setRawMessage, setRawStats, getRawMessage, getRawStats } from './utils'
-import 'jest-extended'
 
 const timestamp = Date.now()
 

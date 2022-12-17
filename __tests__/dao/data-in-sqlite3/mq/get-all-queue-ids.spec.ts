@@ -2,7 +2,6 @@ import * as DAO from '@dao/data-in-sqlite3/mq/get-all-queue-ids'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setRawStats } from './utils'
 import { toArray } from 'iterable-operator'
-import '@blackglory/jest-matchers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -26,7 +25,6 @@ describe('getAllQueueIds(): Iterable<string>', () => {
 
       const result = DAO.getAllQueueIds()
 
-      expect(result).toBeIterable()
       expect(toArray(result)).toEqual([namespace])
     })
   })
@@ -35,7 +33,6 @@ describe('getAllQueueIds(): Iterable<string>', () => {
     it('return empty iterable', () => {
       const result = DAO.getAllQueueIds()
 
-      expect(result).toBeIterable()
       expect(toArray(result)).toEqual([])
     })
   })

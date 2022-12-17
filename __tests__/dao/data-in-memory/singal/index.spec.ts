@@ -1,6 +1,5 @@
 import { SignalDAO } from '@src/dao/data-in-memory/signal'
 import { Observable, firstValueFrom } from 'rxjs'
-import '@blackglory/jest-matchers'
 
 const TIME_ERROR = 1
 

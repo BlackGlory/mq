@@ -1,7 +1,6 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/abandon-all-failed-messages'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
-import 'jest-extended'
 
 const timestamp = Date.now()
 
@@ -39,7 +38,7 @@ describe('abandonAllFailedMessages(namespace: string): void', () => {
     const result = DAO.abandonAllFailedMessages(namespace)
 
     expect(result).toBeUndefined()
-    expect(hasRawMessage(namespace, messageId)).toBeFalse()
+    expect(hasRawMessage(namespace, messageId)).toBe(false)
     expect(getRawStats(namespace)).toMatchObject({
       drafting: 0
     , waiting: 0

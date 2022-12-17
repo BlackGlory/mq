@@ -2,7 +2,6 @@ import * as DAO from '@dao/data-in-sqlite3/mq/get-all-working-namespaces'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setRawStats } from './utils'
 import { toArray } from 'iterable-operator'
-import '@blackglory/jest-matchers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -69,7 +68,6 @@ describe('getAllWorkingQueueIds(): Iterable<string>', () => {
 
     const result = DAO.getAllWorkingNamespaces()
 
-    expect(result).toBeIterable()
     expect(toArray(result)).toEqual(['namespace-3', 'namespace-4'])
   })
 })

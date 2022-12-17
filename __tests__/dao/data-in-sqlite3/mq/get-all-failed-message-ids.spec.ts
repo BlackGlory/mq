@@ -2,8 +2,6 @@ import * as DAO from '@dao/data-in-sqlite3/mq/get-all-failed-message-ids'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setMinimalRawMessage, setRawStats } from './utils'
 import { toArray } from 'iterable-operator'
-import 'jest-extended'
-import '@blackglory/jest-matchers'
 
 const timestamp = Date.now()
 
@@ -41,7 +39,6 @@ describe('getAllFailedMessageIds(namespace: string): Iterable<string>', () => {
 
       const result = DAO.getAllFailedMessageIds(namespace)
 
-      expect(result).toBeIterable()
       expect(toArray(result)).toEqual([messageId])
     })
   })
@@ -52,7 +49,6 @@ describe('getAllFailedMessageIds(namespace: string): Iterable<string>', () => {
 
       const result = DAO.getAllFailedMessageIds(namespace)
 
-      expect(result).toBeIterable()
       expect(toArray(result)).toEqual([])
     })
   })

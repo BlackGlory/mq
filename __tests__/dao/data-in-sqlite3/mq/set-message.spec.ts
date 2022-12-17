@@ -4,7 +4,7 @@ import { BadMessageState, DuplicatePayload, NotFound } from '@dao/data-in-sqlite
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setRawMessage, setRawStats, getRawMessage, getRawStats } from './utils'
 import { getError } from 'return-style'
-import 'jest-extended'
+import { assert, isString } from '@blackglory/prelude'
 
 const timestamp = Date.now()
 
@@ -253,7 +253,7 @@ describe(`
         , state: 'waiting'
         , state_updated_at: 0
         })
-        expect(rawMessageResult!.hash).toBeString()
+        assert(isString(rawMessageResult!.hash), 'hash is not a string')
         expect(rawMessageResult!.hash).not.toBe(oldHash)
         expect(rawStatsResult).toMatchObject({
           drafting: 0

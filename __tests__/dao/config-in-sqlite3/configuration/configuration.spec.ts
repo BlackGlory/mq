@@ -1,7 +1,6 @@
 import * as DAO from '@dao/config-in-sqlite3/configuration/configuration'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { setMinimalConfiguration, getRawConfiguration, hasRawConfiguration } from './utils'
-import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -98,7 +97,7 @@ describe('Configuration', () => {
         const result = DAO.unsetUnique(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawConfiguration(namespace)).toBeFalse()
+        expect(hasRawConfiguration(namespace)).toBe(false)
       })
     })
   })
@@ -139,7 +138,7 @@ describe('Configuration', () => {
         const result = DAO.unsetDraftingTimeout(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawConfiguration(namespace)).toBeFalse()
+        expect(hasRawConfiguration(namespace)).toBe(false)
       })
     })
   })
@@ -180,7 +179,7 @@ describe('Configuration', () => {
         const result = DAO.unsetOrderedTimeout(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawConfiguration(namespace)).toBeFalse()
+        expect(hasRawConfiguration(namespace)).toBe(false)
       })
     })
   })
@@ -221,7 +220,7 @@ describe('Configuration', () => {
         const result = DAO.unsetActiveTimeout(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawConfiguration(namespace)).toBeFalse()
+        expect(hasRawConfiguration(namespace)).toBe(false)
       })
     })
   })
@@ -262,7 +261,7 @@ describe('Configuration', () => {
         const result = DAO.unsetConcurrency(namespace)
 
         expect(result).toBeUndefined()
-        expect(hasRawConfiguration(namespace)).toBeFalse()
+        expect(hasRawConfiguration(namespace)).toBe(false)
       })
     })
   })

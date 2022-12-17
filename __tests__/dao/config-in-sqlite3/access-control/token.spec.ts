@@ -1,7 +1,6 @@
 import * as DAO from '@dao/config-in-sqlite3/access-control/token'
 import { initializeDatabases, clearDatabases } from '@test/utils'
 import { getRawToken, hasRawToken, setRawToken } from './utils'
-import 'jest-extended'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
@@ -108,7 +107,7 @@ describe('token-based access control', () => {
 
           const result = DAO.hasProduceTokens(namespace)
 
-          expect(result).toBeTrue()
+          expect(result).toBe(true)
         })
       })
 
@@ -125,7 +124,7 @@ describe('token-based access control', () => {
 
           const result = DAO.hasProduceTokens(namespace)
 
-          expect(result).toBeFalse()
+          expect(result).toBe(false)
         })
       })
     })
@@ -145,7 +144,7 @@ describe('token-based access control', () => {
 
           const result = DAO.matchProduceToken({ token, namespace })
 
-          expect(result).toBeTrue()
+          expect(result).toBe(true)
         })
       })
 
@@ -163,7 +162,7 @@ describe('token-based access control', () => {
 
           const result = DAO.matchProduceToken({ token, namespace })
 
-          expect(result).toBeFalse()
+          expect(result).toBe(false)
         })
       })
     })
@@ -235,7 +234,7 @@ describe('token-based access control', () => {
           const result = DAO.unsetProduceToken({ token, namespace })
 
           expect(result).toBeUndefined()
-          expect(hasRawToken(token, namespace)).toBeFalse()
+          expect(hasRawToken(token, namespace)).toBe(false)
         })
       })
     })
@@ -257,7 +256,7 @@ describe('token-based access control', () => {
 
           const result = DAO.hasConsumeTokens(namespace)
 
-          expect(result).toBeTrue()
+          expect(result).toBe(true)
         })
       })
 
@@ -275,7 +274,7 @@ describe('token-based access control', () => {
 
           const result = DAO.hasConsumeTokens(namespace)
 
-          expect(result).toBeFalse()
+          expect(result).toBe(false)
         })
       })
     })
@@ -295,7 +294,7 @@ describe('token-based access control', () => {
 
           const result = DAO.matchConsumeToken({ token, namespace })
 
-          expect(result).toBeTrue()
+          expect(result).toBe(true)
         })
       })
 
@@ -313,7 +312,7 @@ describe('token-based access control', () => {
 
           const result = DAO.matchConsumeToken({ token, namespace })
 
-          expect(result).toBeFalse()
+          expect(result).toBe(false)
         })
       })
     })
@@ -385,7 +384,7 @@ describe('token-based access control', () => {
           const result = DAO.unsetConsumeToken({ token, namespace })
 
           expect(result).toBeUndefined()
-          expect(hasRawToken(token, namespace)).toBeFalse()
+          expect(hasRawToken(token, namespace)).toBe(false)
         })
       })
     })
@@ -407,7 +406,7 @@ describe('token-based access control', () => {
 
           const result = DAO.matchClearToken({ token, namespace })
 
-          expect(result).toBeTrue()
+          expect(result).toBe(true)
         })
       })
 
@@ -425,7 +424,7 @@ describe('token-based access control', () => {
 
           const result = DAO.matchClearToken({ token, namespace })
 
-          expect(result).toBeFalse()
+          expect(result).toBe(false)
         })
       })
     })
@@ -496,7 +495,7 @@ describe('token-based access control', () => {
           const result = DAO.unsetClearToken({ token, namespace })
 
           expect(result).toBeUndefined()
-          expect(hasRawToken(token, namespace)).toBeFalse()
+          expect(hasRawToken(token, namespace)).toBe(false)
         })
       })
     })

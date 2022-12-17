@@ -1,13 +1,11 @@
 import { startService, stopService, getAddress } from '@test/utils'
-import { matchers } from 'jest-json-schema'
 import { prepareFailedMessage } from './utils'
 import { fetch } from 'extra-fetch'
 import { patch } from 'extra-request'
-import { url, pathname, searchParam } from 'extra-request/lib/es2018/transformers'
+import { url, pathname } from 'extra-request/lib/es2018/transformers'
 
 jest.mock('@dao/config-in-sqlite3/database')
 jest.mock('@dao/data-in-sqlite3/database')
-expect.extend(matchers)
 
 beforeEach(startService)
 afterEach(stopService)
