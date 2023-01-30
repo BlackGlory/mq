@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { namespaceSchema, tokenSchema, idSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema, idSchema } from '@src/schema.js'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.delete<{
@@ -37,7 +37,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
       try {
         await Core.MQ.abandon(namespace, id)
-        reply.status(204).send()
+        return reply
+          .status(204)
+          .send()
       } catch (e) {
         if (e instanceof Core.MQ.NotFound) return reply.status(404).send()
         throw e

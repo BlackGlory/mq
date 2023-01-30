@@ -1,4 +1,4 @@
-import * as Configuration from './configuration'
+import * as Configuration from './configuration.js'
 
 export const ConfigurationDAO: IConfigurationDAO = {
   getAllNamespacesWithConfiguration: asyncify(Configuration.getAllIdsWithConfiguration)

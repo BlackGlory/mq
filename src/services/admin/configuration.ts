@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { namespaceSchema } from '@src/schema'
+import { namespaceSchema } from '@src/schema.js'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.get(
@@ -16,7 +16,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const result = await Core.Configuration.getAllNamespaces()
-      reply.send(result)
+      return reply.send(result)
     }
   )
 
@@ -41,7 +41,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       const result = await Core.Configuration.get(namespace)
-      reply.send(result)
+      return reply.send(result)
     }
   )
 
@@ -63,7 +63,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       const namespace = req.params.namespace
       const val = req.body
       await Core.Configuration.setUnique(namespace, val)
-      reply.status(204).send()
+      return reply
+        .status(204)
+        .send()
     }
   )
 
@@ -82,7 +84,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       await Core.Configuration.unsetUnique(namespace)
-      reply.status(204).send()
+      return reply
+        .status(204)
+        .send()
     }
   )
 
@@ -104,7 +108,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       const namespace = req.params.namespace
       const val = req.body
       await Core.Configuration.setDraftingTimeout(namespace, val)
-      reply.status(204).send()
+      return reply
+        .status(204)
+        .send()
     }
   )
 
@@ -123,7 +129,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       await Core.Configuration.unsetDraftingTimeout(namespace)
-      reply.status(204).send()
+      return reply
+        .status(204)
+        .send()
     }
   )
 
@@ -144,7 +152,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       const namespace = req.params.namespace
       const val = req.body
       await Core.Configuration.setOrderedTimeout(namespace, val)
-      reply.status(204).send()
+      return reply
+        .status(204)
+        .send()
     }
   )
 
@@ -163,7 +173,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       await Core.Configuration.unsetOrderedTimeout(namespace)
-      reply.status(204).send()
+      return reply
+        .status(204)
+        .send()
     }
   )
 
@@ -184,7 +196,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       const namespace = req.params.namespace
       const val = req.body
       await Core.Configuration.setActiveTimeout(namespace, val)
-      reply.status(204).send()
+      return reply
+        .status(204)
+        .send()
     }
   )
 
@@ -203,7 +217,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       await Core.Configuration.unsetActiveTimeout(namespace)
-      reply.status(204).send()
+      return reply
+        .status(204)
+        .send()
     }
   )
 
@@ -224,7 +240,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       const namespace = req.params.namespace
       const val = req.body
       await Core.Configuration.setConcurrency(namespace, val)
-      reply.status(204).send()
+      return reply
+        .status(204)
+        .send()
     }
   )
 
@@ -243,7 +261,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       await Core.Configuration.unsetConcurrency(namespace)
-      reply.status(204).send()
+      return reply
+        .status(204)
+        .send()
     }
   )
 }

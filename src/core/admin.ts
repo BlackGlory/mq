@@ -1,4 +1,4 @@
-import { ADMIN_PASSWORD } from '@env'
+import { ADMIN_PASSWORD } from '@env/index.js'
 
 export function isAdmin(password: string): boolean {
   return !!(

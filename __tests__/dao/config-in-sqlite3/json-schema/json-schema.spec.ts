@@ -1,9 +1,6 @@
-import * as DAO from '@dao/config-in-sqlite3/json-schema/json-schema'
-import { initializeDatabases, clearDatabases } from '@test/utils'
-import { hasRawJsonSchema, setRawJsonSchema } from './utils'
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
+import * as DAO from '@dao/config-in-sqlite3/json-schema/json-schema.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { hasRawJsonSchema, setRawJsonSchema } from './utils.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)

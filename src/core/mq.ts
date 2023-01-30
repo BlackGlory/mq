@@ -1,5 +1,5 @@
-import { ConfigurationDAO, MQDAO, SignalDAO } from '@dao'
-import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, UNIQUE, CONCURRENCY } from '@env'
+import { ConfigurationDAO, MQDAO, SignalDAO } from '@dao/index.js'
+import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, UNIQUE, CONCURRENCY } from '@env/index.js'
 import { nanoid } from 'nanoid'
 import { CustomError } from '@blackglory/errors'
 import { AbortError } from 'extra-abort'

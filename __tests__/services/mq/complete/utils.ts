@@ -1,4 +1,4 @@
-import { MQDAO } from '@dao'
+import { MQDAO } from '@dao/index.js'
 
 export async function prepareActiveMessage(
   namespace: string

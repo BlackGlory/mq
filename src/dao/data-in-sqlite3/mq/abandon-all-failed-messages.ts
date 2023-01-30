@@ -1,5 +1,5 @@
-import { getDatabase } from '../database'
-import { downcreaseFailed } from './utils/stats'
+import { getDatabase } from '../database.js'
+import { downcreaseFailed } from './utils/stats.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
 export const abandonAllFailedMessages = withLazyStatic(function (namespace: string): void {

@@ -1,5 +1,5 @@
-import { AccessControlDAO } from '@dao'
-import { LIST_BASED_ACCESS_CONTROL, ListBasedAccessControl } from '@env'
+import { AccessControlDAO } from '@dao/index.js'
+import { LIST_BASED_ACCESS_CONTROL, ListBasedAccessControl } from '@env/index.js'
 import { CustomError } from '@blackglory/errors'
 
 export function getAll(): Promise<string[]> {

@@ -1,6 +1,6 @@
-import { getDatabase } from '../database'
-import { downcreaseDrafting, downcreaseOrdered, downcreaseActive, increaseWaiting } from './utils/stats'
-import { getTimestamp } from './utils/get-timestamp'
+import { getDatabase } from '../database.js'
+import { downcreaseDrafting, downcreaseOrdered, downcreaseActive, increaseWaiting } from './utils/stats.js'
+import { getTimestamp } from './utils/get-timestamp.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
 export const rollbackOutdatedDraftingMessages = withLazyStatic(function (

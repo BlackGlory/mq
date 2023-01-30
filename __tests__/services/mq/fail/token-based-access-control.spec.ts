@@ -1,12 +1,9 @@
-import { startService, stopService, getAddress } from '@test/utils'
-import { AccessControlDAO } from '@dao'
-import { prepareActiveMessage } from './utils'
+import { startService, stopService, getAddress } from '@test/utils.js'
+import { AccessControlDAO } from '@dao/index.js'
+import { prepareActiveMessage } from './utils.js'
 import { fetch } from 'extra-fetch'
 import { patch } from 'extra-request'
-import { url, pathname, searchParam } from 'extra-request/lib/es2018/transformers'
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
+import { url, pathname, searchParam } from 'extra-request/transformers'
 
 beforeEach(startService)
 afterEach(stopService)

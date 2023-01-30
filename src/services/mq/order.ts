@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { namespaceSchema, tokenSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema } from '@src/schema.js'
 import { AbortController, AbortError } from 'extra-abort'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
@@ -41,7 +41,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       try {
         Core.MQ.PendingOrderControllerRegistry.register(namespace, controller)
         const result = await Core.MQ.order(namespace, controller.signal)
-        reply.status(200).send(result)
+        return reply
+          .status(200)
+          .send(result)
       } catch (e) {
         if (e instanceof AbortError) return reply.status(404).send()
         throw e

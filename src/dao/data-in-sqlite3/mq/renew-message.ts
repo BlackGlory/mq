@@ -1,8 +1,8 @@
-import { getDatabase } from '../database'
-import { BadMessageState, NotFound } from './error'
-import { getTimestamp } from './utils/get-timestamp'
-import { downcreaseFailed, increaseWaiting } from './utils/stats'
-import { State } from './utils/state'
+import { getDatabase } from '../database.js'
+import { BadMessageState, NotFound } from './error.js'
+import { getTimestamp } from './utils/get-timestamp.js'
+import { downcreaseFailed, increaseWaiting } from './utils/stats.js'
+import { State } from './utils/state.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
 /**

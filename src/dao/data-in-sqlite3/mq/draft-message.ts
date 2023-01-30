@@ -1,6 +1,6 @@
-import { getDatabase } from '../database'
-import { getTimestamp } from './utils/get-timestamp'
-import { increaseDrafting } from './utils/stats'
+import { getDatabase } from '../database.js'
+import { getTimestamp } from './utils/get-timestamp.js'
+import { increaseDrafting } from './utils/stats.js'
 import { isUndefined } from '@blackglory/types'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 

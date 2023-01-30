@@ -1,4 +1,4 @@
-import { SignalDAO } from '@src/dao/data-in-memory/signal'
+import { SignalDAO } from '@src/dao/data-in-memory/signal/index.js'
 import { Observable, firstValueFrom } from 'rxjs'
 
 const TIME_ERROR = 1

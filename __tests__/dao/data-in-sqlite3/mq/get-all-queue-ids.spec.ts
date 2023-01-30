@@ -1,10 +1,7 @@
-import * as DAO from '@dao/data-in-sqlite3/mq/get-all-queue-ids'
-import { initializeDatabases, clearDatabases } from '@test/utils'
-import { setRawStats } from './utils'
+import * as DAO from '@dao/data-in-sqlite3/mq/get-all-queue-ids.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { setRawStats } from './utils.js'
 import { toArray } from 'iterable-operator'
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)

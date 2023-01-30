@@ -1,23 +1,17 @@
-import * as DAO from '@dao/data-in-sqlite3/mq/set-message'
-import { hash } from '@dao/data-in-sqlite3/mq/utils/hash'
-import { BadMessageState, DuplicatePayload, NotFound } from '@dao/data-in-sqlite3/mq/error'
-import { initializeDatabases, clearDatabases } from '@test/utils'
-import { setRawMessage, setRawStats, getRawMessage, getRawStats } from './utils'
+import * as DAO from '@dao/data-in-sqlite3/mq/set-message.js'
+import { hash } from '@dao/data-in-sqlite3/mq/utils/hash.js'
+import { BadMessageState, DuplicatePayload, NotFound } from '@dao/data-in-sqlite3/mq/error.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { setRawMessage, setRawStats, getRawMessage, getRawStats } from './utils.js'
 import { getError } from 'return-style'
 import { assert, isString } from '@blackglory/prelude'
-
-const timestamp = Date.now()
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
-  getTimestamp() {
-    return timestamp
-  }
-}))
+import { setMockTimestamp, clearMock, getTimestamp } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
+
+beforeEach(() => setMockTimestamp(Date.now()))
+afterEach(clearMock)
 
 describe(`
   setMessage(
@@ -150,7 +144,7 @@ describe(`
           , payload
           , hash: expect.any(String)
           , state: 'waiting'
-          , state_updated_at: timestamp
+          , state_updated_at: getTimestamp()
           })
           expect(rawStatsResult).toMatchObject({
             drafting: 0
@@ -201,7 +195,7 @@ describe(`
         , payload
         , hash: expect.any(String)
         , state: 'waiting'
-        , state_updated_at: timestamp
+        , state_updated_at: getTimestamp()
         })
         expect(rawStatsResult).toMatchObject({
           drafting: 0

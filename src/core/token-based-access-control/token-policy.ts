@@ -1,4 +1,4 @@
-import { AccessControlDAO } from '@dao'
+import { AccessControlDAO } from '@dao/index.js'
 
 export function getAllNamespaces(): Promise<string[]> {
   return AccessControlDAO.getAllNamespacesWithTokenPolicies()

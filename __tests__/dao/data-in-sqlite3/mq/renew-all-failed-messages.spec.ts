@@ -1,19 +1,13 @@
-import * as DAO from '@dao/data-in-sqlite3/mq/renew-all-failed-messages'
-import { initializeDatabases, clearDatabases } from '@test/utils'
-import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
-
-const timestamp = Date.now()
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
-  getTimestamp() {
-    return timestamp
-  }
-}))
+import * as DAO from '@dao/data-in-sqlite3/mq/renew-all-failed-messages.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils.js'
+import { setMockTimestamp, clearMock } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
+
+beforeEach(() => setMockTimestamp(Date.now()))
+afterEach(clearMock)
 
 describe('renewAllFailedMessages(namespace: string): void', () => {
   it('convert state to waiting', () => {

@@ -1,9 +1,6 @@
-import * as DAO from '@dao/config-in-sqlite3/configuration/configuration'
-import { initializeDatabases, clearDatabases } from '@test/utils'
-import { setMinimalConfiguration, getRawConfiguration, hasRawConfiguration } from './utils'
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
+import * as DAO from '@dao/config-in-sqlite3/configuration/configuration.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { setMinimalConfiguration, getRawConfiguration, hasRawConfiguration } from './utils.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)

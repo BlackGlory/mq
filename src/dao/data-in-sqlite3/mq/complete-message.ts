@@ -1,7 +1,7 @@
-import { getDatabase } from '../database'
-import { BadMessageState, NotFound } from './error'
-import { downcreaseActive, increaseCompleted } from './utils/stats'
-import { State } from './utils/state'
+import { getDatabase } from '../database.js'
+import { BadMessageState, NotFound } from './error.js'
+import { downcreaseActive, increaseCompleted } from './utils/stats.js'
+import { State } from './utils/state.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
 /**

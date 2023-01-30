@@ -1139,12 +1139,6 @@ await fetch(`http://localhost:8080/admin/mq/${namespace}/tokens/${token}/clear`,
 })
 #+END_SRC
 
-** HTTP/2
-MQ支持HTTP/2, 以多路复用反向代理时的连接, 可通过设置环境变量 =MQ_HTTP2=true= 开启.
-
-此HTTP/2支持不提供从HTTP/1.1自动升级的功能, 亦不提供HTTPS.
-因此, 在本地curl里进行测试时, 需要开启 =--http2-prior-knowledge= 选项.
-
 ** 限制Payload大小
 设置环境变量 =MQ_PAYLOAD_LIMIT= 可限制服务接受的单个请求的Payload字节数, 默认值为1048576(1MB).
 

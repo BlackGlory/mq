@@ -1,13 +1,10 @@
-import { startService, stopService, getAddress } from '@test/utils'
+import { startService, stopService, getAddress } from '@test/utils.js'
 import { fetch } from 'extra-fetch'
-import { url, header, pathname } from 'extra-request/lib/es2018/transformers'
+import { url, header, pathname } from 'extra-request/transformers'
 import { get } from 'extra-request'
-import { path as appRoot } from 'app-root-path'
 import { readJSONFile } from 'extra-filesystem'
 import path from 'path'
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
+import { getAppRoot } from '@src/utils.js'
 
 beforeEach(startService)
 afterEach(stopService)
@@ -24,7 +21,7 @@ describe('global', () => {
   describe('request with accept-version', () => {
     it('accept-version match', async () => {
       const pkg = await readJSONFile<{ version: string }>(
-        path.join(appRoot, 'package.json')
+        path.join(getAppRoot(), 'package.json')
       )
       const res = await fetch(get(
         url(getAddress())

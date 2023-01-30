@@ -1,4 +1,4 @@
-import { ConfigurationDAO } from '@dao/config-in-sqlite3/configuration'
+import { ConfigurationDAO } from '@dao/config-in-sqlite3/configuration/index.js'
 
 export function getAllNamespaces(): Promise<string[]> {
   return ConfigurationDAO.getAllNamespacesWithConfiguration()

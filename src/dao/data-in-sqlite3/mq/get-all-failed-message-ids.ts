@@ -1,4 +1,4 @@
-import { getDatabase } from '../database'
+import { getDatabase } from '../database.js'
 import { map } from 'iterable-operator'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 

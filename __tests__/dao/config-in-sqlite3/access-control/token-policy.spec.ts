@@ -1,9 +1,6 @@
-import * as DAO from '@dao/config-in-sqlite3/access-control/token-policy'
-import { initializeDatabases, clearDatabases } from '@test/utils'
-import { getRawTokenPolicy, hasRawTokenPolicy, setRawTokenPolicy } from './utils'
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
+import * as DAO from '@dao/config-in-sqlite3/access-control/token-policy.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { getRawTokenPolicy, hasRawTokenPolicy, setRawTokenPolicy } from './utils.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)

@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { namespaceSchema, tokenSchema, idSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema, idSchema } from '@src/schema.js'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.get<{
@@ -37,7 +37,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
       try {
         const result = await Core.MQ.get(namespace, id)
-        reply
+        return reply
           .status(200)
           .header('Content-Type', result.type)
           .header('X-MQ-Priority', result.priority)

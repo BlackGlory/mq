@@ -1,9 +1,6 @@
-import * as DAO from '@dao/data-in-sqlite3/mq/clear'
-import { initializeDatabases, clearDatabases } from '@test/utils'
-import { setMinimalRawMessage, setRawStats, hasRawStats, hasRawMessage } from './utils'
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
+import * as DAO from '@dao/data-in-sqlite3/mq/clear.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { setMinimalRawMessage, setRawStats, hasRawStats, hasRawMessage } from './utils.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)

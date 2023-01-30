@@ -1,21 +1,15 @@
-import * as DAO from '@dao/data-in-sqlite3/mq/complete-message'
-import { BadMessageState, NotFound } from '@dao/data-in-sqlite3/mq/error'
-import { initializeDatabases, clearDatabases } from '@test/utils'
-import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils'
+import * as DAO from '@dao/data-in-sqlite3/mq/complete-message.js'
+import { BadMessageState, NotFound } from '@dao/data-in-sqlite3/mq/error.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils.js'
 import { getError } from 'return-style'
-
-const timestamp = Date.now()
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
-  getTimestamp() {
-    return timestamp
-  }
-}))
+import { setMockTimestamp, clearMock } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
+
+beforeEach(() => setMockTimestamp(Date.now()))
+afterEach(clearMock)
 
 describe('completeMessage(namespace: string, messageId: string): void', () => {
   describe('message does not exist', () => {

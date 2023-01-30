@@ -1,24 +1,24 @@
-import { draftMessage } from './draft-message'
-import { setMessage } from './set-message'
-import { orderMessage } from './order-message'
-import { getMessage } from './get-message'
-import { abandonMessage } from './abandon-message'
-import { completeMessage } from './complete-message'
-import { failMessage } from './fail-message'
-import { renewMessage } from './renew-message'
-import { abandonAllFailedMessages } from './abandon-all-failed-messages'
-import { renewAllFailedMessages } from './renew-all-failed-messages'
-import { stats } from './stats'
-import { clear } from './clear'
-import { getAllFailedMessageIds } from './get-all-failed-message-ids'
-import { getAllWorkingNamespaces } from './get-all-working-namespaces'
-import { getAllQueueIds } from './get-all-queue-ids'
+import { draftMessage } from './draft-message.js'
+import { setMessage } from './set-message.js'
+import { orderMessage } from './order-message.js'
+import { getMessage } from './get-message.js'
+import { abandonMessage } from './abandon-message.js'
+import { completeMessage } from './complete-message.js'
+import { failMessage } from './fail-message.js'
+import { renewMessage } from './renew-message.js'
+import { abandonAllFailedMessages } from './abandon-all-failed-messages.js'
+import { renewAllFailedMessages } from './renew-all-failed-messages.js'
+import { stats } from './stats.js'
+import { clear } from './clear.js'
+import { getAllFailedMessageIds } from './get-all-failed-message-ids.js'
+import { getAllWorkingNamespaces } from './get-all-working-namespaces.js'
+import { getAllQueueIds } from './get-all-queue-ids.js'
 import {
   rollbackOutdatedDraftingMessages
 , rollbackOutdatedOrderedMessages
 , rollbackOutdatedActiveMessages
-} from './rollback-outdated-messages'
-import { BadMessageState, NotFound, DuplicatePayload } from './error'
+} from './rollback-outdated-messages.js'
+import { BadMessageState, NotFound, DuplicatePayload } from './error.js'
 
 export const MQDAO: IMQDAO = {
   draftMessage: asyncify(draftMessage)

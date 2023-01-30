@@ -1,7 +1,7 @@
-import { getDatabase } from '../database'
-import { getTimestamp } from './utils/get-timestamp'
-import { downcreaseWaiting, increaseOrdered } from './utils/stats'
-import { stats } from './stats'
+import { getDatabase } from '../database.js'
+import { getTimestamp } from './utils/get-timestamp.js'
+import { downcreaseWaiting, increaseOrdered } from './utils/stats.js'
+import { stats } from './stats.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
 export const orderMessage = withLazyStatic(function (

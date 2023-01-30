@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { namespaceSchema, tokenSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema } from '@src/schema.js'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.post<{
@@ -45,7 +45,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
 
       const result = await Core.MQ.draft(namespace, priority ?? undefined)
-      reply.status(200).send(result)
+      return reply
+        .status(200)
+        .send(result)
     }
   )
 }

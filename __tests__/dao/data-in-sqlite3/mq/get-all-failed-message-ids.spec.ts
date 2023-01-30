@@ -1,20 +1,14 @@
-import * as DAO from '@dao/data-in-sqlite3/mq/get-all-failed-message-ids'
-import { initializeDatabases, clearDatabases } from '@test/utils'
-import { setMinimalRawMessage, setRawStats } from './utils'
+import * as DAO from '@dao/data-in-sqlite3/mq/get-all-failed-message-ids.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { setMinimalRawMessage, setRawStats } from './utils.js'
 import { toArray } from 'iterable-operator'
-
-const timestamp = Date.now()
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
-  getTimestamp() {
-    return timestamp
-  }
-}))
+import { setMockTimestamp, clearMock } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
+
+beforeEach(() => setMockTimestamp(Date.now()))
+afterEach(clearMock)
 
 describe('getAllFailedMessageIds(namespace: string): Iterable<string>', () => {
   describe('exist', () => {

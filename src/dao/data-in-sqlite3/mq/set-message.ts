@@ -1,9 +1,9 @@
-import { getDatabase } from '../database'
-import { getTimestamp } from './utils/get-timestamp'
-import { hash } from './utils/hash'
-import { BadMessageState, DuplicatePayload, NotFound } from './error'
-import { downcreaseDrafting, increaseWaiting } from './utils/stats'
-import { State } from './utils/state'
+import { getDatabase } from '../database.js'
+import { getTimestamp } from './utils/get-timestamp.js'
+import { hash } from './utils/hash.js'
+import { BadMessageState, DuplicatePayload, NotFound } from './error.js'
+import { downcreaseDrafting, increaseWaiting } from './utils/stats.js'
+import { State } from './utils/state.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
 
 /**

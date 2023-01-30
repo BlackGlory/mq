@@ -1,12 +1,9 @@
-import { expectMatchSchema, startService, stopService, getAddress } from '@test/utils'
-import { JsonSchemaDAO } from '@dao'
+import { expectMatchSchema, startService, stopService, getAddress } from '@test/utils.js'
+import { JsonSchemaDAO } from '@dao/index.js'
 import { fetch } from 'extra-fetch'
 import { get, put, del } from 'extra-request'
-import { url, pathname, headers, json, text, header } from 'extra-request/lib/es2018/transformers'
+import { url, pathname, headers, json, text, header } from 'extra-request/transformers'
 import { toJSON } from 'extra-response'
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
 
 beforeEach(startService)
 afterEach(stopService)

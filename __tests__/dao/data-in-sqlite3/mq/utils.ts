@@ -1,4 +1,4 @@
-import { getDatabase } from '@dao/data-in-sqlite3/database'
+import { getDatabase } from '@dao/data-in-sqlite3/database.js'
 import { MapNullablePropsToOptional } from 'hotypes'
 
 type IState = 'drafting' | 'waiting' | 'ordered' | 'active' | 'completed' | 'failed'

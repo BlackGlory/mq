@@ -1,22 +1,20 @@
 import fastify from 'fastify'
-import cors from 'fastify-cors'
-import metricsPlugin from 'fastify-metrics'
-import { Registry } from 'prom-client'
-import { routes as admin } from '@services/admin'
-import { routes as mq } from '@services/mq'
-import { routes as robots } from '@services/robots'
-import { routes as health } from '@services/health'
-import { HTTP2, PAYLOAD_LIMIT, NODE_ENV, NodeEnv } from '@env'
-import { Core } from '@core'
+import cors from '@fastify/cors'
+import { routes as admin } from '@services/admin/index.js'
+import { routes as mq } from '@services/mq/index.js'
+import { routes as robots } from '@services/robots/index.js'
+import { routes as health } from '@services/health/index.js'
+import { PAYLOAD_LIMIT, NODE_ENV, NodeEnv } from '@env/index.js'
+import { Core } from '@core/index.js'
 import path from 'path'
-import { path as appRoot } from 'app-root-path'
 import { readJSONFileSync } from 'extra-filesystem'
 import { isntUndefined, isString } from '@blackglory/types'
 import { assert } from '@blackglory/errors'
-import { isAcceptable } from 'extra-semver'
+import { getAppRoot } from '@src/utils.js'
+import semver from 'semver'
 
 const pkg = readJSONFileSync<{ version: string }>(
-  path.join(appRoot, 'package.json')
+  path.join(getAppRoot(), 'package.json')
 )
 
 type LoggerLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal'
@@ -25,9 +23,8 @@ export function buildServer() {
   const server = fastify({
     logger: getLoggerOptions()
   , maxParamLength: 600
-    /* @ts-ignore */
-  , http2: HTTP2()
   , bodyLimit: PAYLOAD_LIMIT()
+  , forceCloseConnections: true
   })
   server.addHook('onRequest', async (req, reply) => {
     reply.headers({ 'Cache-Control': 'private, no-cache' })
@@ -36,16 +33,12 @@ export function buildServer() {
     const acceptVersion = req.headers['accept-version']
     if (isntUndefined(acceptVersion)) {
       assert(isString(acceptVersion), 'Accept-Version must be string')
-      if (!isAcceptable(pkg.version, acceptVersion)) {
+      if (!semver.satisfies(pkg.version, acceptVersion)) {
         return reply.status(400).send()
       }
     }
   })
 
-  server.register(metricsPlugin, {
-    endpoint: '/metrics'
-  , register: new Registry()
-  })
   server.register(cors, { origin: true })
   server.register(admin, { Core })
   server.register(mq, { Core })

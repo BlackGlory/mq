@@ -1,4 +1,4 @@
-import * as JsonSchema from './json-schema'
+import * as JsonSchema from './json-schema.js'
 
 export const JsonSchemaDAO: IJsonSchemaDAO = {
   getAllNamespacesWithJsonSchema: asyncify(JsonSchema.getAllIdsWithJsonSchema)

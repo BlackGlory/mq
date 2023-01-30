@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { namespaceSchema } from '@src/schema'
+import { namespaceSchema } from '@src/schema.js'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.get<{ Params: { namespace: string }}>(
@@ -23,7 +23,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       const result = await Core.MQ.stats(namespace)
-      reply.send(result)
+      return reply.send(result)
     }
   )
 }

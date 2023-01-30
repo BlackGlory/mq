@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { namespaceSchema, tokenSchema } from '@src/schema'
+import { namespaceSchema, tokenSchema } from '@src/schema.js'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
   server.delete<{
@@ -32,7 +32,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
 
       await Core.MQ.abandonAllFailedMessages(namespace)
-      return reply.status(204).send()
+      return reply
+        .status(204)
+        .send()
     }
   )
 }

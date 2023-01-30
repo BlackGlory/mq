@@ -1,7 +1,7 @@
-import * as Blacklist from './blacklist'
-import * as Whitelist from './whitelist'
-import * as Token from './token'
-import * as TokenPolicy from './token-policy'
+import * as Blacklist from './blacklist.js'
+import * as Whitelist from './whitelist.js'
+import * as Token from './token.js'
+import * as TokenPolicy from './token-policy.js'
 
 const BlacklistDAO: IBlacklistDAO = {
   addBlacklistItem: asyncify(Blacklist.addBlacklistItem)

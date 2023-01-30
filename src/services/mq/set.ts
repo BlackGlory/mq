@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify'
-import { namespaceSchema, tokenSchema, idSchema } from '@src/schema'
-import { JSON_PAYLOAD_ONLY, SET_PAYLOAD_LIMIT } from '@env'
+import { namespaceSchema, tokenSchema, idSchema } from '@src/schema.js'
+import { JSON_PAYLOAD_ONLY, SET_PAYLOAD_LIMIT } from '@env/index.js'
 import { CustomError } from '@blackglory/errors'
 
 export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
@@ -74,7 +74,9 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
       try {
         await Core.MQ.set(namespace, id, type, payload)
-        reply.status(204).send()
+        return reply
+          .status(204)
+          .send()
       } catch (e) {
         if (e instanceof Core.MQ.NotFound) return reply.status(404).send()
         if (e instanceof Core.MQ.BadMessageState) return reply.status(409).send()

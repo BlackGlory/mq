@@ -1,19 +1,13 @@
-import * as DAO from '@dao/data-in-sqlite3/mq/order-message'
-import { initializeDatabases, clearDatabases } from '@test/utils'
-import { setRawMessage, setRawStats, getRawMessage, getRawStats } from './utils'
-
-const timestamp = Date.now()
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
-  getTimestamp() {
-    return timestamp
-  }
-}))
+import * as DAO from '@dao/data-in-sqlite3/mq/order-message.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { setRawMessage, setRawStats, getRawMessage, getRawStats } from './utils.js'
+import { setMockTimestamp, clearMock, getTimestamp } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
+
+beforeEach(() => setMockTimestamp(Date.now()))
+afterEach(clearMock)
 
 describe('orderMessage(namespace: string, concurrency: number): string | null', () => {
   describe('message does not exist', () => {
@@ -91,7 +85,7 @@ describe('orderMessage(namespace: string, concurrency: number): string | null', 
           expect(result).toBe('3')
           expect(rawMessageResult).toMatchObject({
             state: 'ordered'
-          , state_updated_at: timestamp
+          , state_updated_at: getTimestamp()
           })
           expect(rawStatsResult).toMatchObject({
             drafting: 0

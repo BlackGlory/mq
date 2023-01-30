@@ -1,19 +1,13 @@
-import * as DAO from '@dao/data-in-sqlite3/mq/rollback-outdated-messages'
-import { initializeDatabases, clearDatabases } from '@test/utils'
-import { setRawMessage, setRawStats, getRawStats, hasRawMessage, getRawMessage } from './utils'
-
-const timestamp = Date.now()
-
-jest.mock('@dao/config-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/database')
-jest.mock('@dao/data-in-sqlite3/mq/utils/get-timestamp', () => ({
-  getTimestamp() {
-    return timestamp
-  }
-}))
+import * as DAO from '@dao/data-in-sqlite3/mq/rollback-outdated-messages.js'
+import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { setRawMessage, setRawStats, getRawStats, hasRawMessage, getRawMessage } from './utils.js'
+import { setMockTimestamp, clearMock, getTimestamp } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
+
+beforeEach(() => setMockTimestamp(Date.now()))
+afterEach(clearMock)
 
 describe('rollbackOutdatedDraftingMessages(namespace: string, timestamp: number): void', () => {
   describe('no changes', () => {
@@ -195,7 +189,7 @@ describe('rollbackOutdatedOrderedMessages(namespace: string, timestamp: number):
       expect(result).toBe(true)
       expect(rawMessage1Result).toMatchObject({
         state: 'waiting'
-      , state_updated_at: timestamp
+      , state_updated_at: getTimestamp()
       })
       expect(rawMessage2Result).toMatchObject({
         state: 'ordered'
@@ -299,7 +293,7 @@ describe('rollbackOutdatedActiveMessages(namespace: string, timestamp: number): 
       expect(result).toBe(true)
       expect(rawMessage1Result).toMatchObject({
         state: 'waiting'
-      , state_updated_at: timestamp
+      , state_updated_at: getTimestamp()
       })
       expect(rawMessage2Result).toMatchObject({
         state: 'active'
