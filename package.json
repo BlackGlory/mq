@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "mq",
-  "version": "0.5.4",
+  "version": "0.6.0",
   "repository": "git@github.com:BlackGlory/mq.git",
   "author": "BlackGlory <woshenmedoubuzhidao@blackglory.me>",
   "license": "MIT",

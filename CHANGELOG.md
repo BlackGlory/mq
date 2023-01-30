@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/BlackGlory/mq/compare/v0.5.4...v0.6.0) (2023-01-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* - The `Accept-Version` header is semver now.
+- Removed `/metrics`.
+- Removed HTTP2 support.
+
+* upgrade dependencies ([da0e569](https://github.com/BlackGlory/mq/commit/da0e56975a36fa079be9a07d3766030e369a1140))
+
 ### [0.5.4](https://github.com/BlackGlory/mq/compare/v0.5.3...v0.5.4) (2022-12-01)
 
 
