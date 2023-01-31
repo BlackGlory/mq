@@ -1,13 +1,13 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/rollback-outdated-messages.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setRawMessage, setRawStats, getRawStats, hasRawMessage, getRawMessage } from './utils.js'
-import { setMockTimestamp, clearMock, getTimestamp } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
+import { _setMockedTimestamp, _clearMockedTimestamp, getTimestamp } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-beforeEach(() => setMockTimestamp(Date.now()))
-afterEach(clearMock)
+beforeEach(() => _setMockedTimestamp(Date.now()))
+afterEach(_clearMockedTimestamp)
 
 describe('rollbackOutdatedDraftingMessages(namespace: string, timestamp: number): void', () => {
   describe('no changes', () => {

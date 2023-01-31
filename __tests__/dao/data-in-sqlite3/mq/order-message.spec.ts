@@ -1,13 +1,13 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/order-message.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setRawMessage, setRawStats, getRawMessage, getRawStats } from './utils.js'
-import { setMockTimestamp, clearMock, getTimestamp } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
+import { _setMockedTimestamp, _clearMockedTimestamp, getTimestamp } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-beforeEach(() => setMockTimestamp(Date.now()))
-afterEach(clearMock)
+beforeEach(() => _setMockedTimestamp(Date.now()))
+afterEach(_clearMockedTimestamp)
 
 describe('orderMessage(namespace: string, concurrency: number): string | null', () => {
   describe('message does not exist', () => {

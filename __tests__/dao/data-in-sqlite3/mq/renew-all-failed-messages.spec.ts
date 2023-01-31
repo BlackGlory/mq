@@ -1,13 +1,13 @@
 import * as DAO from '@dao/data-in-sqlite3/mq/renew-all-failed-messages.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils.js'
-import { setMockTimestamp, clearMock } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
+import { _setMockedTimestamp, _clearMockedTimestamp } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-beforeEach(() => setMockTimestamp(Date.now()))
-afterEach(clearMock)
+beforeEach(() => _setMockedTimestamp(Date.now()))
+afterEach(_clearMockedTimestamp)
 
 describe('renewAllFailedMessages(namespace: string): void', () => {
   it('convert state to waiting', () => {

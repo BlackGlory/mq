@@ -3,13 +3,13 @@ import { BadMessageState, NotFound } from '@dao/data-in-sqlite3/mq/error.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils.js'
 import { getError } from 'return-style'
-import { setMockTimestamp, clearMock } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
+import { _setMockedTimestamp, _clearMockedTimestamp } from '@dao/data-in-sqlite3/mq/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)
 
-beforeEach(() => setMockTimestamp(Date.now()))
-afterEach(clearMock)
+beforeEach(() => _setMockedTimestamp(Date.now()))
+afterEach(_clearMockedTimestamp)
 
 describe('failMessage(namespace: string, messageId: string): void', () => {
   describe('message does not exist', () => {
