@@ -1,7 +1,8 @@
 import { FastifyPluginAsync } from 'fastify'
 import { namespaceSchema } from '@src/schema.js'
+import { IAPI } from '@api/contract.js'
 
-export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
+export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
   server.get(
     '/mq-with-config'
   , {
@@ -15,7 +16,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const result = await Core.Configuration.getAllNamespaces()
+      const result = await api.Configuration.getAllNamespaces()
       return reply.send(result)
     }
   )
@@ -40,7 +41,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      const result = await Core.Configuration.get(namespace)
+      const result = await api.Configuration.get(namespace)
       return reply.send(result)
     }
   )
@@ -62,7 +63,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       const val = req.body
-      await Core.Configuration.setUnique(namespace, val)
+      await api.Configuration.setUnique(namespace, val)
       return reply
         .status(204)
         .send()
@@ -83,7 +84,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await Core.Configuration.unsetUnique(namespace)
+      await api.Configuration.unsetUnique(namespace)
       return reply
         .status(204)
         .send()
@@ -107,7 +108,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       const val = req.body
-      await Core.Configuration.setDraftingTimeout(namespace, val)
+      await api.Configuration.setDraftingTimeout(namespace, val)
       return reply
         .status(204)
         .send()
@@ -128,7 +129,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await Core.Configuration.unsetDraftingTimeout(namespace)
+      await api.Configuration.unsetDraftingTimeout(namespace)
       return reply
         .status(204)
         .send()
@@ -151,7 +152,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       const val = req.body
-      await Core.Configuration.setOrderedTimeout(namespace, val)
+      await api.Configuration.setOrderedTimeout(namespace, val)
       return reply
         .status(204)
         .send()
@@ -172,7 +173,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await Core.Configuration.unsetOrderedTimeout(namespace)
+      await api.Configuration.unsetOrderedTimeout(namespace)
       return reply
         .status(204)
         .send()
@@ -195,7 +196,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       const val = req.body
-      await Core.Configuration.setActiveTimeout(namespace, val)
+      await api.Configuration.setActiveTimeout(namespace, val)
       return reply
         .status(204)
         .send()
@@ -216,7 +217,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await Core.Configuration.unsetActiveTimeout(namespace)
+      await api.Configuration.unsetActiveTimeout(namespace)
       return reply
         .status(204)
         .send()
@@ -239,7 +240,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       const val = req.body
-      await Core.Configuration.setConcurrency(namespace, val)
+      await api.Configuration.setConcurrency(namespace, val)
       return reply
         .status(204)
         .send()
@@ -260,7 +261,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await Core.Configuration.unsetConcurrency(namespace)
+      await api.Configuration.unsetConcurrency(namespace)
       return reply
         .status(204)
         .send()

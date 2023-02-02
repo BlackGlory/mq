@@ -15,8 +15,8 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setClearTokenRequired(namespace, true)
-          await AccessControlDAO.setClearToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setClearTokenRequired(namespace, true)
+          AccessControlDAO.Token.setClearToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
@@ -33,8 +33,8 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setClearTokenRequired(namespace, true)
-          await AccessControlDAO.setClearToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setClearTokenRequired(namespace, true)
+          AccessControlDAO.Token.setClearToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
@@ -51,8 +51,8 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setClearTokenRequired(namespace, true)
-          await AccessControlDAO.setClearToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setClearTokenRequired(namespace, true)
+          AccessControlDAO.Token.setClearToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
@@ -102,8 +102,8 @@ describe('token-based access control', () => {
         it('204', async () => {
           const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
-          await AccessControlDAO.setConsumeToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
+          AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
@@ -121,8 +121,8 @@ describe('token-based access control', () => {
           process.env.MQ_CLEAR_TOKEN_REQUIRED = 'true'
           const namespace = 'namespace'
           const token = 'token'
-          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
-          await AccessControlDAO.setConsumeToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
+          AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())

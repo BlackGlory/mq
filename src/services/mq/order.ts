@@ -1,8 +1,9 @@
 import { FastifyPluginAsync } from 'fastify'
 import { namespaceSchema, tokenSchema } from '@src/schema.js'
 import { AbortController, AbortError } from 'extra-abort'
+import { IAPI } from '@api/contract.js'
 
-export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
+export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
   server.get<{
     Params: { namespace: string }
     Querystring: { token?: string }
@@ -24,23 +25,23 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
 
       req.raw.on('close', () => {
         controller.abort()
-        Core.MQ.PendingOrderControllerRegistry.unregister(namespace, controller)
+        api.MQ.PendingOrderControllerRegistry.unregister(namespace, controller)
       })
 
       try {
-        await Core.Blacklist.check(namespace)
-        await Core.Whitelist.check(namespace)
-        await Core.TBAC.checkConsumePermission(namespace, token)
+        await api.Blacklist.check(namespace)
+        await api.Whitelist.check(namespace)
+        await api.TBAC.checkConsumePermission(namespace, token)
       } catch (e) {
-        if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
-        if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
-        if (e instanceof Core.TBAC.Unauthorized) return reply.status(401).send()
+        if (e instanceof api.Blacklist.Forbidden) return reply.status(403).send()
+        if (e instanceof api.Whitelist.Forbidden) return reply.status(403).send()
+        if (e instanceof api.TBAC.Unauthorized) return reply.status(401).send()
         throw e
       }
 
       try {
-        Core.MQ.PendingOrderControllerRegistry.register(namespace, controller)
-        const result = await Core.MQ.order(namespace, controller.signal)
+        api.MQ.PendingOrderControllerRegistry.register(namespace, controller)
+        const result = await api.MQ.order(namespace, controller.signal)
         return reply
           .status(200)
           .send(result)
@@ -48,7 +49,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
         if (e instanceof AbortError) return reply.status(404).send()
         throw e
       } finally {
-        Core.MQ.PendingOrderControllerRegistry.unregister(namespace, controller)
+        api.MQ.PendingOrderControllerRegistry.unregister(namespace, controller)
       }
     }
   )

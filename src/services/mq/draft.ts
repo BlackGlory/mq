@@ -1,7 +1,8 @@
 import { FastifyPluginAsync } from 'fastify'
 import { namespaceSchema, tokenSchema } from '@src/schema.js'
+import { IAPI } from '@api/contract.js'
 
-export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
+export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
   server.post<{
     Params: { namespace: string }
     Querystring: { token?: string }
@@ -34,17 +35,17 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       const token = req.query.token
 
       try {
-        await Core.Blacklist.check(namespace)
-        await Core.Whitelist.check(namespace)
-        await Core.TBAC.checkProducePermission(namespace, token)
+        await api.Blacklist.check(namespace)
+        await api.Whitelist.check(namespace)
+        await api.TBAC.checkProducePermission(namespace, token)
       } catch (e) {
-        if (e instanceof Core.Blacklist.Forbidden) return reply.status(403).send()
-        if (e instanceof Core.Whitelist.Forbidden) return reply.status(403).send()
-        if (e instanceof Core.TBAC.Unauthorized) return reply.status(401).send()
+        if (e instanceof api.Blacklist.Forbidden) return reply.status(403).send()
+        if (e instanceof api.Whitelist.Forbidden) return reply.status(403).send()
+        if (e instanceof api.TBAC.Unauthorized) return reply.status(401).send()
         throw e
       }
 
-      const result = await Core.MQ.draft(namespace, priority ?? undefined)
+      const result = await api.MQ.draft(namespace, priority ?? undefined)
       return reply
         .status(200)
         .send(result)

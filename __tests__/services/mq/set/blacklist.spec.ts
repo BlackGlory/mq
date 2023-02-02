@@ -17,7 +17,7 @@ describe('blacklist', () => {
         const id = 'message-id'
         const payload = 'payload'
         await prepareDraftingMessage(namespace, id)
-        await AccessControlDAO.addBlacklistItem(namespace)
+        AccessControlDAO.Blacklist.addBlacklistItem(namespace)
 
         const res = await fetch(put(
           url(getAddress())
@@ -55,7 +55,7 @@ describe('blacklist', () => {
         const id = 'message-id'
         const payload = 'payload'
         await prepareDraftingMessage(namespace, id)
-        await AccessControlDAO.addBlacklistItem(namespace)
+        await AccessControlDAO.Blacklist.addBlacklistItem(namespace)
 
         const res = await fetch(put(
           url(getAddress())

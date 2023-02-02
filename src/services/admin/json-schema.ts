@@ -1,8 +1,9 @@
 import { FastifyPluginAsync } from 'fastify'
 import { namespaceSchema } from '@src/schema.js'
 import { JSONValue } from 'justypes'
+import { IAPI } from '@api/contract.js'
 
-export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
+export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
   server.get(
     '/mq-with-json-schema'
   , {
@@ -16,7 +17,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
       }
     }
   , async (req, reply) => {
-      const result = await Core.JsonSchema.getAllNamespaces()
+      const result = await api.JsonSchema.getAllNamespaces()
       return reply.send(result)
     }
   )
@@ -34,7 +35,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      const result = await Core.JsonSchema.get(namespace)
+      const result = await api.JsonSchema.get(namespace)
       if (result) {
         return reply
           .header('content-type', 'application/json')
@@ -63,7 +64,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
   , async (req, reply) => {
       const namespace = req.params.namespace
       const schema = req.body
-      await Core.JsonSchema.set(namespace, schema)
+      await api.JsonSchema.set(namespace, schema)
       return reply
         .status(204)
         .send()
@@ -82,7 +83,7 @@ export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await Core.JsonSchema.remove(namespace)
+      await api.JsonSchema.remove(namespace)
       return reply
         .status(204)
         .send()

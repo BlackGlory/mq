@@ -19,8 +19,8 @@ describe('token-based access control', () => {
           const payload = 'payload'
           const token = 'token'
           await prepareDraftingMessage(namespace, id)
-          await AccessControlDAO.setProduceTokenRequired(namespace, true)
-          await AccessControlDAO.setProduceToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
+          AccessControlDAO.Token.setProduceToken({ namespace, token })
 
           const res = await fetch(put(
             url(getAddress())
@@ -41,8 +41,8 @@ describe('token-based access control', () => {
           const payload = 'payload'
           const token = 'token'
           await prepareDraftingMessage(namespace, id)
-          await AccessControlDAO.setProduceTokenRequired(namespace, true)
-          await AccessControlDAO.setProduceToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
+          AccessControlDAO.Token.setProduceToken({ namespace, token })
 
           const res = await fetch(put(
             url(getAddress())
@@ -63,8 +63,8 @@ describe('token-based access control', () => {
           const payload = 'payload'
           const token = 'token'
           await prepareDraftingMessage(namespace, id)
-          await AccessControlDAO.setProduceTokenRequired(namespace, true)
-          await AccessControlDAO.setProduceToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
+          AccessControlDAO.Token.setProduceToken({ namespace, token })
 
           const res = await fetch(put(
             url(getAddress())
@@ -126,8 +126,8 @@ describe('token-based access control', () => {
           const payload = 'payload'
           const token = 'token'
           await prepareDraftingMessage(namespace, id)
-          await AccessControlDAO.setProduceTokenRequired(namespace, true)
-          await AccessControlDAO.setProduceToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
+          AccessControlDAO.Token.setProduceToken({ namespace, token })
 
           const res = await fetch(put(
             url(getAddress())
@@ -149,8 +149,8 @@ describe('token-based access control', () => {
           const payload = 'payload'
           const token = 'token'
           await prepareDraftingMessage(namespace, id)
-          await AccessControlDAO.setProduceTokenRequired(namespace, true)
-          await AccessControlDAO.setProduceToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
+          AccessControlDAO.Token.setProduceToken({ namespace, token })
 
           const res = await fetch(put(
             url(getAddress())

@@ -16,7 +16,7 @@ describe('whitelist', () => {
         const namespace = 'namespace'
         const id = 'message-id'
         await prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
-        await AccessControlDAO.addWhitelistItem(namespace)
+        AccessControlDAO.Whitelist.addWhitelistItem(namespace)
 
         const res = await fetch(get(
           url(getAddress())

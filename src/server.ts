@@ -5,7 +5,7 @@ import { routes as mq } from '@services/mq/index.js'
 import { routes as robots } from '@services/robots/index.js'
 import { routes as health } from '@services/health/index.js'
 import { PAYLOAD_LIMIT, NODE_ENV, NodeEnv } from '@env/index.js'
-import { Core } from '@core/index.js'
+import { api } from '@api/index.js'
 import path from 'path'
 import { readJSONFileSync } from 'extra-filesystem'
 import { isntUndefined, isString } from '@blackglory/types'
@@ -40,8 +40,8 @@ export function buildServer() {
   })
 
   server.register(cors, { origin: true })
-  server.register(admin, { Core })
-  server.register(mq, { Core })
+  server.register(admin, { api: api })
+  server.register(mq, { api: api })
   server.register(robots)
   server.register(health)
 

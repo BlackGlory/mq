@@ -2,7 +2,7 @@ import { startService, stopService, getAddress } from '@test/utils.js'
 import { fetch } from 'extra-fetch'
 import { post } from 'extra-request'
 import { url, pathname, json } from 'extra-request/transformers'
-import { getRawMessage } from '@test/dao/data-in-sqlite3/mq/utils.js'
+import { getRawMessage } from '@test/dao/data/mq/utils.js'
 
 beforeEach(startService)
 afterEach(stopService)

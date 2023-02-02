@@ -12,21 +12,22 @@ import { routes as renewAllFailedMessages } from './renew-all-failed-messages.js
 import { routes as clearRoutes } from './clear.js'
 import { routes as statsRoutes } from './stats.js'
 import { routes as getAllFailedMessageIdsRoutes } from './get-all-failed-message-ids.js'
-import { routes as getAllQueueIdsRoutes } from './get-all-namespaces.js'
+import { routes as getAllNamespacesRoutes } from './get-all-namespaces.js'
+import { IAPI } from '@api/contract.js'
 
-export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
-  server.register(draftRoutes, { Core })
-  server.register(setRoutes, { Core })
-  server.register(orderRoutes, { Core })
-  server.register(getRoutes, { Core })
-  server.register(abandonRoutes, { Core })
-  server.register(completeRoutes, { Core })
-  server.register(failRoutes, { Core })
-  server.register(renewRoutes, { Core })
-  server.register(abandonAllFailedMessages, { Core })
-  server.register(renewAllFailedMessages, { Core })
-  server.register(clearRoutes, { Core })
-  server.register(statsRoutes, { Core })
-  server.register(getAllFailedMessageIdsRoutes, { Core })
-  server.register(getAllQueueIdsRoutes, { Core })
+export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
+  server.register(draftRoutes, { api })
+  server.register(setRoutes, { api })
+  server.register(orderRoutes, { api })
+  server.register(getRoutes, { api })
+  server.register(abandonRoutes, { api })
+  server.register(completeRoutes, { api })
+  server.register(failRoutes, { api })
+  server.register(renewRoutes, { api })
+  server.register(abandonAllFailedMessages, { api })
+  server.register(renewAllFailedMessages, { api })
+  server.register(clearRoutes, { api })
+  server.register(statsRoutes, { api })
+  server.register(getAllFailedMessageIdsRoutes, { api })
+  server.register(getAllNamespacesRoutes, { api })
 }

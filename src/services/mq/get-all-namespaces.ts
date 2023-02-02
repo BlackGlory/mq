@@ -1,27 +1,28 @@
 import { FastifyPluginAsync } from 'fastify'
-import { stringifyJSONStreamAsync, stringifyNDJSONStreamAsync } from 'extra-generator'
+import { stringifyJSONStream, stringifyNDJSONStream } from 'extra-generator'
 import accepts from '@fastify/accepts'
 import { Readable } from 'stream'
+import { IAPI } from '@api/contract.js'
 
-export const routes: FastifyPluginAsync<{ Core: ICore }> = async function routes(server, { Core }) {
+export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
   server.register(accepts)
 
   server.get(
     '/mq'
   , (req, reply) => {
-      const result = Core.MQ.getAllNamespaces()
+      const result = api.MQ.getAllNamespaces()
 
       const accept = req.accepts().type(['application/json', 'application/x-ndjson'])
       if (accept === 'application/x-ndjson') {
         return reply
           .status(200)
           .header('Content-Type', 'application/x-ndjson')
-          .send(Readable.from(stringifyNDJSONStreamAsync(result)))
+          .send(Readable.from(stringifyNDJSONStream(result)))
       } else {
         return reply
           .status(200)
           .header('Content-Type', 'application/json')
-          .send(Readable.from(stringifyJSONStreamAsync(result)))
+          .send(Readable.from(stringifyJSONStream(result)))
       }
     }
   )

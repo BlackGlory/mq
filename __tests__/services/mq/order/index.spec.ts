@@ -3,7 +3,7 @@ import { prepareWaitingMessage } from './utils.js'
 import { fetch } from 'extra-fetch'
 import { get } from 'extra-request'
 import { url, pathname } from 'extra-request/transformers'
-import * as Core from '@src/core/mq.js'
+import { api } from '@src/api/index.js'
 import { delay } from 'extra-promise'
 
 beforeEach(startService)
@@ -27,7 +27,7 @@ describe('no access control', () => {
     const namespace = 'namespace'
     queueMicrotask(async () => {
       await delay(1000)
-      Core.clear(namespace)
+      api.MQ.clear(namespace)
     })
 
     const res = await fetch(get(

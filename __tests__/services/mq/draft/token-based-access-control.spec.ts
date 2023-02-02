@@ -16,8 +16,8 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const token = 'token'
           const payload = { priority: null }
-          await AccessControlDAO.setProduceTokenRequired(namespace, true)
-          await AccessControlDAO.setProduceToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
+          AccessControlDAO.Token.setProduceToken({ namespace, token })
 
           const res = await fetch(post(
             url(getAddress())
@@ -36,8 +36,8 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const token = 'token'
           const payload = { priority: null }
-          await AccessControlDAO.setProduceTokenRequired(namespace, true)
-          await AccessControlDAO.setProduceToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
+          AccessControlDAO.Token.setProduceToken({ namespace, token })
 
           const res = await fetch(post(
             url(getAddress())
@@ -56,8 +56,8 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const token = 'token'
           const payload = { priority: null }
-          await AccessControlDAO.setProduceTokenRequired(namespace, true)
-          await AccessControlDAO.setProduceToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
+          AccessControlDAO.Token.setProduceToken({ namespace, token })
 
           const res = await fetch(post(
             url(getAddress())
@@ -113,8 +113,8 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const token = 'token'
           const payload = { priority: null }
-          await AccessControlDAO.setProduceTokenRequired(namespace, true)
-          await AccessControlDAO.setProduceToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
+          AccessControlDAO.Token.setProduceToken({ namespace, token })
 
           const res = await fetch(post(
             url(getAddress())
@@ -134,8 +134,8 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const token = 'token'
           const payload = { priority: null }
-          await AccessControlDAO.setProduceTokenRequired(namespace, true)
-          await AccessControlDAO.setProduceToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
+          AccessControlDAO.Token.setProduceToken({ namespace, token })
 
           const res = await fetch(post(
             url(getAddress())

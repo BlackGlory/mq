@@ -18,8 +18,8 @@ describe('token-based access control', () => {
           const id = 'message-id'
           const token = 'token'
           await prepareOrderedMessage(namespace, id, 'text/plain', 'payload')
-          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
-          await AccessControlDAO.setConsumeToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
+          AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
           const res = await fetch(get(
             url(getAddress())
@@ -38,8 +38,8 @@ describe('token-based access control', () => {
           const id = 'message-id'
           const token = 'token'
           await prepareOrderedMessage(namespace, id, 'text/plain', 'payload')
-          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
-          await AccessControlDAO.setConsumeToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
+          AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
           const res = await fetch(get(
             url(getAddress())
@@ -58,8 +58,8 @@ describe('token-based access control', () => {
           const id = 'message-id'
           const token = 'token'
           await prepareOrderedMessage(namespace, id, 'text/plain', 'payload')
-          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
-          await AccessControlDAO.setConsumeToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
+          AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
           const res = await fetch(get(
             url(getAddress())
@@ -115,8 +115,8 @@ describe('token-based access control', () => {
           const id = 'message-id'
           const token = 'token'
           await prepareOrderedMessage(namespace, id, 'text/plain', 'payload')
-          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
-          await AccessControlDAO.setConsumeToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
+          AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
           const res = await fetch(get(
             url(getAddress())
@@ -136,8 +136,8 @@ describe('token-based access control', () => {
           const id = 'message-id'
           const token = 'token'
           await prepareOrderedMessage(namespace, id, 'text/plain', 'payload')
-          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
-          await AccessControlDAO.setConsumeToken({ namespace, token })
+          AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
+          AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
           const res = await fetch(get(
             url(getAddress())

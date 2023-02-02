@@ -1,15 +1,15 @@
-import { nextTick } from '@core/mq.js'
-import { AbortError, withAbortSignal } from 'extra-abort'
+import { nextTick } from '@api/mq.js'
+import { AbortError } from 'extra-abort'
 import { setDynamicTimeoutLoop } from 'extra-timers'
 import ms from 'ms'
 
 /**
  * 该函数是一个长时函数, 每个异步操作都应该可以响应AbortSignal以提前返回.
  */
-export function callNextTickEverySecond(abortSignal: AbortSignal): void {
+export function callNextTickEverySecond(signal: AbortSignal): void {
   const cancel = setDynamicTimeoutLoop(ms('1s'), async () => {
     try {
-      await withAbortSignal(abortSignal, nextTick)
+      nextTick()
     } catch (e) {
       if (e instanceof AbortError) return cancel()
       console.error(e)

@@ -14,8 +14,8 @@ describe('whitelist', () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'whitelist'
         const namespace = 'namespace'
         const id = 'message-id'
-        await MQDAO.draftMessage(namespace, id)
-        await AccessControlDAO.addWhitelistItem(namespace)
+        MQDAO.draftMessage(namespace, id)
+        AccessControlDAO.Whitelist.addWhitelistItem(namespace)
 
         const res = await fetch(del(
           url(getAddress())

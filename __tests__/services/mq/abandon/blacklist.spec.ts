@@ -14,8 +14,8 @@ describe('blacklist', () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const namespace = 'namespace'
         const id = 'message-id'
-        await MQDAO.draftMessage(namespace, id)
-        await AccessControlDAO.addBlacklistItem(namespace)
+        MQDAO.draftMessage(namespace, id)
+        AccessControlDAO.Blacklist.addBlacklistItem(namespace)
 
         const res = await fetch(del(
           url(getAddress())
@@ -31,7 +31,7 @@ describe('blacklist', () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const namespace = 'namespace'
         const id = 'message-id'
-        await MQDAO.draftMessage(namespace, id)
+        MQDAO.draftMessage(namespace, id)
 
         const res = await fetch(del(
           url(getAddress())
@@ -49,7 +49,7 @@ describe('blacklist', () => {
         const namespace = 'namespace'
         const id = 'message-id'
         await MQDAO.draftMessage(namespace, id)
-        await AccessControlDAO.addBlacklistItem(namespace)
+        AccessControlDAO.Blacklist.addBlacklistItem(namespace)
 
         const res = await fetch(del(
           url(getAddress())

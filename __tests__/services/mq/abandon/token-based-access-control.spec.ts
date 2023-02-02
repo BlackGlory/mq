@@ -16,9 +16,9 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const id = 'message-id'
           const token = 'token'
-          await MQDAO.draftMessage(namespace, id)
-          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
-          await AccessControlDAO.setConsumeToken({ namespace, token })
+          MQDAO.draftMessage(namespace, id)
+          AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
+          AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
@@ -36,9 +36,9 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const id = 'message-id'
           const token = 'token'
-          await MQDAO.draftMessage(namespace, id)
-          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
-          await AccessControlDAO.setConsumeToken({ namespace, token })
+          MQDAO.draftMessage(namespace, id)
+          AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
+          AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
@@ -56,9 +56,9 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const id = 'message-id'
           const token = 'token'
-          await MQDAO.draftMessage(namespace, id)
-          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
-          await AccessControlDAO.setConsumeToken({ namespace, token })
+          MQDAO.draftMessage(namespace, id)
+          AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
+          AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
@@ -113,9 +113,9 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const id = 'message-id'
           const token = 'token'
-          await MQDAO.draftMessage(namespace, id)
-          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
-          await AccessControlDAO.setConsumeToken({ namespace, token })
+          MQDAO.draftMessage(namespace, id)
+          AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
+          AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())
@@ -134,9 +134,9 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const id = 'message-id'
           const token = 'token'
-          await MQDAO.draftMessage(namespace, id)
-          await AccessControlDAO.setConsumeTokenRequired(namespace, true)
-          await AccessControlDAO.setConsumeToken({ namespace, token })
+          MQDAO.draftMessage(namespace, id)
+          AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
+          AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
           const res = await fetch(del(
             url(getAddress())

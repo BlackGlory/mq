@@ -13,7 +13,7 @@ describe('whitelist', () => {
       it('204', async () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'whitelist'
         const namespace = 'namespace'
-        await AccessControlDAO.addWhitelistItem(namespace)
+        AccessControlDAO.Whitelist.addWhitelistItem(namespace)
 
         const res = await fetch(del(
           url(getAddress())
