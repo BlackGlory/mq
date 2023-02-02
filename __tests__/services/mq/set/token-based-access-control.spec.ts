@@ -18,7 +18,7 @@ describe('token-based access control', () => {
           const id = 'message-id'
           const payload = 'payload'
           const token = 'token'
-          await prepareDraftingMessage(namespace, id)
+          prepareDraftingMessage(namespace, id)
           AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
           AccessControlDAO.Token.setProduceToken({ namespace, token })
 
@@ -40,7 +40,7 @@ describe('token-based access control', () => {
           const id = 'message-id'
           const payload = 'payload'
           const token = 'token'
-          await prepareDraftingMessage(namespace, id)
+          prepareDraftingMessage(namespace, id)
           AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
           AccessControlDAO.Token.setProduceToken({ namespace, token })
 
@@ -62,7 +62,7 @@ describe('token-based access control', () => {
           const id = 'message-id'
           const payload = 'payload'
           const token = 'token'
-          await prepareDraftingMessage(namespace, id)
+          prepareDraftingMessage(namespace, id)
           AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
           AccessControlDAO.Token.setProduceToken({ namespace, token })
 
@@ -85,7 +85,7 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const id = 'message-id'
           const payload = 'payload'
-          await prepareDraftingMessage(namespace, id)
+          prepareDraftingMessage(namespace, id)
 
           const res = await fetch(put(
             url(getAddress())
@@ -103,7 +103,7 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const id = 'message-id'
           const payload = 'payload'
-          await prepareDraftingMessage(namespace, id)
+          prepareDraftingMessage(namespace, id)
 
           const res = await fetch(put(
             url(getAddress())
@@ -125,7 +125,7 @@ describe('token-based access control', () => {
           const id = 'message-id'
           const payload = 'payload'
           const token = 'token'
-          await prepareDraftingMessage(namespace, id)
+          prepareDraftingMessage(namespace, id)
           AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
           AccessControlDAO.Token.setProduceToken({ namespace, token })
 
@@ -148,7 +148,7 @@ describe('token-based access control', () => {
           const id = 'message-id'
           const payload = 'payload'
           const token = 'token'
-          await prepareDraftingMessage(namespace, id)
+          prepareDraftingMessage(namespace, id)
           AccessControlDAO.TokenPolicy.setProduceTokenRequired(namespace, true)
           AccessControlDAO.Token.setProduceToken({ namespace, token })
 

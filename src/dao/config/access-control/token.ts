@@ -6,24 +6,25 @@ export const getAllNamespacesWithTokens = withLazyStatic(function (): string[] {
   const result = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM mq_token;
-  `), [getDatabase()]).all()
+  `), [getDatabase()]).all() as Array<{ namespace: string }>
+
   return result.map(x => x['namespace'])
 })
 
 export const getAllTokens = withLazyStatic(function (namespace: string): ITokenInfo[] {
-  const result: Array<{
-    token: string
-    'produce_permission': number
-    'consume_permission': number
-    'clear_permission': number
-  }> = lazyStatic(() => getDatabase().prepare(`
+  const result = lazyStatic(() => getDatabase().prepare(`
     SELECT token
          , produce_permission
          , consume_permission
          , clear_permission
       FROM mq_token
      WHERE namespace = $namespace;
-  `), [getDatabase()]).all({ namespace })
+  `), [getDatabase()]).all({ namespace }) as Array<{
+    token: string
+    produce_permission: number
+    consume_permission: number
+    clear_permission: number
+  }>
 
   return result.map(x => ({
     token: x['token']
@@ -41,7 +42,7 @@ export const hasProduceTokens = withLazyStatic(function (namespace: string): boo
               WHERE namespace = $namespace
                 AND produce_permission = 1
            ) AS produce_tokens_exist;
-  `), [getDatabase()]).get({ namespace })
+  `), [getDatabase()]).get({ namespace }) as { produce_tokens_exist: 1 | 0 }
 
   return result['produce_tokens_exist'] === 1
 })
@@ -58,7 +59,7 @@ export const matchProduceToken = withLazyStatic(function ({ token, namespace }: 
                 AND token = $token
                 AND produce_permission = 1
            ) AS matched;
-  `), [getDatabase()]).get({ token, namespace })
+  `), [getDatabase()]).get({ token, namespace }) as { matched: 1 | 0 }
 
   return result['matched'] === 1
 })
@@ -102,7 +103,7 @@ export const hasConsumeTokens = withLazyStatic(function (namespace: string): boo
               WHERE namespace = $namespace
                 AND consume_permission = 1
            ) AS consume_tokens_exist
-  `), [getDatabase()]).get({ namespace })
+  `), [getDatabase()]).get({ namespace }) as { consume_tokens_exist: 1 | 0 }
 
   return result['consume_tokens_exist'] === 1
 })
@@ -119,7 +120,7 @@ export const matchConsumeToken = withLazyStatic(function ({ token, namespace }: 
                 AND token = $token
                 AND consume_permission = 1
            ) AS matched
-  `), [getDatabase()]).get({ token, namespace })
+  `), [getDatabase()]).get({ token, namespace }) as { matched: 1 | 0 }
 
   return result['matched'] === 1
 })
@@ -167,7 +168,7 @@ export const matchClearToken = withLazyStatic(function ({ token, namespace }: {
                 AND token = $token
                 AND clear_permission = 1
            ) AS matched
-  `), [getDatabase()]).get({ token, namespace })
+  `), [getDatabase()]).get({ token, namespace }) as { matched: 1 | 0 }
 
   return result['matched'] === 1
 })

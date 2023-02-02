@@ -26,10 +26,10 @@ const order = withLazyStatic(function (namespace: string, now: number): string |
             , state_updated_at ASC
             , rowid            ASC
      LIMIT 1;
-  `), [getDatabase()]).get({ namespace })
+  `), [getDatabase()]).get({ namespace }) as { id: string } | undefined
   if (!row) return null
 
-  const id = row['id'] as string
+  const id = row['id']
   lazyStatic(() => getDatabase().prepare(`
     UPDATE mq_message
        SET state = 'ordered'

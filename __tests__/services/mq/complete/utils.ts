@@ -1,13 +1,13 @@
 import { MQDAO } from '@dao/index.js'
 
-export async function prepareActiveMessage(
+export function prepareActiveMessage(
   namespace: string
 , id: string
 , type: string
 , payload: string
-) {
-  await MQDAO.draftMessage(namespace, id)
-  await MQDAO.setMessage(namespace, id, type, payload)
-  await MQDAO.orderMessage(namespace, Infinity)
-  await MQDAO.getMessage(namespace, id)
+): void {
+  MQDAO.draftMessage(namespace, id)
+  MQDAO.setMessage(namespace, id, type, payload)
+  MQDAO.orderMessage(namespace, Infinity)
+  MQDAO.getMessage(namespace, id)
 }

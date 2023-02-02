@@ -2,7 +2,7 @@ import { FastifyPluginAsync } from 'fastify'
 import { namespaceSchema } from '@src/schema.js'
 import { IAPI } from '@api/contract.js'
 
-export const routes: FastifyPluginAsync<{ Core: IAPI }> = async (server, { Core }) => {
+export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
   server.get(
     '/blacklist'
   , {
@@ -16,7 +16,7 @@ export const routes: FastifyPluginAsync<{ Core: IAPI }> = async (server, { Core 
       }
     }
   , async (req, reply) => {
-      const result = await Core.Blacklist.getAll()
+      const result = api.Blacklist.getAll()
       return reply.send(result)
     }
   )
@@ -33,7 +33,7 @@ export const routes: FastifyPluginAsync<{ Core: IAPI }> = async (server, { Core 
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await Core.Blacklist.add(namespace)
+      api.Blacklist.add(namespace)
       return reply.status(204).send()
     }
   )
@@ -50,7 +50,7 @@ export const routes: FastifyPluginAsync<{ Core: IAPI }> = async (server, { Core 
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await Core.Blacklist.remove(namespace)
+      api.Blacklist.remove(namespace)
       return reply
         .status(204)
         .send()

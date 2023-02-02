@@ -16,7 +16,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
       }
     }
   , async (req, reply) => {
-      const result = await api.Configuration.getAllNamespaces()
+      const result = api.Configuration.getAllNamespaces()
       return reply.send(result)
     }
   )
@@ -41,7 +41,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      const result = await api.Configuration.get(namespace)
+      const result = api.Configuration.get(namespace)
       return reply.send(result)
     }
   )
@@ -63,7 +63,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , async (req, reply) => {
       const namespace = req.params.namespace
       const val = req.body
-      await api.Configuration.setUnique(namespace, val)
+      api.Configuration.setUnique(namespace, val)
       return reply
         .status(204)
         .send()
@@ -84,7 +84,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await api.Configuration.unsetUnique(namespace)
+      api.Configuration.unsetUnique(namespace)
       return reply
         .status(204)
         .send()
@@ -108,7 +108,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , async (req, reply) => {
       const namespace = req.params.namespace
       const val = req.body
-      await api.Configuration.setDraftingTimeout(namespace, val)
+      api.Configuration.setDraftingTimeout(namespace, val)
       return reply
         .status(204)
         .send()
@@ -129,7 +129,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await api.Configuration.unsetDraftingTimeout(namespace)
+      api.Configuration.unsetDraftingTimeout(namespace)
       return reply
         .status(204)
         .send()
@@ -152,7 +152,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , async (req, reply) => {
       const namespace = req.params.namespace
       const val = req.body
-      await api.Configuration.setOrderedTimeout(namespace, val)
+      api.Configuration.setOrderedTimeout(namespace, val)
       return reply
         .status(204)
         .send()
@@ -173,7 +173,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await api.Configuration.unsetOrderedTimeout(namespace)
+      api.Configuration.unsetOrderedTimeout(namespace)
       return reply
         .status(204)
         .send()
@@ -196,7 +196,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , async (req, reply) => {
       const namespace = req.params.namespace
       const val = req.body
-      await api.Configuration.setActiveTimeout(namespace, val)
+      api.Configuration.setActiveTimeout(namespace, val)
       return reply
         .status(204)
         .send()
@@ -217,7 +217,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await api.Configuration.unsetActiveTimeout(namespace)
+      api.Configuration.unsetActiveTimeout(namespace)
       return reply
         .status(204)
         .send()
@@ -240,7 +240,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , async (req, reply) => {
       const namespace = req.params.namespace
       const val = req.body
-      await api.Configuration.setConcurrency(namespace, val)
+      api.Configuration.setConcurrency(namespace, val)
       return reply
         .status(204)
         .send()
@@ -261,7 +261,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await api.Configuration.unsetConcurrency(namespace)
+      api.Configuration.unsetConcurrency(namespace)
       return reply
         .status(204)
         .send()

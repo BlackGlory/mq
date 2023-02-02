@@ -14,17 +14,17 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , { parseAs: 'string' }
   , (req, body, done) => done(null, body)
   )
-  server.register(bearerAuthPlugin, {
+  await server.register(bearerAuthPlugin, {
     keys: new Set<string>() // because auth is a function, keys will be ignored.
   , auth(key, req) {
       return api.isAdmin(key)
     }
   })
 
-  server.register(jsonSchemaRoutes, { prefix: '/admin', api: api })
-  server.register(blacklistRoutes, { prefix: '/admin', Core: api })
-  server.register(whitelistRoutes, { prefix: '/admin', api: api })
-  server.register(tokenPolicyRoutes, { prefix: '/admin', api: api })
-  server.register(tokenRoutes, { prefix: '/admin', api: api })
-  server.register(configurationRoutes, { prefix: '/admin', api: api })
+  await server.register(jsonSchemaRoutes, { prefix: '/admin', api })
+  await server.register(blacklistRoutes, { prefix: '/admin', api })
+  await server.register(whitelistRoutes, { prefix: '/admin', api })
+  await server.register(tokenPolicyRoutes, { prefix: '/admin', api })
+  await server.register(tokenRoutes, { prefix: '/admin', api })
+  await server.register(configurationRoutes, { prefix: '/admin', api })
 }

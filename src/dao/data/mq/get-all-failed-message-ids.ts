@@ -11,7 +11,8 @@ export const getAllFailedMessageIds = withLazyStatic(function (
      WHERE namespace = $namespace
        AND state = 'failed'
      ORDER BY state_updated_at ASC;
-  `), [getDatabase()]).iterate({ namespace })
+  `), [getDatabase()])
+    .iterate({ namespace }) as IterableIterator<{ id: string }>
 
   return map(iter, x => x['id'])
 })

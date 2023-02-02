@@ -1,4 +1,4 @@
-import { JSONValue } from 'justypes'
+import { JSONValue } from '@blackglory/prelude'
 import { CustomErrorConstructor } from '@blackglory/errors'
 
 export interface ITokenInfo {

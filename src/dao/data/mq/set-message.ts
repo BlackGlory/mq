@@ -32,7 +32,8 @@ export const setMessage = withLazyStatic(function (
         FROM mq_message
        WHERE namespace = $namespace
          AND id = $id;
-    `), [getDatabase()]).get({ namespace, id })
+    `), [getDatabase()])
+      .get({ namespace, id }) as { state: State } | undefined
     if (!row) throw new NotFound()
 
     if (
@@ -42,7 +43,7 @@ export const setMessage = withLazyStatic(function (
       throw new BadMessageState(State.Drafting, State.Waiting)
     }
 
-    const oldState = row['state'] as State.Drafting | State.Waiting
+    const oldState = row['state']
 
     const payloadHash = hash(payload)
     if (unique && hasDuplicatePayload(namespace, id, payloadHash)) {
@@ -106,7 +107,8 @@ const hasDuplicatePayload = withLazyStatic(function (
                 AND id != $id
                 AND hash = $hash
            ) AS matched;
-  `), [getDatabase()]).get({ namespace, id, hash })
+  `), [getDatabase()])
+    .get({ namespace, id, hash }) as { matched: 1 | 0 }
 
   return !!result['matched']
 })

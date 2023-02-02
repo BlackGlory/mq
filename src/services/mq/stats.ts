@@ -23,7 +23,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      const result = await api.MQ.stats(namespace)
+      const result = api.MQ.stats(namespace)
       return reply.send(result)
     }
   )

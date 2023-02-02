@@ -68,13 +68,13 @@ export function hasRawMessage(namespace: string, messageId: string): boolean {
   return !!getRawMessage(namespace, messageId)
 }
 
-export function getRawMessage(namespace: string, messageId: string): IRawMessage | null {
+export function getRawMessage(namespace: string, messageId: string): IRawMessage | undefined {
   return getDatabase().prepare(`
     SELECT *
       FROM mq_message
      WHERE namespace = $namespace
        AND id = $messageId;
-  `).get({ namespace, messageId })
+  `).get({ namespace, messageId }) as IRawMessage | undefined
 }
 
 export function setRawStats(item: IRawStats): IRawStats {
@@ -106,10 +106,10 @@ export function hasRawStats(namespace: string): boolean {
   return !!getRawStats(namespace)
 }
 
-export function getRawStats(namespace: string): IRawStats | null {
+export function getRawStats(namespace: string): IRawStats | undefined {
   return getDatabase().prepare(`
     SELECT *
       FROM mq_stats
      WHERE namespace = $namespace;
-  `).get({ namespace })
+  `).get({ namespace }) as IRawStats | undefined
 }

@@ -18,7 +18,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
       }
     }
   , async (req, reply) => {
-      const result = await api.TBAC.Token.getAllNamespaces()
+      const result = api.TBAC.Token.getAllNamespaces()
       return reply.send(result)
     }
   )
@@ -49,7 +49,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      const result = await api.TBAC.Token.getAll(namespace)
+      const result = api.TBAC.Token.getAll(namespace)
       return reply.send(result)
     }
   )
@@ -73,7 +73,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , async (req, reply) => {
       const namespace = req.params.namespace
       const token = req.params.token
-      await api.TBAC.Token.setProduceToken(namespace, token)
+      api.TBAC.Token.setProduceToken(namespace, token)
       return reply
         .status(204)
         .send()
@@ -98,7 +98,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , async (req, reply) => {
       const namespace = req.params.namespace
       const token = req.params.token
-      await api.TBAC.Token.unsetProduceToken(namespace, token)
+      api.TBAC.Token.unsetProduceToken(namespace, token)
       return reply
         .status(204)
         .send()
@@ -124,7 +124,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , async (req, reply) => {
       const namespace = req.params.namespace
       const token = req.params.token
-      await api.TBAC.Token.setConsumeToken(namespace, token)
+      api.TBAC.Token.setConsumeToken(namespace, token)
       return reply
         .status(204)
         .send()
@@ -149,7 +149,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , async (req, reply) => {
       const namespace = req.params.namespace
       const token = req.params.token
-      await api.TBAC.Token.unsetConsumeToken(namespace, token)
+      api.TBAC.Token.unsetConsumeToken(namespace, token)
       return reply
         .status(204)
         .send()
@@ -175,7 +175,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , async (req, reply) => {
       const namespace = req.params.namespace
       const token = req.params.token
-      await api.TBAC.Token.setClearToken(namespace, token)
+      api.TBAC.Token.setClearToken(namespace, token)
       return reply
         .status(204)
         .send()
@@ -200,7 +200,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , async (req, reply) => {
       const namespace = req.params.namespace
       const token = req.params.token
-      await api.TBAC.Token.unsetClearToken(namespace, token)
+      api.TBAC.Token.unsetClearToken(namespace, token)
       return reply
         .status(204)
         .send()

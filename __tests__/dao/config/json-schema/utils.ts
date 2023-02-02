@@ -18,10 +18,10 @@ export function hasRawJSONSchema(namespace: string): boolean {
   return !!getRawJSONSchema(namespace)
 }
 
-export function getRawJSONSchema(namespace: string): IRawJSONSchema | null {
+export function getRawJSONSchema(namespace: string): IRawJSONSchema | undefined {
   return getDatabase().prepare(`
     SELECT *
       FROM mq_json_schema
      WHERE namespace = $namespace;
-  `).get({ namespace })
+  `).get({ namespace }) as IRawJSONSchema | undefined
 }

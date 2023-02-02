@@ -6,23 +6,24 @@ export const getAllNamespacesWithTokenPolicies = withLazyStatic(function (): str
   const result = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM mq_token_policy;
-  `), [getDatabase()]).all()
+  `), [getDatabase()]).all() as Array<{ namespace: string }>
 
   return result.map(x => x['namespace'])
 })
 
 export const getTokenPolicies = withLazyStatic(function (namespace: string): ITokenPolicy {
-  const row: {
-    'produce_token_required': number | null
-  , 'consume_token_required': number | null
-  , 'clear_token_required': number | null
-  } = lazyStatic(() => getDatabase().prepare(`
+  const row = lazyStatic(() => getDatabase().prepare(`
     SELECT produce_token_required
          , consume_token_required
          , clear_token_required
       FROM mq_token_policy
      WHERE namespace = $namespace;
-  `), [getDatabase()]).get({ namespace })
+  `), [getDatabase()]).get({ namespace }) as {
+    produce_token_required: number | null
+  , consume_token_required: number | null
+  , clear_token_required: number | null
+  } | undefined
+
   if (row) {
     const produceTokenRequired = row['produce_token_required']
     const consumeTokenRequired = row['consume_token_required']
@@ -59,7 +60,10 @@ export const setProduceTokenRequired = withLazyStatic(function (
     VALUES ($namespace, $produceTokenRequired)
         ON CONFLICT(namespace)
         DO UPDATE SET produce_token_required = $produceTokenRequired;
-  `), [getDatabase()]).run({ namespace, produceTokenRequired: booleanToNumber(val) })
+  `), [getDatabase()]).run({
+    namespace
+  , produceTokenRequired: booleanToNumber(val)
+  })
 })
 
 export const unsetProduceTokenRequired = withLazyStatic(function (namespace: string): void {

@@ -5,7 +5,7 @@ export const getAllNamespacesWithJSONSchema = withLazyStatic(function (): string
   const result = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM mq_json_schema
-  `), [getDatabase()]).all()
+  `), [getDatabase()]).all() as Array<{ namespace: string }>
 
   return result.map(x => x['namespace'])
 })
@@ -15,7 +15,7 @@ export const getJSONSchema = withLazyStatic(function (namespace: string): string
     SELECT json_schema
       FROM mq_json_schema
      WHERE namespace = $namespace;
-  `), [getDatabase()]).get({ namespace })
+  `), [getDatabase()]).get({ namespace }) as { json_schema: string } | undefined
 
   return result ? result['json_schema'] : null
 })

@@ -52,14 +52,14 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
       const type = req.headers['content-type'] ?? 'application/octet-stream'
 
       try {
-        await api.Blacklist.check(namespace)
-        await api.Whitelist.check(namespace)
-        await api.TBAC.checkProducePermission(namespace, token)
+        api.Blacklist.check(namespace)
+        api.Whitelist.check(namespace)
+        api.TBAC.checkProducePermission(namespace, token)
         if (api.JsonSchema.isEnabled()) {
           if (isJSONPayload()) {
-            await api.JsonSchema.validate(namespace, payload)
+            api.JsonSchema.validate(namespace, payload)
           } else {
-            if (await api.JsonSchema.get(namespace)) {
+            if (api.JsonSchema.get(namespace)) {
               throw new BadContentType('application/json')
             }
           }
@@ -74,7 +74,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
       }
 
       try {
-        await api.MQ.set(namespace, id, type, payload)
+        api.MQ.set(namespace, id, type, payload)
         return reply
           .status(204)
           .send()

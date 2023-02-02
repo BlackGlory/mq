@@ -142,6 +142,7 @@ describe(`
             priority: null
           , type
           , payload
+            // eslint-disable-next-line
           , hash: expect.any(String)
           , state: 'waiting'
           , state_updated_at: getTimestamp()
@@ -193,6 +194,7 @@ describe(`
           priority: null
         , type
         , payload
+          // eslint-disable-next-line
         , hash: expect.any(String)
         , state: 'waiting'
         , state_updated_at: getTimestamp()

@@ -16,7 +16,7 @@ describe('blacklist', () => {
         const namespace = 'namespace'
         const id = 'message-id'
         const payload = 'payload'
-        await prepareDraftingMessage(namespace, id)
+        prepareDraftingMessage(namespace, id)
         AccessControlDAO.Blacklist.addBlacklistItem(namespace)
 
         const res = await fetch(put(
@@ -35,7 +35,7 @@ describe('blacklist', () => {
         const namespace = 'namespace'
         const id = 'message-id'
         const payload = 'payload'
-        await prepareDraftingMessage(namespace, id)
+        prepareDraftingMessage(namespace, id)
 
         const res = await fetch(put(
           url(getAddress())
@@ -54,8 +54,8 @@ describe('blacklist', () => {
         const namespace = 'namespace'
         const id = 'message-id'
         const payload = 'payload'
-        await prepareDraftingMessage(namespace, id)
-        await AccessControlDAO.Blacklist.addBlacklistItem(namespace)
+        prepareDraftingMessage(namespace, id)
+        AccessControlDAO.Blacklist.addBlacklistItem(namespace)
 
         const res = await fetch(put(
           url(getAddress())

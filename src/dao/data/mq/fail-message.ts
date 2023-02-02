@@ -18,7 +18,8 @@ export const failMessage = withLazyStatic(function (namespace: string, id: strin
         FROM mq_message
        WHERE namespace = $namespace
          AND id = $id;
-    `), [getDatabase()]).get({ namespace, id })
+    `), [getDatabase()]).get({ namespace, id }) as { state: State } | undefined
+
     if (!row) throw new NotFound()
     if (row.state !== State.Active) throw new BadMessageState(State.Active)
 

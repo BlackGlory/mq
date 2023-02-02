@@ -1,11 +1,11 @@
 import { MQDAO } from '@dao/index.js'
 
-export async function prepareFailedMessages(namespace: string, ids: string[]) {
+export function prepareFailedMessages(namespace: string, ids: string[]): void {
   for (const id of ids) {
-    await MQDAO.draftMessage(namespace, id)
-    await MQDAO.setMessage(namespace, id, 'type', 'payload')
-    await MQDAO.orderMessage(namespace, Infinity)
-    await MQDAO.getMessage(namespace, id)
-    await MQDAO.failMessage(namespace, id)
+    MQDAO.draftMessage(namespace, id)
+    MQDAO.setMessage(namespace, id, 'type', 'payload')
+    MQDAO.orderMessage(namespace, Infinity)
+    MQDAO.getMessage(namespace, id)
+    MQDAO.failMessage(namespace, id)
   }
 }

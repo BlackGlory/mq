@@ -35,9 +35,9 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
       const token = req.query.token
 
       try {
-        await api.Blacklist.check(namespace)
-        await api.Whitelist.check(namespace)
-        await api.TBAC.checkProducePermission(namespace, token)
+        api.Blacklist.check(namespace)
+        api.Whitelist.check(namespace)
+        api.TBAC.checkProducePermission(namespace, token)
       } catch (e) {
         if (e instanceof api.Blacklist.Forbidden) return reply.status(403).send()
         if (e instanceof api.Whitelist.Forbidden) return reply.status(403).send()
@@ -45,7 +45,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
         throw e
       }
 
-      const result = await api.MQ.draft(namespace, priority ?? undefined)
+      const result = api.MQ.draft(namespace, priority ?? undefined)
       return reply
         .status(200)
         .send(result)

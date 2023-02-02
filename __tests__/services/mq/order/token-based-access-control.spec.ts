@@ -17,7 +17,7 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const id = 'message-id'
           const token = 'token'
-          await prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
+          prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
           AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
           AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
@@ -37,7 +37,7 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const id = 'message-id'
           const token = 'token'
-          await prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
+          prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
           AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
           AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
@@ -57,7 +57,7 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const id = 'message-id'
           const token = 'token'
-          await prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
+          prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
           AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
           AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
@@ -78,7 +78,7 @@ describe('token-based access control', () => {
           process.env.MQ_CONSUME_TOKEN_REQUIRED = 'true'
           const namespace = 'namespace'
           const id = 'message-id'
-          await prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
+          prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
 
           const res = await fetch(get(
             url(getAddress())
@@ -94,7 +94,7 @@ describe('token-based access control', () => {
           process.env.MQ_TOKEN_BASED_ACCESS_CONTROL = 'true'
           const namespace = 'namespace'
           const id = 'message-id'
-          await prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
+          prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
 
           const res = await fetch(get(
             url(getAddress())
@@ -114,7 +114,7 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const id = 'message-id'
           const token = 'token'
-          await prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
+          prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
           AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
           AccessControlDAO.Token.setConsumeToken({ namespace, token })
 
@@ -135,7 +135,7 @@ describe('token-based access control', () => {
           const namespace = 'namespace'
           const id = 'message-id'
           const token = 'token'
-          await prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
+          prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
           AccessControlDAO.TokenPolicy.setConsumeTokenRequired(namespace, true)
           AccessControlDAO.Token.setConsumeToken({ namespace, token })
 

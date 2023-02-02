@@ -6,19 +6,13 @@ export const getAllNamespacesWithConfiguration = withLazyStatic(function (): str
   const result = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM mq_configuration;
-  `), [getDatabase()]).all()
+  `), [getDatabase()]).all() as Array<{ namespace: string }>
 
   return result.map(x => x['namespace'])
 })
 
 export const getConfiguration = withLazyStatic((namespace: string): IConfiguration => {
-  const row: {
-    'uniq': number | null
-    'drafting_timeout': number | null
-    'ordered_timeout': number | null
-    'active_timeout': number | null
-    'concurrency': number | null
-  } = lazyStatic(() => getDatabase().prepare(`
+  const row = lazyStatic(() => getDatabase().prepare(`
     SELECT uniq
          , drafting_timeout
          , ordered_timeout
@@ -26,7 +20,13 @@ export const getConfiguration = withLazyStatic((namespace: string): IConfigurati
          , concurrency
       FROM mq_configuration
      WHERE namespace = $namespace;
-  `), [getDatabase()]).get({ namespace })
+  `), [getDatabase()]).get({ namespace }) as {
+    uniq: number | null
+    drafting_timeout: number | null
+    ordered_timeout: number | null
+    active_timeout: number | null
+    concurrency: number | null
+  } | undefined
 
   if (row) {
     const unique = row['uniq']

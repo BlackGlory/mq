@@ -13,7 +13,7 @@ describe('no access control', () => {
   it('200', async () => {
     const namespace = 'namespace'
     const id = 'message-id'
-    await prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
+    prepareWaitingMessage(namespace, id, 'text/plain', 'payload')
 
     const res = await fetch(get(
       url(getAddress())
@@ -25,6 +25,7 @@ describe('no access control', () => {
 
   it('can abort by clear', async () => {
     const namespace = 'namespace'
+    // eslint-disable-next-line
     queueMicrotask(async () => {
       await delay(1000)
       api.MQ.clear(namespace)

@@ -18,7 +18,7 @@ export const renewMessage = withLazyStatic(function (namespace: string, id: stri
         FROM mq_message
        WHERE namespace = $namespace
          AND id = $id;
-    `), [getDatabase()]).get({ namespace, id })
+    `), [getDatabase()]).get({ namespace, id }) as { state: State } | undefined
     if (!row) throw new NotFound()
     if (row.state !== State.Failed) throw new BadMessageState(State.Failed)
 

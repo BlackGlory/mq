@@ -4,6 +4,7 @@ import { fetch } from 'extra-fetch'
 import { get, put, del } from 'extra-request'
 import { url, pathname, headers } from 'extra-request/transformers'
 import { toJSON } from 'extra-response'
+import { createAuthHeaders } from './utils.js'
 
 beforeEach(startService)
 afterEach(stopService)
@@ -399,9 +400,3 @@ describe('TBAC', () => {
     })
   })
 })
-
-function createAuthHeaders(adminPassword?: string) {
-  return {
-    'Authorization': `Bearer ${ adminPassword ?? process.env.MQ_ADMIN_PASSWORD }`
-  }
-}

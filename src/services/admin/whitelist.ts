@@ -16,7 +16,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
       }
     }
   , async (req, reply) => {
-      const result = await api.Whitelist.getAll()
+      const result = api.Whitelist.getAll()
       return reply.send(result)
     }
   )
@@ -33,7 +33,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await api.Whitelist.add(namespace)
+      api.Whitelist.add(namespace)
       return reply
         .status(204)
         .send()
@@ -52,7 +52,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await api.Whitelist.remove(namespace)
+      api.Whitelist.remove(namespace)
       return reply
         .status(204)
         .send()

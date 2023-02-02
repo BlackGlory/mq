@@ -11,7 +11,7 @@ describe('no access control', () => {
   it('204', async () => {
     const namespace = 'namespace'
     const id = 'message-id'
-    await prepareActiveMessage(namespace, id, 'text/plain', 'payload')
+    prepareActiveMessage(namespace, id, 'text/plain', 'payload')
 
     const res = await fetch(patch(
       url(getAddress())

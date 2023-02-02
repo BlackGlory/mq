@@ -11,7 +11,7 @@ describe('no access control', () => {
   it('204', async () => {
     const namespace = 'namespace'
     const id = 'message-id'
-    await prepareFailedMessage(namespace, id, 'text/plain', 'payload')
+    prepareFailedMessage(namespace, id, 'text/plain', 'payload')
 
     const res = await fetch(del(
       url(getAddress())

@@ -5,7 +5,7 @@ export const getAllBlacklistItems = withLazyStatic(function (): string[] {
   const result = lazyStatic(() => getDatabase().prepare(`
     SELECT namespace
       FROM mq_blacklist;
-  `), [getDatabase()]).all()
+  `), [getDatabase()]).all() as Array<{ namespace: string }>
 
   return result.map(x => x['namespace'])
 })
@@ -17,7 +17,7 @@ export const inBlacklist = withLazyStatic(function (namespace: string): boolean 
                FROM mq_blacklist
               WHERE namespace = $namespace
            ) AS exist_in_blacklist;
-  `), [getDatabase()]).get({ namespace })
+  `), [getDatabase()]).get({ namespace }) as { exist_in_blacklist: 1 | 0 }
 
   return result['exist_in_blacklist'] === 1
 })

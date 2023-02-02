@@ -12,7 +12,7 @@ describe('no access control', () => {
     const namespace = 'namespace'
     const id = 'message-id'
     const payload = 'payload'
-    await prepareDraftingMessage(namespace, id)
+    prepareDraftingMessage(namespace, id)
 
     const res = await fetch(put(
       url(getAddress())

@@ -11,7 +11,7 @@ afterEach(stopService)
 describe('no access control', () => {
   it('200', async () => {
     const namespaces = ['namespace']
-    await prepareNamespaces(namespaces)
+    prepareNamespaces(namespaces)
 
     const res = await fetch(get(
       url(getAddress())

@@ -15,7 +15,7 @@ describe('blacklist', () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const namespace = 'namespace'
         const id = 'message-id'
-        await prepareFailedMessage(namespace, id, 'text/plain', 'payload')
+        prepareFailedMessage(namespace, id, 'text/plain', 'payload')
         AccessControlDAO.Blacklist.addBlacklistItem(namespace)
 
         const res = await fetch(patch(
@@ -32,7 +32,7 @@ describe('blacklist', () => {
         process.env.MQ_LIST_BASED_ACCESS_CONTROL = 'blacklist'
         const namespace = 'namespace'
         const id = 'message-id'
-        await prepareFailedMessage(namespace, id, 'text/plain', 'payload')
+        prepareFailedMessage(namespace, id, 'text/plain', 'payload')
 
         const res = await fetch(patch(
           url(getAddress())
@@ -49,7 +49,7 @@ describe('blacklist', () => {
       it('204', async () => {
         const namespace = 'namespace'
         const id = 'message-id'
-        await prepareFailedMessage(namespace, id, 'text/plain', 'payload')
+        prepareFailedMessage(namespace, id, 'text/plain', 'payload')
         AccessControlDAO.Blacklist.addBlacklistItem(namespace)
 
         const res = await fetch(patch(

@@ -13,17 +13,17 @@ import { withLazyStatic, lazyStatic } from 'extra-lazy'
 /**
  * @throws {NotFound}
  */
-export const abandonMessage = withLazyStatic(function (namespace: string, id: string): void {
+export const abandonMessage = withLazyStatic((namespace: string, id: string): void => {
   lazyStatic(() => getDatabase().transaction((namespace: string, id: string) => {
     const row = lazyStatic(() => getDatabase().prepare(`
       SELECT state
         FROM mq_message
        WHERE namespace = $namespace
          AND id = $id;
-    `), [getDatabase()]).get({ namespace, id })
+    `), [getDatabase()]).get({ namespace, id }) as { state: State } | undefined
     if (!row) throw new NotFound()
 
-    const state = row['state'] as State
+    const state = row['state']
 
     lazyStatic(() => getDatabase().prepare(`
       DELETE FROM mq_message

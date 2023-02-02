@@ -1,7 +1,7 @@
 import { MQDAO } from '@dao/index.js'
 
-export async function prepareNamespaces(namespaces: string[]) {
+export function prepareNamespaces(namespaces: string[]): void {
   for (const namespace of namespaces) {
-    await MQDAO.draftMessage(namespace, 'message-id')
+    MQDAO.draftMessage(namespace, 'message-id')
   }
 }

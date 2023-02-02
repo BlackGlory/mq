@@ -7,6 +7,7 @@ import { buildServer } from './server.js'
 import { PORT, HOST, NODE_ENV, NodeEnv } from '@env/index.js'
 import { youDied } from 'you-died'
 
+// eslint-disable-next-line
 go(async () => {
   Config.openDatabase()
   youDied(() => Config.closeDatabase())
@@ -16,7 +17,7 @@ go(async () => {
   youDied(() => Data.closeDatabase())
   await Data.prepareDatabase()
 
-  const server = buildServer()
+  const server = await buildServer()
   await server.listen({
     host: HOST()
   , port: PORT()

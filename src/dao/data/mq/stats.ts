@@ -12,7 +12,14 @@ export const stats = withLazyStatic(function (namespace: string): IStats {
          , failed
       FROM mq_stats
      WHERE namespace = $namespace;
-  `), [getDatabase()]).get({ namespace })
+  `), [getDatabase()]).get({ namespace }) as {
+    drafting: number
+    waiting: number
+    ordered: number
+    active: number
+    completed: number
+    failed: number
+  } | undefined
 
   if (row) {
     return {

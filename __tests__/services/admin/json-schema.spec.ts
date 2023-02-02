@@ -4,6 +4,7 @@ import { fetch } from 'extra-fetch'
 import { get, put, del } from 'extra-request'
 import { url, pathname, headers, json, text, header } from 'extra-request/transformers'
 import { toJSON } from 'extra-response'
+import { createAuthHeaders } from './utils.js'
 
 beforeEach(startService)
 afterEach(stopService)
@@ -61,7 +62,7 @@ describe('json schema', () => {
           process.env.MQ_ADMIN_PASSWORD = 'password'
           const namespace = 'namespace'
           const schema = { type: 'number' }
-          await JSONSchemaDAO.setJSONSchema({
+          JSONSchemaDAO.setJSONSchema({
             namespace
           , schema: JSON.stringify(schema)
           })
@@ -237,9 +238,3 @@ describe('json schema', () => {
     })
   })
 })
-
-function createAuthHeaders(adminPassword?: string) {
-  return {
-    'Authorization': `Bearer ${ adminPassword ?? process.env.MQ_ADMIN_PASSWORD }`
-  }
-}

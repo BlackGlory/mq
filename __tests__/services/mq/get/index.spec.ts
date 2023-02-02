@@ -11,7 +11,7 @@ describe('no access control', () => {
   test('custom priority', async () => {
     const namespace = 'namespace'
     const id = 'message-id'
-    await prepareOrderedMessage(namespace, id, 'text/plain', 'payload', 1)
+    prepareOrderedMessage(namespace, id, 'text/plain', 'payload', 1)
 
     const res = await fetch(get(
       url(getAddress())
@@ -26,7 +26,7 @@ describe('no access control', () => {
   test('default priority', async () => {
     const namespace = 'namespace'
     const id = 'message-id'
-    await prepareOrderedMessage(namespace, id, 'text/plain', 'payload')
+    prepareOrderedMessage(namespace, id, 'text/plain', 'payload')
 
     const res = await fetch(get(
       url(getAddress())

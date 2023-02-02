@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify'
 import { namespaceSchema } from '@src/schema.js'
-import { JSONValue } from 'justypes'
+import { JSONValue } from '@blackglory/prelude'
 import { IAPI } from '@api/contract.js'
 
 export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
@@ -17,7 +17,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
       }
     }
   , async (req, reply) => {
-      const result = await api.JsonSchema.getAllNamespaces()
+      const result = api.JsonSchema.getAllNamespaces()
       return reply.send(result)
     }
   )
@@ -35,7 +35,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      const result = await api.JsonSchema.get(namespace)
+      const result = api.JsonSchema.get(namespace)
       if (result) {
         return reply
           .header('content-type', 'application/json')
@@ -64,7 +64,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , async (req, reply) => {
       const namespace = req.params.namespace
       const schema = req.body
-      await api.JsonSchema.set(namespace, schema)
+      api.JsonSchema.set(namespace, schema)
       return reply
         .status(204)
         .send()
@@ -83,7 +83,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      await api.JsonSchema.remove(namespace)
+      api.JsonSchema.remove(namespace)
       return reply
         .status(204)
         .send()

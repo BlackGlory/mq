@@ -11,7 +11,7 @@ describe('no access control', () => {
   it('204', async () => {
     const namespace = 'namespace'
     const id = 'message-id'
-    await MQDAO.draftMessage(namespace, id)
+    MQDAO.draftMessage(namespace, id)
 
     const res = await fetch(del(
       url(getAddress())
