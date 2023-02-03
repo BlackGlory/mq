@@ -1,17 +1,15 @@
 import { FastifyPluginAsync } from 'fastify'
-import { namespaceSchema, tokenSchema } from '@src/schema.js'
+import { namespaceSchema } from '@src/schema.js'
 import { IAPI } from '@api/contract.js'
 
 export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
   server.patch<{
     Params: { namespace: string }
-    Querystring: { token?: string }
   }>(
     '/mq/:namespace/failed-messages/renew'
   , {
       schema: {
         params: { namespace: namespaceSchema }
-      , querystring: { token: tokenSchema }
       , response: {
           204: { type: 'null' }
         }
@@ -19,18 +17,6 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
-      const token = req.query.token
-
-      try {
-        api.Blacklist.check(namespace)
-        api.Whitelist.check(namespace)
-        api.TBAC.checkConsumePermission(namespace, token)
-      } catch (e) {
-        if (e instanceof api.Blacklist.Forbidden) return reply.status(403).send()
-        if (e instanceof api.Whitelist.Forbidden) return reply.status(403).send()
-        if (e instanceof api.TBAC.Unauthorized) return reply.status(401).send()
-        throw e
-      }
 
       api.MQ.renewAllFailedMessages(namespace)
       return reply

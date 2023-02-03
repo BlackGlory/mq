@@ -1,7 +1,6 @@
 import { FastifyPluginAsync } from 'fastify'
-import { namespaceSchema, tokenSchema, idSchema } from '@src/schema.js'
+import { namespaceSchema, idSchema } from '@src/schema.js'
 import { JSON_PAYLOAD_ONLY, SET_PAYLOAD_LIMIT } from '@env/index.js'
-import { CustomError } from '@blackglory/errors'
 import { IAPI } from '@api/contract.js'
 
 export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
@@ -20,7 +19,6 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
 
   server.put<{
     Params: { namespace: string; id: string }
-    Querystring: { token?: string }
     Body: string
   }>(
     '/mq/:namespace/messages/:id'
@@ -30,7 +28,6 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
           namespace: namespaceSchema
         , id: idSchema
         }
-      , querystring: { token: tokenSchema }
       , headers: {
           'content-type':
             JSON_PAYLOAD_ONLY()
@@ -48,30 +45,7 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
       const namespace = req.params.namespace
       const id = req.params.id
       const payload = req.body
-      const token = req.query.token
       const type = req.headers['content-type'] ?? 'application/octet-stream'
-
-      try {
-        api.Blacklist.check(namespace)
-        api.Whitelist.check(namespace)
-        api.TBAC.checkProducePermission(namespace, token)
-        if (api.JsonSchema.isEnabled()) {
-          if (isJSONPayload()) {
-            api.JsonSchema.validate(namespace, payload)
-          } else {
-            if (api.JsonSchema.get(namespace)) {
-              throw new BadContentType('application/json')
-            }
-          }
-        }
-      } catch (e) {
-        if (e instanceof api.Blacklist.Forbidden) return reply.status(403).send()
-        if (e instanceof api.Whitelist.Forbidden) return reply.status(403).send()
-        if (e instanceof api.TBAC.Unauthorized) return reply.status(401).send()
-        if (e instanceof api.JsonSchema.InvalidPayload) return reply.status(400).send()
-        if (e instanceof BadContentType) return reply.status(415).send()
-        throw e
-      }
 
       try {
         api.MQ.set(namespace, id, type, payload)
@@ -84,20 +58,6 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
         if (e instanceof api.MQ.DuplicatePayload) return reply.status(409).send()
         throw e
       }
-
-      function isJSONPayload(): boolean {
-        const contentType = req.headers['content-type']
-        if (!contentType) return false
-        return contentType
-          .toLowerCase()
-          .startsWith('application/json')
-      }
     }
   )
-}
-
-class BadContentType extends CustomError {
-  constructor(contentType: string) {
-    super(`Content-Type must be ${contentType}`)
-  }
 }
