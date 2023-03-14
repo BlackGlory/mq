@@ -56,7 +56,7 @@ CREATE TABLE mq_message (
   )
 );
 
---- SQLite的AND条件只能使用一个索引, 因此必须建立复合索引.
+-- SQLite的AND条件只能使用一个索引, 因此必须建立复合索引.
 CREATE INDEX idx_mq_message_namespace_state_priority_state_updated_at
           ON mq_message(
                namespace

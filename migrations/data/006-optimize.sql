@@ -2,7 +2,7 @@
 -- Up
 --------------------------------------------------------------------------------
 
---- SQLite的AND条件只能使用一个索引, 因此必须建立复合索引.
+-- SQLite的AND条件只能使用一个索引, 因此必须建立复合索引.
 
 -- 优化 hasDuplicatePayload 的性能
 CREATE INDEX idx_mq_message_namespace_id_hash
