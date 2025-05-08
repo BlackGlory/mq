@@ -10,8 +10,12 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , {
       schema: {
         params: {
-          namespace: namespaceSchema
-        , id: idSchema
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          , id: idSchema
+          }
+        , required: ['namespace', 'id']
         }
       , response: {
           200: { type: 'string' }

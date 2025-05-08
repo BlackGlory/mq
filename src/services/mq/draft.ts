@@ -10,7 +10,13 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     '/mq/:namespace/messages'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
+        params: {
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          }
+        , required: ['namespace']
+        }
       , body: {
           type: 'object'
         , properties: {

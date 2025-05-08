@@ -1,3 +1,4 @@
+import { beforeEach, afterEach, describe, it, expect } from 'vitest'
 import { expectMatchSchema, startService, stopService, getAddress } from '@test/utils.js'
 import { fetch } from 'extra-fetch'
 import { get, put, del } from 'extra-request'

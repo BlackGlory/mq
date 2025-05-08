@@ -27,7 +27,13 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     '/mq/:namespace/config'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
+        params: {
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          }
+        , required: ['namespace']
+        }
       , response: {
           200: {
             unique: { type: 'boolean', nullable: true }
@@ -53,7 +59,13 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     '/mq/:namespace/config/unique'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
+        params: {
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          }
+        , required: ['namespace']
+        }
       , body: { type: 'boolean' }
       , response: {
           204: { type: 'null' }
@@ -76,7 +88,13 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     '/mq/:namespace/config/unique'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
+        params: {
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          }
+        , required: ['namespace']
+        }
       , response: {
           204: { type: 'null' }
         }
@@ -98,7 +116,13 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     '/mq/:namespace/config/drafting-timeout'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
+        params: {
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          }
+        , required: ['namespace']
+        }
       , body: { type: 'number' }
       , response: {
           204: { type: 'null' }
@@ -121,7 +145,13 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     '/mq/:namespace/config/drafting-timeout'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
+        params: {
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          }
+        , required: ['namespace']
+        }
       , response: {
           204: { type: 'null' }
         }
@@ -143,7 +173,13 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     '/mq/:namespace/config/ordered-timeout'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
+        params: {
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          }
+        , required: ['namespace']
+        }
       , response: {
           204: { type: 'null' }
         }
@@ -165,7 +201,13 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     '/mq/:namespace/config/ordered-timeout'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
+        params: {
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          }
+        , required: ['namespace']
+        }
       , response: {
           204: { type: 'null' }
         }
@@ -187,7 +229,13 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     '/mq/:namespace/config/active-timeout'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
+        params: {
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          }
+        , required: ['namespace']
+        }
       , response: {
           204: { type: 'null' }
         }
@@ -209,7 +257,13 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     '/mq/:namespace/config/active-timeout'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
+        params: {
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          }
+        , required: ['namespace']
+        }
       , response: {
           204: { type: 'null' }
         }
@@ -231,7 +285,13 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     '/mq/:namespace/config/concurrency'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
+        params: {
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          }
+        , required: ['namespace']
+        }
       , response: {
           204: { type: 'null' }
         }
@@ -253,7 +313,13 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     '/mq/:namespace/config/concurrency'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
+        params: {
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          }
+        , required: ['namespace']
+        }
       , response: {
           204: { type: 'null' }
         }

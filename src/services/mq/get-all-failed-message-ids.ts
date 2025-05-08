@@ -14,7 +14,13 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
     '/mq/:namespace/failed-messages'
   , {
       schema: {
-        params: { namespace: namespaceSchema }
+        params: {
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          }
+        , required: ['namespace']
+        }
       }
     }
   , async (req, reply) => {

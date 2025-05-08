@@ -1,3 +1,4 @@
+import { beforeEach, afterEach, describe, it, expect } from 'vitest'
 import * as DAO from '@dao/config/configuration/configuration.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setMinimalConfiguration, getRawConfiguration, hasRawConfiguration } from './utils.js'

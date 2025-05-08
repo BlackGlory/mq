@@ -25,14 +25,20 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
   , {
       schema: {
         params: {
-          namespace: namespaceSchema
-        , id: idSchema
+          type: 'object'
+        , properties: {
+            namespace: namespaceSchema
+          , id: idSchema
+          }
+        , required: ['namespace', 'id']
         }
       , headers: {
-          'content-type':
-            JSON_PAYLOAD_ONLY()
-            ? { type: 'string', pattern: '^application/json' }
-            : { type: 'string' }
+          type: 'object'
+        , properties: {
+            'content-type': JSON_PAYLOAD_ONLY()
+                          ? { type: 'string', pattern: '^application/json' }
+                          : { type: 'string' }
+          }
         }
       , body: { type: 'string' }
       , response: {

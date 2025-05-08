@@ -1,3 +1,4 @@
+import { beforeEach, afterEach, describe, it, expect } from 'vitest'
 import * as DAO from '@dao/data/mq/stats.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setRawStats } from './utils.js'

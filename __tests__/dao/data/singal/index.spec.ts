@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest'
 import { SignalDAO } from '@src/dao/data/signal/index.js'
 import { Observable, firstValueFrom } from 'rxjs'
 

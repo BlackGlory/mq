@@ -1,3 +1,4 @@
+import { beforeEach, afterEach, describe, it, expect } from 'vitest'
 import * as DAO from '@dao/data/mq/order-message.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setRawMessage, setRawStats, getRawMessage, getRawStats } from './utils.js'
@@ -13,8 +14,6 @@ describe('orderMessage(namespace: string, concurrency: number): string | null', 
   describe('message does not exist', () => {
     it('return null', () => {
       const namespace = 'namespace'
-      const duration = 100
-      const limit = 1
 
       const result = DAO.orderMessage(namespace, Infinity)
 
