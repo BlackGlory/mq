@@ -38,8 +38,6 @@ export interface IStats {
 }
 
 export interface IAPI {
-  isAdmin(password: string): boolean
-
   MQ: {
     PendingOrderControllerRegistry: {
       register(namespace: string, controller: AbortController): void

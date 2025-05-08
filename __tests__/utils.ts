@@ -39,23 +39,6 @@ export function clearDatabases(): void {
 }
 
 function resetEnvironment(): void {
-  // assigning a property on `process.env` will implicitly convert the value to a string.
-  // use `delete` to delete a property from `process.env`.
-  // see also: https://nodejs.org/api/process.html#process_process_env
-  delete process.env.MQ_ADMIN_PASSWORD
-  delete process.env.MQ_LIST_BASED_ACCESS_CONTROL
-  delete process.env.MQ_TOKEN_BASED_ACCESS_CONTROL
-  delete process.env.MQ_PRODUCE_TOKEN_REQUIRED
-  delete process.env.MQ_CONSUME_TOKEN_REQUIRED
-  delete process.env.MQ_CLEAR_TOKEN_REQUIRED
-  delete process.env.MQ_JSON_VALIDATION
-  delete process.env.MQ_JSON_PAYLOAD_ONLY
-  delete process.env.MQ_DEFAULT_JSON_SCHEMA
-  delete process.env.MQ_UNIQUE
-  delete process.env.MQ_DRAFTING_TIMEOUT
-  delete process.env.MQ_ORDERED_TIMEOUT
-  delete process.env.MQ_ACTIVE_TIMEOUT
-
   // reset memoize
   resetCache()
 }

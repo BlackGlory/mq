@@ -1,5 +1,4 @@
 import { ConfigurationDAO, MQDAO, SignalDAO } from '@dao/index.js'
-import { DRAFTING_TIMEOUT, ORDERED_TIMEOUT, ACTIVE_TIMEOUT, UNIQUE, CONCURRENCY } from '@env/index.js'
 import { nanoid } from 'nanoid'
 import { CustomError } from '@blackglory/errors'
 import { AbortError } from 'extra-abort'
@@ -45,7 +44,7 @@ export function set(
 , payload: string
 ): void {
   const configurations = ConfigurationDAO.getConfiguration(namespace)
-  const unique = configurations.unique ?? UNIQUE()
+  const unique = configurations.unique ?? false
 
   try {
     MQDAO.setMessage(namespace, id, type, payload, unique)
@@ -67,7 +66,7 @@ export async function order(
 ): Promise<string> {
   while (!abortSignal.aborted) {
     const configurations = ConfigurationDAO.getConfiguration(namespace)
-    const concurrency = configurations.concurrency ?? CONCURRENCY()
+    const concurrency = configurations.concurrency ?? Infinity
 
     const id = MQDAO.orderMessage(namespace, concurrency)
     if (id) return id
@@ -191,18 +190,18 @@ export function nextTick(): void {
 
     const configurations = ConfigurationDAO.getConfiguration(namespace)
 
-    const draftingTimeout = configurations.draftingTimeout ?? DRAFTING_TIMEOUT()
+    const draftingTimeout = configurations.draftingTimeout ?? 60_000
     if (draftingTimeout !== Infinity) {
       MQDAO.rollbackOutdatedDraftingMessages(namespace, timestamp - draftingTimeout)
     }
 
-    const orderedTimeout = configurations.orderedTimeout ?? ORDERED_TIMEOUT()
+    const orderedTimeout = configurations.orderedTimeout ?? 60_000
     if (orderedTimeout !== Infinity) {
       const changed = MQDAO.rollbackOutdatedOrderedMessages(namespace, timestamp - orderedTimeout)
       if (changed) emit = true
     }
 
-    const activeTimeout = configurations.activeTimeout ?? ACTIVE_TIMEOUT()
+    const activeTimeout = configurations.activeTimeout ??  300_000
     if (activeTimeout !== Infinity) {
       const changed = MQDAO.rollbackOutdatedActiveMessages(namespace, timestamp - activeTimeout)
       if (changed) emit = true

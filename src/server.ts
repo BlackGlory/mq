@@ -4,7 +4,7 @@ import { routes as admin } from '@services/admin/index.js'
 import { routes as mq } from '@services/mq/index.js'
 import { routes as robots } from '@services/robots/index.js'
 import { routes as health } from '@services/health/index.js'
-import { PAYLOAD_LIMIT, NODE_ENV, NodeEnv } from '@env/index.js'
+import { NODE_ENV, NodeEnv } from '@env/index.js'
 import { api } from '@api/index.js'
 import path from 'path'
 import { readJSONFileSync } from 'extra-filesystem'
@@ -23,7 +23,6 @@ export async function buildServer() {
   const server = fastify({
     logger: getLoggerOptions()
   , maxParamLength: 600
-  , bodyLimit: PAYLOAD_LIMIT()
   , forceCloseConnections: true
   })
   server.addHook('onRequest', async (req, reply) => {

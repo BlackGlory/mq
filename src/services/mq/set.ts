@@ -1,6 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
 import { namespaceSchema, idSchema } from '@src/schema.js'
-import { JSON_PAYLOAD_ONLY, SET_PAYLOAD_LIMIT } from '@env/index.js'
 import { IAPI } from '@api/contract.js'
 
 export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api }) => {
@@ -32,20 +31,11 @@ export const routes: FastifyPluginAsync<{ api: IAPI }> = async (server, { api })
           }
         , required: ['namespace', 'id']
         }
-      , headers: {
-          type: 'object'
-        , properties: {
-            'content-type': JSON_PAYLOAD_ONLY()
-                          ? { type: 'string', pattern: '^application/json' }
-                          : { type: 'string' }
-          }
-        }
       , body: { type: 'string' }
       , response: {
           204: { type: 'null' }
         }
       }
-    , bodyLimit: SET_PAYLOAD_LIMIT()
     }
   , async (req, reply) => {
       const namespace = req.params.namespace
