@@ -1,4 +1,4 @@
-import { getDatabase } from '@dao/data/database.js'
+import { getDatabase } from '@src/database.js'
 import { MapNullablePropsToOptional } from 'hotypes'
 
 type IState = 'drafting' | 'waiting' | 'ordered' | 'active' | 'completed' | 'failed'

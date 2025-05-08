@@ -1,8 +1,8 @@
 import { beforeEach, afterEach, describe, it, expect } from 'vitest'
-import * as DAO from '@dao/data/mq/order-message.js'
+import * as DAO from '@dao/mq/order-message.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setRawMessage, setRawStats, getRawMessage, getRawStats } from './utils.js'
-import { _setMockedTimestamp, _clearMockedTimestamp, getTimestamp } from '@dao/data/mq/utils/get-timestamp.js'
+import { _setMockedTimestamp, _clearMockedTimestamp, getTimestamp } from '@dao/mq/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)

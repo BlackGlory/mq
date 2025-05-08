@@ -1,3 +1,3 @@
-export { ConfigurationDAO } from './config/configuration/index.js'
-export { MQDAO } from './data/mq/index.js'
-export { SignalDAO } from './data/signal/index.js'
+export { ConfigurationDAO } from './configuration/index.js'
+export { MQDAO } from './mq/index.js'
+export { SignalDAO } from './signal/index.js'

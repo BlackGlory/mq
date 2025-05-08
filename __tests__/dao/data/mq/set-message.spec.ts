@@ -1,12 +1,12 @@
 import { beforeEach, afterEach, describe, it, expect } from 'vitest'
-import * as DAO from '@dao/data/mq/set-message.js'
-import { hash } from '@dao/data/mq/utils/hash.js'
-import { BadMessageState, DuplicatePayload, NotFound } from '@dao/data/mq/error.js'
+import * as DAO from '@dao/mq/set-message.js'
+import { hash } from '@dao/mq/utils/hash.js'
+import { BadMessageState, DuplicatePayload, NotFound } from '@dao/mq/error.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setRawMessage, setRawStats, getRawMessage, getRawStats } from './utils.js'
 import { getError } from 'return-style'
 import { assert, isString } from '@blackglory/prelude'
-import { _setMockedTimestamp, _clearMockedTimestamp, getTimestamp } from '@dao/data/mq/utils/get-timestamp.js'
+import { _setMockedTimestamp, _clearMockedTimestamp, getTimestamp } from '@dao/mq/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
 afterEach(clearDatabases)

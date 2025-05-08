@@ -26,7 +26,6 @@ export async function buildServer() {
   , forceCloseConnections: true
   })
   server.addHook('onRequest', async (req, reply) => {
-    // eslint-disable-next-line
     reply.header('Cache-Control', 'private, no-cache')
   })
   server.addHook('onRequest', async (req, reply) => {

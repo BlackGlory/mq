@@ -1,5 +1,5 @@
 import { beforeEach, afterEach, describe, it, expect } from 'vitest'
-import * as DAO from '@dao/data/mq/clear.js'
+import * as DAO from '@dao/mq/clear.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setMinimalRawMessage, setRawStats, hasRawStats, hasRawMessage } from './utils.js'
 

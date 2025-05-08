@@ -1,5 +1,5 @@
 import { beforeEach, afterEach, describe, it, expect } from 'vitest'
-import * as DAO from '@dao/data/mq/get-all-namespaces.js'
+import * as DAO from '@dao/mq/get-all-namespaces.js'
 import { initializeDatabases, clearDatabases } from '@test/utils.js'
 import { setRawStats } from './utils.js'
 import { toArray } from 'iterable-operator'

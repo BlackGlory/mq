@@ -1,5 +1,5 @@
 import { MapNullablePropsToOptional } from 'hotypes'
-import { getDatabase } from '@dao/config/database.js'
+import { getDatabase } from '@src/database.js'
 
 interface IRawConfiguration {
   namespace: string

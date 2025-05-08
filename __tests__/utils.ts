@@ -1,5 +1,4 @@
-import * as Config from '@dao/config/database.js'
-import * as Data from '@dao/data/database.js'
+import { openDatabase, prepareDatabase, closeDatabase } from '@src/database.js'
 import { resetCache } from '@env/cache.js'
 import { buildServer } from '@src/server.js'
 import Ajv from 'ajv'
@@ -26,16 +25,12 @@ export async function stopService(): Promise<void> {
 }
 
 export async function initializeDatabases(): Promise<void> {
-  Config.openDatabase()
-  await Config.prepareDatabase()
-
-  Data.openDatabase()
-  await Data.prepareDatabase()
+  openDatabase()
+  await prepareDatabase()
 }
 
 export function clearDatabases(): void {
-  Config.closeDatabase()
-  Data.closeDatabase()
+  closeDatabase()
 }
 
 function resetEnvironment(): void {
