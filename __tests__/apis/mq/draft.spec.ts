@@ -1,6 +1,6 @@
 import { beforeEach, afterEach, describe, test, expect } from 'vitest'
 import { startService, stopService, buildClient } from '@test/utils.js'
-import { getRawMessage } from '@test/dao/data/mq/utils.js'
+import { getRawMessage } from '@test/dao/mq/utils.js'
 
 beforeEach(startService)
 afterEach(stopService)
