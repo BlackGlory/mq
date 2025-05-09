@@ -3,13 +3,7 @@ import { isNumber } from '@blackglory/types'
 import { assert, Getter } from '@blackglory/prelude'
 import { getCache } from '@env/cache.js'
 import * as path from 'path'
-import { getAppRoot } from '@src/utils.js'
-
-export enum ListBasedAccessControl {
-  Disable
-, Whitelist
-, Blacklist
-}
+import { getAppRoot } from '@utils/get-app-root.js'
 
 export enum NodeEnv {
   Test
