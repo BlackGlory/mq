@@ -1,4 +1,4 @@
-import { ConfigurationDAO } from '@dao/configuration/index.js'
+import * as ConfigurationDAO from '@dao/configuration.js'
 import { IConfiguration } from '@src/contract.js'
 
 export function getAllNamespaces(): string[] {

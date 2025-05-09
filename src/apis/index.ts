@@ -1,24 +1,37 @@
 import { ImplementationOf } from 'delight-rpc'
-import * as MQ from './mq.js'
 import * as Configuration from './configuration.js'
 import { IAPI } from '@src/contract.js'
+import { abandon } from './abandon.js'
+import { complete } from './complete.js'
+import { draft } from './draft.js'
+import { fail } from './fail.js'
+import { get } from './get.js'
+import { getAllFailedMessageIds } from './get-all-failed-message-ids.js'
+import { getAllNamespaces } from './get-all-namespaces.js'
+import { order } from './order.js'
+import { renew } from './renew.js'
+import { renewAllFailedMessages } from './renew-all-failed-messages.js'
+import { set } from './set.js'
+import { stats } from './stats.js'
+import { clear } from './clear.js'
+import { abandonAllFailedMessages } from './abandon-all-failed-messages.js'
 
 export const API: ImplementationOf<IAPI> = {
   MQ: {
-    abandon: MQ.abandon
-  , abandonAllFailedMessages: MQ.abandonAllFailedMessages
-  , clear: MQ.clear
-  , complete: MQ.complete
-  , draft: MQ.draft
-  , fail: MQ.fail
-  , get: MQ.get
-  , getAllFailedMessageIds: MQ.getAllFailedMessageIds
-  , getAllNamespaces: MQ.getAllNamespaces
-  , order: MQ.order
-  , renew: MQ.renew
-  , renewAllFailedMessages: MQ.renewAllFailedMessages
-  , set: MQ.set
-  , stats: MQ.stats
+    abandon
+  , abandonAllFailedMessages
+  , clear
+  , complete
+  , draft
+  , fail
+  , get
+  , getAllFailedMessageIds
+  , getAllNamespaces
+  , order
+  , renew
+  , renewAllFailedMessages
+  , set
+  , stats
   }
 , Configuration: {
     get: Configuration.get

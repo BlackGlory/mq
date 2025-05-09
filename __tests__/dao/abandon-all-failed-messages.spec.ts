@@ -1,0 +1,46 @@
+import { beforeEach, afterEach, describe, it, expect } from 'vitest'
+import { abandonAllFailedMessages } from '@dao/abandon-all-failed-messages.js'
+import { initializeDatabases, clearDatabase } from '@test/utils.js'
+import { setMinimalRawMessage, setRawStats, getRawStats, hasRawMessage } from './utils.js'
+import { _setMockedTimestamp, _clearMockedTimestamp } from '@dao/utils/get-timestamp.js'
+
+beforeEach(initializeDatabases)
+afterEach(clearDatabase)
+
+beforeEach(() => _setMockedTimestamp(Date.now()))
+afterEach(_clearMockedTimestamp)
+
+describe('abandonAllFailedMessages', () => {
+  it('delete messages', () => {
+    const namespace = 'namespace'
+    const messageId = 'message-id'
+    setMinimalRawMessage({
+      namespace
+    , id: messageId
+    , state: 'failed'
+    , state_updated_at: 0
+    })
+    setRawStats({
+      namespace
+    , drafting: 0
+    , waiting: 0
+    , ordered: 0
+    , active: 0
+    , completed: 0
+    , failed: 1
+    })
+
+    const result = abandonAllFailedMessages(namespace)
+
+    expect(result).toBeUndefined()
+    expect(hasRawMessage(namespace, messageId)).toBe(false)
+    expect(getRawStats(namespace)).toMatchObject({
+      drafting: 0
+    , waiting: 0
+    , ordered: 0
+    , active: 0
+    , completed: 0
+    , failed: 0
+    })
+  })
+})

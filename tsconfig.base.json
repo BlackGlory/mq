@@ -8,13 +8,13 @@
   , "esModuleInterop": true
   , "baseUrl": "."
   , "paths": {
-      "@src/*": ["src/*"]
+      "@test/*": ["__tests__/*"]
     , "@dao/*": ["src/dao/*"]
     , "@apis/*": ["src/apis/*"]
     , "@env/*": ["src/env/*"]
-    , "@test/*": ["__tests__/*"]
     , "@services/*": ["src/services/*"]
     , "@utils/*": ["src/utils/*"]
+    , "@src/*": ["src/*"]
     }
   , "plugins" : [
       {
