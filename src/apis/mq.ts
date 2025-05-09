@@ -232,18 +232,27 @@ export function nextTick(): null {
 
     const draftingTimeout = configurations.draftingTimeout ?? 60_000
     if (draftingTimeout !== Infinity) {
-      MQDAO.rollbackOutdatedDraftingMessages(namespace, timestamp - draftingTimeout)
+      MQDAO.rollbackOutdatedDraftingMessages(
+        namespace
+      , timestamp - draftingTimeout
+      )
     }
 
     const orderedTimeout = configurations.orderedTimeout ?? 60_000
     if (orderedTimeout !== Infinity) {
-      const changed = MQDAO.rollbackOutdatedOrderedMessages(namespace, timestamp - orderedTimeout)
+      const changed = MQDAO.rollbackOutdatedOrderedMessages(
+        namespace
+      , timestamp - orderedTimeout
+      )
       if (changed) emit = true
     }
 
     const activeTimeout = configurations.activeTimeout ??  300_000
     if (activeTimeout !== Infinity) {
-      const changed = MQDAO.rollbackOutdatedActiveMessages(namespace, timestamp - activeTimeout)
+      const changed = MQDAO.rollbackOutdatedActiveMessages(
+        namespace
+      , timestamp - activeTimeout
+      )
       if (changed) emit = true
     }
 

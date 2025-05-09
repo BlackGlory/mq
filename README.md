@@ -50,8 +50,6 @@ volumes:
 ```ts
 ```
 
-所有API中的namespace都需要满足此正则表达式: `^[a-zA-Z0-9\.\-_]{0,255}$`
-
 ### Public
 #### producer
 ##### draft
