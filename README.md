@@ -48,309 +48,21 @@ volumes:
 
 ## API
 ```ts
-```
-
-### Public
-#### producer
-##### draft
-`POST /mq/<namespace>/messages`
-
-申请往特定消息队列放入消息, namespace用于标识消息队列.
-该动作创建一个drafting状态的message, 返回此message的id.
-
-需要按以下格式发送Payload:
-```ts
-{
-  priority: number | null // 数字越小, 优先级越高, 0是最高优先级, null是最低优先级.
+interface IConfiguration {
+  unique: boolean | null
+  draftingTimeout: number | null
+  orderedTimeout: number | null
+  activeTimeout: number | null
+  concurrency: number | null
 }
-```
 
-一个处于drafting状态的消息会在设定的超时时间后被删除, 需要生产者手动调用[[set]]以避免超时.
+interface IMessage {
+  type: string
+  payload: string
+  priority: number | null
+}
 
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl \
-  --request POST \
-  --header 'Content-Type: application/json' \
-  --data '{ "priority": null }' \
-  "http://localhost:8080/mq/$namespace/messages"
-#+END_SRC
-
-####### JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${namespace}/messages`, {
-  method: 'POST'
-, headers: { 'Content-Type': 'application/json' }
-, body: JSON.stringify({ priority: null })
-}).then(res => res.text())
-#+END_SRC
-
-##### <<set>>
-=PUT /mq/<namespace>/messages/<id>=
-
-发送消息正文并确认入列, 当消息的状态是drafting时, 转为waiting状态.
-若消息的状态是waiting, 可以再次调用此操作对消息内容进行更新.
-
-当消息不存在时, 会返回404状态码.
-当消息的状态不满足条件时(不是drafting, waiting中的任何一个), 会返回409状态码.
-当消息payload与其他已有消息重复时(需要将配置中的 =unique= 设为 =true=), 会返回409状态码.
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-  curl \
-    --request PUT \
-    --data "$msg" \
-    "http://localhost:8080/mq/$namespace/messages/$id"
-#+END_SRC
-
-####### JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${namespace}/messages/${id}`, {
-  method: 'PUT'
-, body: msg
-})
-#+END_SRC
-
-#### consumer
-##### order
-=GET /mq/<namespace>/messages=
-
-从特定消息队列取出消息, 优先级最高且最早的消息会先被取出.
-返回message id.
-如果没有可用的消息, 则会阻塞直到有可用的消息返回.
-如果消息队列遭到clear, 则会以404状态码中断阻塞.
-
-该操作会使消息从waiting状态转为ordered状态.
-一个处于ordered状态的消息会在设定的超时时间后以waiting状态重新入列, 优先级不会改变.
-需要消费者手动调用[[get]]以避免超时.
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl "http://localhost:8080/mq/$namespace/messages"
-#+END_SRC
-
-####### JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${namespace}/messages`).then(res => res.text())
-#+END_SRC
-
-##### <<get>>
-=GET /mq/<namespace>/messages/<id>=
-
-获取特定队列的指定消息, 仅当消息的状态为ordered时, 消息会从ordered状态转为active状态.
-一个处于active状态的消息会在设定的超时时间后以waiting状态重新入列, 优先级不会改变.
-需要消费者手动调用[[complete]], [[fail]]或[[abandon]]以避免超时.
-
-此操作是幂等的, 可以多次调用.
-
-响应头 =X-MQ-Priority= 显示该消息的优先级(=number | null=), 可用于在手动重新入列时使用.
-响应头 =X-MQ-State= 显示该消息在此请求响应后的状态(=string=), 可能为drafting, waiting, active, failed中的一个.
-
-当消息不存在时, 会返回404状态码.
-当消息的状态不满足条件时(不是waiting, ordered, active, failed中的任何一个), 会返回409状态码.
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl "http://localhost:8080/mq/$namespace/messages/$id"
-#+END_SRC
-
-####### JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${namespace}/messages/${id}`).then(res => res.text())
-#+END_SRC
-
-##### <<abandon>>
-=DELETE /mq/<namespace>/messages/<id>=
-
-废弃此消息, 消息将不会纳入统计结果.
-
-此操作是幂等的, 若遇到网络错误, 可以再次调用.
-
-当消息不存在时, 会返回404.
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl \
-  --request DELETE \
-  "http://localhost:8080/mq/$namespace/messages/$id"
-#+END_SRC
-
-####### JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${namespace}/messages/${id}`, {
-  method: 'DELETE'
-})
-#+END_SRC
-
-##### <<complete>>
-=PATCH /mq/<namespace>/messages/<id>/complete=
-
-当消息处于active状态时表示消息被消耗完毕, 消息将被统计为已完成的消息(completed).
-
-此操作是幂等的, 若遇到网络错误, 可以再次调用.
-
-当消息不存在时, 将返回404状态码.
-当消息的状态不满足条件时(不是active), 将返回409状态码.
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl \
-  --request PATCH \
-  "http://localhost:8080/mq/$namespace/messages/$id/complete"
-#+END_SRC
-
-####### JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${namespace}/messages/${id}/complete`, {
-  method: 'PATCH'
-})
-#+END_SRC
-
-##### <<fail>>
-=PATCH /mq/<namespace>/messages/<id>/fail=
-
-当消息处于active状态时表示消息在消耗过程中失败,
-消息将从active状态转为failed状态, 同时被统计为已失败的消息(failed).
-
-此操作是幂等的, 若遇到网络错误, 可以再次调用.
-
-当消息不存在时, 将返回404状态码.
-当消息的状态不满足条件时(不是active), 将返回409状态码.
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl \
-  --request PATCH \
-  "http://localhost:8080/mq/$namespace/messages/$id/fail"
-#+END_SRC
-
-####### JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${namespace}/messages/${id}/fail`, {
-  method: 'PATCH'
-})
-#+END_SRC
-
-##### renew
-=PATCH /mq/<namespace>/messages/<id>/renew=
-
-当消息处于failed状态时表示将消息重新入列, 消息将从failed状态转为waiting状态.
-
-此操作是幂等的, 若遇到网络错误, 可以再次调用.
-
-当消息不存在时, 将返回404状态码.
-当消息的状态不满足条件时(不是failed), 将返回409状态码.
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl \
-  --request PATCH \
-  "http://localhost:8080/mq/$namespace/messages/$id/renew"
-#+END_SRC
-
-####### JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${namespace}/messages/${id}/renew`, {
-  method: 'PATCH'
-})
-#+END_SRC
-
-##### get all failed message ids
-=GET /mq/<namespace>/failed-messages=
-
-列出所有处于failed状态的消息id.
-返回 =Array<string>=.
-
-此操作支持返回[[https://github.com/ndjson/ndjson-spec][ndjson]]格式的响应, 需要 =Accept: application/x-ndjson= 请求头.
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl "http://localhost:8080/mq/$namespace/failed-messages"
-#+END_SRC
-
-####### JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${namespace}/failed-messages`).then(res => res.json())
-#+END_SRC
-
-##### abandon all failed messages
-=DELETE /mq/<namespace>/failed-messages=
-
-将所有failed状态的消息废弃.
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl \
-  --request DELETE \
-  "http://localhost:8080/mq/$namespace/failed-messages"
-#+END_SRC
-
-####### JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${namespace}/failed-messages`, {
-  method: 'POST'
-})
-#+END_SRC
-
-##### renew all failed messages
-=PATCH /mq/<namespace>/failed-messages/renew=
-
-将所有failed状态的消息以FIFO的顺序转为waiting状态.
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl \
-  --request PATCH \
-  "http://localhost:8080/mq/$namespace/failed-messages/renew"
-#+END_SRC
-
-####### JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${namespace}/failed-messages/renew`, {
-  method: 'POST'
-})
-#+END_SRC
-
-#### <<clear>>
-=DELETE /mq/<namespace>=
-
-清空队列内的所有消息和统计信息.
-
-##### Example
-###### curl
-#+BEGIN_SRC sh
-curl \
-  --request DELETE \
-  "http://localhost:8080/mq/$namespace"
-#+END_SRC
-
-###### JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${namespace}`, {
-  method: 'DELETE'
-})
-#+END_SRC
-
-#### stats
-=GET /mq/<namespace>/stats=
-
-获取统计信息, 查看当前队列中对应状态的消息个数.
-由于completed状态的消息不会保留, 因此completed的值是由计数器统计的.
-除非调用[[clear]], 否则completed的数值将只会增长不会减少.
-
-#+BEGIN_SRC ts
-{
+interface IStats {
   namespace: string
   drafting: number
   waiting: number
@@ -359,176 +71,92 @@ await fetch(`http://localhost:8080/mq/${namespace}`, {
   completed: number
   failed: number
 }
-#+END_SRC
 
-##### Example
-###### curl
-#+BEGIN_SRC sh
-curl "http://localhost:8080/mq/$namespace/stats"
-#+END_SRC
+interface IAPI {
+  MQ: {
+    draft(namespace: string, priority: number | null): string
 
-###### JavaScript
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/mq/${namespace}/stats`).then(res => res.json())
-#+END_SRC
+    /**
+     * @throws {NotFound}
+     * @throws {BadMessageState}
+     * @throws {DuplicatePayload}
+     */
+    set(
+      namespace: string
+    , messageId: string
+    , type: string
+    , payload: string
+    ): null
 
-#### get all namespaces
-=GET /mq=
+    /**
+     * @throws {AbortError}
+     */
+    order(namespace: string, abortSignal: AbortSignal): Promise<string>
 
-获取所有有统计信息的队列namespace.
+    /**
+     * @throws {NotFound}
+     * @throws {BadMessageState}
+     */
+    get(namespace: string, messageId: string): IMessage
 
-返回 =Array<string>=.
+    /**
+     * @throws {NotFound}
+     */
+    abandon(namespace: string, messageId: string): null
 
-此操作支持返回[[https://github.com/ndjson/ndjson-spec][ndjson]]格式的响应, 需要 =Accept: application/x-ndjson= 请求头.
+    /**
+     * @throws {NotFound}
+     * @throws {BadMessageState}
+     */
+    complete(namespace: string, messageId: string): null
 
-##### Example
-###### curl
-#+BEGIN_SRC sh
-curl 'http://localhost:8080/mq'
-#+END_SRC
+    /**
+     * @throws {NotFound}
+     * @throws {BadMessageState}
+     */
+    fail(namespace: string, messageId: string): null
 
-###### JavaScript
-#+BEGIN_SRC js
-await fetch('http://localhost:8080/mq').then(res => res.json())
-#+END_SRC
+    /**
+     * @throws {NotFound}
+     * @throws {BadMessageState}
+     */
+    renew(namespace: string, messageId: string): null
 
-##### Example
-###### curl
-#+BEGIN_SRC sh
-curl 'http://localhost:8080/metrics'
-#+END_SRC
+    abandonAllFailedMessages(namespace: string): null
+    renewAllFailedMessages(namespace: string): null
 
-###### JavaScript
-#+BEGIN_SRC js
-await fetch('http://localhost:8080/metrics').then(res => res.json())
-#+END_SRC
+    getAllFailedMessageIds(namespace: string): string[]
+    getAllNamespaces(): string[]
 
-### Private
-#### 队列配置
-#+BEGIN_SRC ts
-{
-  unique: boolean | null // 队列是否对消息自动去重, null表示继承全局设置
-  draftingTimeout: number | null // 允许处于draft状态的秒数, null表示继承全局设置
-  orderedTimeout: number | null // 允许处于ordered状态的秒数, null表示继承全局设置
-  activeTimeout: number | null // 允许处于active状态的秒数, null表示继承全局设置
-  concurrency: number | null // 允许派发的并发任务数, null表示继承全局设置
+    clear(namespace: string): null
+    stats(namespace: string): IStats
+  }
+
+  Configuration: {
+    getAllNamespaces(): string[]
+    get(namespace: string): IConfiguration
+
+    setUnique(namespace: string, val: boolean): null
+    unsetUnique(namespace: string): null
+
+    setDraftingTimeout(namespace: string, val: number): null
+    unsetDraftingTimeout(namespace: string): null
+
+    setOrderedTimeout(namespace: string, val: number): null
+    unsetOrderedTimeout(namespace: string): null
+
+    setActiveTimeout(namespace: string, val: number): null
+    unsetActiveTimeout(namespace: string): null
+
+    setConcurrency(namespace: string, val: number): null
+    unsetConcurrency(namespace: string): null
+  }
 }
-#+END_SRC
 
-可用以下环境变量作为全局设置:
-- =MQ_UNIQUE=, 默认为 =false=.
-- =MQ_DRAFTING_TIMEOUT=, 默认为60秒.
-- =MQ_ORDERED_TIMEOUT=, 默认为60秒.
-- =MQ_ACTIVE_TIMEOUT=, 默认为300秒.
-- =MQ_CONCURRENCY=, 默认为无限.
-
-##### 获取所有具有配置的namespace
-=GET /admin/mq-with-config=
-
-返回由JSON表示的字符串数组 =string[]=.
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl \
-  --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq-with-config"
-#+END_SRC
-
-####### fetch
-#+BEGIN_SRC js
-await fetch('http://localhost:8080/admin/mq-with-config', {
-  headers: {
-    'Authorization': `Bearer ${adminPassword}`
-  }
-}).then(res => res.json())
-#+END_SRC
-
-##### 获取特定队列的配置
-=GET /admin/mq/<namespace>/config=
-
-返回JSON:
-#+BEGIN_SRC ts
-{
-  unique: boolean | null
-  draftingTimeout: number | null
-  orderedTimeout: number | null
-  activeTimeout: number | null
-  concurrency: number | null
-}
-#+END_SRC
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl \
-  --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$namespace/config"
-#+END_SRC
-
-####### fetch
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${namespace}/config`, {
-  headers: {
-    'Authorization': `Bearer ${adminPassword}`
-  }
-}).then(res => res.json())
-#+END_SRC
-
-##### 设置配置
-=PUT /admin/mq/<namespace>/config/unique=
-=PUT /admin/mq/<namespace>/config/drafting-timeout=
-=PUT /admin/mq/<namespace>/config/ordered-timeout=
-=PUT /admin/mq/<namespace>/config/active-timeout=
-=PUT /admin/mq/<namespace>/config/concurrency=
-
-Payload必须为对应的null以外的JSON值.
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl \
-  --request PUT \
-  --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  --header "Content-Type: application/json" \
-  --data "$UNIQUE" \
-  "http://localhost:8080/admin/mq/$namespace/config/unique"
-#+END_SRC
-
-####### fetch
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${namespace}/config/unique`, {
-  method: 'PUT'
-, headers: {
-    'Authorization': `Bearer ${adminPassword}`
-  , 'Content-Type': 'application/json'
-  }
-, body: JSON.stringify(unique)
-})
-#+END_SRC
-
-##### 移除配置
-=DELETE /admin/mq/<namespace>/config/unique=
-=DELETE /admin/mq/<namespace>/config/drafting-timeout=
-=DELETE /admin/mq/<namespace>/config/ordered-timeout=
-=DELETE /admin/mq/<namespace>/config/active-timeout=
-=DELETE /admin/mq/<namespace>/config/concurrency=
-
-###### Example
-####### curl
-#+BEGIN_SRC sh
-curl \
-  --request DELETE \
-  --header "Authorization: Bearer $ADMIN_PASSWORD" \
-  "http://localhost:8080/admin/mq/$namespace/config/unique"
-#+END_SRC
-
-####### fetch
-#+BEGIN_SRC js
-await fetch(`http://localhost:8080/admin/mq/${namespace}/config/unique`, {
-  method: 'DELETE'
-})
-#+END_SRC
+class NotFound extends CustomError {}
+class BadMessageState extends CustomError {}
+class DuplicatePayload extends CustomError {}
+```
 
 ## 环境变量
 ### `MQ_HOST`, `MQ_PORT`

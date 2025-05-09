@@ -14,17 +14,11 @@ export const API: ImplementationOf<IAPI> = {
   , get: MQ.get
   , getAllFailedMessageIds: MQ.getAllFailedMessageIds
   , getAllNamespaces: MQ.getAllNamespaces
-  , nextTick: MQ.nextTick
   , order: MQ.order
   , renew: MQ.renew
   , renewAllFailedMessages: MQ.renewAllFailedMessages
   , set: MQ.set
   , stats: MQ.stats
-  , PendingOrderControllerRegistry: {
-      abortAll: MQ.PendingOrderControllerRegistry.abortAll
-    , register: MQ.PendingOrderControllerRegistry.register
-    , unregister: MQ.PendingOrderControllerRegistry.unregister
-    }
   }
 , Configuration: {
     get: Configuration.get

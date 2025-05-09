@@ -1,18 +1,5 @@
 import { CustomError } from '@blackglory/errors'
 
-export interface ITokenInfo {
-  token: string
-  produce: boolean
-  consume: boolean
-  clear: boolean
-}
-
-export interface ITokenPolicy {
-  produceTokenRequired: boolean | null
-  consumeTokenRequired: boolean | null
-  clearTokenRequired: boolean | null
-}
-
 export interface IConfiguration {
   unique: boolean | null
   draftingTimeout: number | null
@@ -39,12 +26,6 @@ export interface IStats {
 
 export interface IAPI {
   MQ: {
-    PendingOrderControllerRegistry: {
-      register(namespace: string, controller: AbortController): null
-      unregister(namespace: string, controller: AbortController): null
-      abortAll(namespace: string): null
-    }
-
     draft(namespace: string, priority: number | null): string
 
     /**
@@ -98,7 +79,6 @@ export interface IAPI {
 
     getAllFailedMessageIds(namespace: string): string[]
     getAllNamespaces(): string[]
-    nextTick(): null
 
     clear(namespace: string): null
     stats(namespace: string): IStats
