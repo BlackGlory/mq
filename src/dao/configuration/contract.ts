@@ -1,5 +1,5 @@
-import { IConfiguration } from '@api/contract.js'
-export { IConfiguration } from '@api/contract.js'
+import { IConfiguration } from '@src/contract.js'
+export { IConfiguration } from '@src/contract.js'
 
 export interface IConfigurationDAO {
   getAllNamespacesWithConfiguration(): string[]

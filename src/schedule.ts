@@ -1,4 +1,4 @@
-import { nextTick } from '@api/mq.js'
+import { nextTick } from '@apis/mq.js'
 import { AbortError } from 'extra-abort'
 import { setDynamicTimeoutLoop } from 'extra-timers'
 import ms from 'ms'

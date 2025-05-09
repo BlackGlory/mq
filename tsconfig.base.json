@@ -10,7 +10,7 @@
   , "paths": {
       "@src/*": ["src/*"]
     , "@dao/*": ["src/dao/*"]
-    , "@api/*": ["src/api/*"]
+    , "@apis/*": ["src/apis/*"]
     , "@env/*": ["src/env/*"]
     , "@test/*": ["__tests__/*"]
     , "@services/*": ["src/services/*"]

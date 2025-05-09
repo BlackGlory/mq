@@ -14,8 +14,8 @@ export default {
   , filename: 'index.cjs'
   }
 , externals: {
-    'long': 'commonjs long'
-  , 'app-root-path': 'commonjs app-root-path'
-  , 'better-sqlite3': 'commonjs better-sqlite3'
+    'better-sqlite3': 'commonjs better-sqlite3'
+  , 'bufferutil': 'commonjs bufferutil'
+  , 'utf-8-validate': 'commonjs utf-8-validate'
   }
 }

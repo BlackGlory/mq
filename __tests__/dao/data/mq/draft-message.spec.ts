@@ -1,11 +1,11 @@
 import { beforeEach, afterEach, describe, it, expect } from 'vitest'
 import * as DAO from '@dao/mq/draft-message.js'
-import { initializeDatabases, clearDatabases } from '@test/utils.js'
+import { initializeDatabases, clearDatabase } from '@test/utils.js'
 import { getRawMessage, getRawStats } from './utils.js'
 import { _setMockedTimestamp, _clearMockedTimestamp, getTimestamp } from '@dao/mq/utils/get-timestamp.js'
 
 beforeEach(initializeDatabases)
-afterEach(clearDatabases)
+afterEach(clearDatabase)
 
 beforeEach(() => _setMockedTimestamp(Date.now()))
 afterEach(_clearMockedTimestamp)

@@ -1,6 +1,6 @@
 import { CustomError, CustomErrorConstructor } from '@blackglory/errors'
-import { IMessage, IStats } from '@api/contract.js'
-export { IMessage, IStats } from '@api/contract.js'
+import { IMessage, IStats } from '@src/contract.js'
+export { IMessage, IStats } from '@src/contract.js'
 
 export interface IMQDAO {
   draftMessage(namespace: string, messageId: string, priority?: number): void

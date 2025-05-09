@@ -1,57 +1,48 @@
-import fastify from 'fastify'
-import cors from '@fastify/cors'
-import { routes as admin } from '@services/admin/index.js'
-import { routes as mq } from '@services/mq/index.js'
-import { routes as robots } from '@services/robots/index.js'
-import { routes as health } from '@services/health/index.js'
-import { NODE_ENV, NodeEnv } from '@env/index.js'
-import { api } from '@api/index.js'
-import path from 'path'
+import { WS_HEARTBEAT_INTERVAL, NODE_ENV, NodeEnv } from '@env/index.js'
+import { API } from '@apis/index.js'
+import { WebSocket, WebSocketServer } from 'ws'
+import { createServer, Level } from '@delight-rpc/websocket'
 import { readJSONFileSync } from 'extra-filesystem'
-import { isntUndefined, isString } from '@blackglory/types'
-import { assert } from '@blackglory/errors'
-import { getAppRoot } from '@src/utils.js'
-import semver from 'semver'
+import { Destructor } from 'extra-defer'
+import { setDynamicTimeoutLoop } from 'extra-timers'
+import { getPackageFilename } from '@utils/get-package-filename.js'
+import { pass } from '@blackglory/prelude'
 
-const pkg = readJSONFileSync<{ version: string }>(
-  path.join(getAppRoot(), 'package.json')
-)
+export function startServer(host: string, port: number): () => Promise<void> {
+  const pkg = readJSONFileSync<{
+    version: `${number}.${number}.${number}`
+  }>(getPackageFilename())
 
-type LoggerLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal'
+  const sockets = new Set<WebSocket>()
 
-export async function buildServer() {
-  const server = fastify({
-    logger: getLoggerOptions()
-  , maxParamLength: 600
-  , forceCloseConnections: true
+  const server = new WebSocketServer({ host, port })
+  server.on('connection', socket => {
+    const destructor = new Destructor()
+
+    sockets.add(socket)
+    destructor.defer(() => sockets.delete(socket))
+
+    const close = createServer(API, socket, {
+      loggerLevel: NODE_ENV() === NodeEnv.Test ? Level.None : Level.Info
+    , version: pkg.version
+    })
+    destructor.defer(close)
+
+    const cancelHeartbeatTimer: (() => void) | null = WS_HEARTBEAT_INTERVAL() > 0
+      ? setDynamicTimeoutLoop(WS_HEARTBEAT_INTERVAL(), () => socket.ping())
+      : null
+    destructor.defer(() => cancelHeartbeatTimer?.())
+
+    socket.once('close', () => {
+      destructor.execute().catch(pass)
+    })
   })
-  server.addHook('onRequest', async (req, reply) => {
-    reply.header('Cache-Control', 'private, no-cache')
+
+  return () => new Promise<void>((resolve, reject) => {
+    server.close(err => {
+      if (err) return reject(err)
+      resolve()
+    })
+    server.clients.forEach(socket => socket.close())
   })
-  server.addHook('onRequest', async (req, reply) => {
-    const acceptVersion = req.headers['accept-version']
-    if (isntUndefined(acceptVersion)) {
-      assert(isString(acceptVersion), 'Accept-Version must be string')
-      if (!semver.satisfies(pkg.version, acceptVersion)) {
-        return reply.status(400).send()
-      }
-    }
-  })
-
-  await server.register(cors, { origin: true })
-  await server.register(admin, { api: api })
-  await server.register(mq, { api: api })
-  await server.register(robots)
-  await server.register(health)
-
-  return server
-}
-
-function getLoggerOptions(): { level: LoggerLevel } | boolean {
-  switch (NODE_ENV()) {
-    case NodeEnv.Test: return false
-    case NodeEnv.Production: return { level: 'error' }
-    case NodeEnv.Development: return { level: 'trace' }
-    default: return false
-  }
 }

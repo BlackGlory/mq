@@ -1,6 +1,6 @@
 import { ValueGetter } from 'value-getter'
 import { isNumber } from '@blackglory/types'
-import { Getter } from '@blackglory/prelude'
+import { assert, Getter } from '@blackglory/prelude'
 import { getCache } from '@env/cache.js'
 import * as path from 'path'
 import { getAppRoot } from '@src/utils.js'
@@ -48,6 +48,14 @@ export const PORT: Getter<number> =
     .memoize(getCache)
     .get()
 
+export const WS_HEARTBEAT_INTERVAL: Getter<number> =
+  env('MQ_WS_HEARTBEAT_INTERVAL')
+    .convert(toInteger)
+    .default(0)
+    .assert(shouldBePositiveOrZero)
+    .memoize(getCache)
+    .get()
+
 function env(name: string): ValueGetter<string | undefined> {
   return new ValueGetter(name, () => process.env[name])
 }
@@ -55,4 +63,8 @@ function env(name: string): ValueGetter<string | undefined> {
 function toInteger(val: string | number | undefined ): number | undefined {
   if (isNumber(val)) return val
   if (val) return Number.parseInt(val, 10)
+}
+
+function shouldBePositiveOrZero(val: number) {
+  assert(val === 0 || val > 0, 'should be positive or zero')
 }
