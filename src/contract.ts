@@ -42,17 +42,17 @@ export interface IQueueConfig extends JSONObject {
   unique: boolean
 
   /**
-   * 允许消息处于`drafting`状态的秒数.
+   * 允许消息处于`drafting`状态的毫秒数.
    */
   draftingTimeout: number
 
   /**
-   * 允许消息处于`ordered`状态的秒数.
+   * 允许消息处于`ordered`状态的毫秒数.
    */
   orderedTimeout: number
 
   /**
-   * 允许消息处于`active`状态的秒数.
+   * 允许消息处于`active`状态的毫秒数.
    */
   activeTimeout: number
 
