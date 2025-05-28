@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/BlackGlory/mq/compare/v0.6.2...v0.7.0) (2025-05-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* Rewritten
+* HTTP => WebSocket
+* Changed the database schema
+* Node.js v16 => v22
+* - Removed JSON schema validation.
+- Removed access control.
+
+### Features
+
+* rewrite ([30f2c3c](https://github.com/BlackGlory/mq/commit/30f2c3c06d89771f0e6385fe379b5f94155bfa23))
+
+
+* http => websocket ([431190a](https://github.com/BlackGlory/mq/commit/431190aa24a6b644659ce2276e71791b1e422a7a))
+* merge databases ([3f8ad77](https://github.com/BlackGlory/mq/commit/3f8ad7785ae44e237c92bb84b805b874da0a7e3a))
+* remove JSON schema validation, access control ([eced90c](https://github.com/BlackGlory/mq/commit/eced90c38ff48c437f434792c59c6dd3c433729b))
+* upgrade dependencies ([c453baa](https://github.com/BlackGlory/mq/commit/c453baa66e53bfa5dccf640e03b7faadf9828956))
+
 ### [0.6.2](https://github.com/BlackGlory/mq/compare/v0.6.1...v0.6.2) (2023-02-02)
 
 ### [0.6.1](https://github.com/BlackGlory/mq/compare/v0.6.0...v0.6.1) (2023-01-31)
