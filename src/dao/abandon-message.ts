@@ -1,42 +1,81 @@
 import { getDatabase } from '@src/database.js'
-import { NotFound } from '@src/contract.js'
-import {
-  downcreaseDrafting
-, downcreaseWaiting
-, downcreaseOrdered
-, downcreaseActive
-, downcreaseFailed
-} from './utils/stats.js'
-import { State } from './utils/state.js'
+import { AdditionalBehavior, MessageNotFound, MessageState, QueueNotFound } from '@src/contract.js'
+import { increaseAbandoned, increaseStatByState } from './increase-queue-stats.js'
+import { getQueueConfiguration } from './get-queue-configuration.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
+import { removeMessageAllSlots } from './remvoe-message-all-slots.js'
+import { removeMessage } from './remove-message.js'
+import { getMessageState } from './get-message-state.js'
+import { isNull } from '@blackglory/prelude'
 
 /**
- * @throws {NotFound}
+ * @throws {QueueNotFound}
+ * @throws {MessageNotFound}
  */
-export const abandonMessage = withLazyStatic((namespace: string, id: string): void => {
-  lazyStatic(() => getDatabase().transaction((namespace: string, id: string) => {
-    const row = lazyStatic(() => getDatabase().prepare(`
-      SELECT state
-        FROM mq_message
-       WHERE namespace = $namespace
-         AND id = $id;
-    `), [getDatabase()]).get({ namespace, id }) as { state: State } | undefined
-    if (!row) throw new NotFound()
+export const abandonMessage = withLazyStatic((
+  queueId: string
+, messageId: string
+, timestamp: number
+): {
+  state: MessageState
+  removed: boolean
+} => {
+  return lazyStatic(() => getDatabase().transaction((
+    queueId: string
+  , messageId: string
+  , timestamp: number
+  ): {
+    state: MessageState
+    removed: boolean
+  } => {
+    const config = getQueueConfiguration(queueId)
+    if (!config) throw new QueueNotFound()
 
-    const state = row['state']
+    const oldMessageState = getMessageState(queueId, messageId)
+    if (isNull(oldMessageState)) throw new MessageNotFound()
 
-    lazyStatic(() => getDatabase().prepare(`
-      DELETE FROM mq_message
-       WHERE namespace = $namespace
-         AND id = $id;
-    `), [getDatabase()]).run({ namespace, id })
+    lazyStatic(() => getDatabase().prepare<
+      {
+        queueId: string
+        messageId: string
+        stateUpdatedAt: number
+      }
+    , { state: MessageState }
+    >(`
+      UPDATE mq_message
+         SET state = ${MessageState.Abandoned}
+           , state_updated_at = $stateUpdatedAt
+       WHERE queue_id = $queueId
+         AND id = $messageId;
+    `), [getDatabase()]).run({
+      queueId
+    , messageId
+    , stateUpdatedAt: timestamp
+    })
 
-    switch (state) {
-      case State.Drafting: downcreaseDrafting(namespace); break
-      case State.Waiting: downcreaseWaiting(namespace); break
-      case State.Ordered: downcreaseOrdered(namespace); break
-      case State.Active: downcreaseActive(namespace); break
-      case State.Failed: downcreaseFailed(namespace); break
+    increaseStatByState(queueId, oldMessageState, -1)
+    increaseAbandoned(queueId, 1)
+
+    let removed = false
+    switch (config.behaviorWhenAbandoned) {
+      case AdditionalBehavior.RemoveMessage: {
+        removed = true
+
+        removeMessage(queueId, messageId)
+        increaseAbandoned(queueId, 1)
+
+        break
+      }
+      case AdditionalBehavior.RemoveAllSlots: {
+        removeMessageAllSlots(queueId, messageId)
+        
+        break
+      }
     }
-  }), [getDatabase()])(namespace, id)
+
+    return {
+      state: oldMessageState
+    , removed
+    }
+  }), [getDatabase()])(queueId, messageId, timestamp)
 })

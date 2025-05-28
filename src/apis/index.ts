@@ -1,50 +1,43 @@
 import { ImplementationOf } from 'delight-rpc'
-import * as Configuration from './configuration.js'
 import { IAPI } from '@src/contract.js'
-import { abandon } from './abandon.js'
-import { complete } from './complete.js'
-import { draft } from './draft.js'
-import { fail } from './fail.js'
-import { get } from './get.js'
-import { getAllFailedMessageIds } from './get-all-failed-message-ids.js'
-import { getAllNamespaces } from './get-all-namespaces.js'
-import { order } from './order.js'
-import { renew } from './renew.js'
-import { renewAllFailedMessages } from './renew-all-failed-messages.js'
-import { set } from './set.js'
-import { stats } from './stats.js'
-import { clear } from './clear.js'
+import { getAllQueueIds } from './get-all-queue-ids.js'
+import { getQueue } from './get-queue.js'
+import { setQueue } from './set-queue.js'
+import { removeQueue } from './remove-queue.js'
+import { getQueueStats } from './get-queue-stats.js'
+import { resetQueue } from './reset-queue.js'
+import { draftMessage} from './draft-message.js'
+import { setMessageSlot } from './set-message-slot.js'
+import { orderMessage } from './order-message.js'
+import { getMessage } from './get-message.js'
+import { completeMessage } from './complete-message.js'
+import { failMessage } from './fail-message.js'
+import { renewMessage } from './renew-message.js'
+import { abandonMessage } from './abandon-message.js'
+import { removeMessage } from './remove-message.js'
 import { abandonAllFailedMessages } from './abandon-all-failed-messages.js'
+import { renewAllFailedMessages } from './renew-all-failed-messages.js'
+import { getMessageIdsByState } from './get-message-ids-by-state.js'
+import { clearMessagesByState } from './clear-messages-by-state.js'
 
 export const API: ImplementationOf<IAPI> = {
-  MQ: {
-    abandon
-  , abandonAllFailedMessages
-  , clear
-  , complete
-  , draft
-  , fail
-  , get
-  , getAllFailedMessageIds
-  , getAllNamespaces
-  , order
-  , renew
-  , renewAllFailedMessages
-  , set
-  , stats
-  }
-, Configuration: {
-    get: Configuration.get
-  , getAllNamespaces: Configuration.getAllNamespaces
-  , setActiveTimeout: Configuration.setActiveTimeout
-  , setConcurrency: Configuration.setConcurrency
-  , setDraftingTimeout: Configuration.setDraftingTimeout
-  , setOrderedTimeout: Configuration.setOrderedTimeout
-  , setUnique: Configuration.setUnique
-  , unsetActiveTimeout: Configuration.unsetActiveTimeout
-  , unsetConcurrency: Configuration.unsetConcurrency
-  , unsetDraftingTimeout: Configuration.unsetDraftingTimeout
-  , unsetOrderedTimeout: Configuration.unsetOrderedTimeout
-  , unsetUnique: Configuration.unsetUnique
-  }
+  getAllQueueIds
+, getQueue
+, setQueue
+, removeQueue
+, getQueueStats
+, resetQueue
+, draftMessage
+, setMessageSlot
+, orderMessage
+, getMessage
+, completeMessage
+, failMessage
+, renewMessage
+, abandonMessage
+, removeMessage
+, abandonAllFailedMessages
+, renewAllFailedMessages
+, getMessageIdsByState
+, clearMessagesByState
 }

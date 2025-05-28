@@ -1,49 +1,66 @@
 import { getDatabase } from '@src/database.js'
-import { getTimestamp } from './utils/get-timestamp.js'
-import { downcreaseWaiting, increaseOrdered } from './utils/stats.js'
-import { stats } from './stats.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
+import { getQueueConfiguration } from './get-queue-configuration.js'
+import { MessageState, QueueNotFound } from '@src/contract.js'
+import { getQueueStats } from './get-queue-stats.js'
+import { increaseOrdered, increaseWaiting } from './increase-queue-stats.js'
 
-export const orderMessage = withLazyStatic(function (
-  namespace: string
-, concurrency: number
-): string | null {
-  return lazyStatic(() => getDatabase().transaction((namespace: string) => {
-    const { active, ordered } = stats(namespace)
-    if (active + ordered >= concurrency) return null
+/**
+ * @throws {QueueNotFound}
+ */
+export const orderMessage = withLazyStatic((
+  queueId: string
+, timestamp: number
+): string | null => {
+  return lazyStatic(() => getDatabase().transaction((
+    queueId: string
+  , timestamp: number
+  ): string | null => {
+    const config = getQueueConfiguration(queueId)
+    if (!config) throw new QueueNotFound()
+    const concurrency = config.concurrency ?? Infinity
 
-    return order(namespace, getTimestamp())
-  }), [getDatabase()])(namespace)
-})
+    const stats = getQueueStats(queueId)
+    if (!stats) throw new QueueNotFound()
+    if (stats.active + stats.ordered >= concurrency) return null
 
-const order = withLazyStatic(function (namespace: string, now: number): string | null {
-  const row = lazyStatic(() => getDatabase().prepare(`
-    SELECT id
-      FROM mq_message
-     WHERE namespace = $namespace
-       AND state = 'waiting'
-     ORDER BY priority         ASC NULLS LAST
-            , state_updated_at ASC
-            , rowid            ASC
-     LIMIT 1;
-  `), [getDatabase()]).get({ namespace }) as { id: string } | undefined
-  if (!row) return null
+    const row = lazyStatic(() => getDatabase().prepare<
+      { queueId: string }
+    , { id: string }
+    >(`
+      SELECT id
+        FROM mq_message
+       WHERE queue_id = $queueId
+         AND state = ${MessageState.Waiting}
+       ORDER BY priority         DESC NULLS LAST
+              , state_updated_at ASC
+              , rowid            ASC
+       LIMIT 1;
+    `), [getDatabase()]).get({ queueId })
+    if (!row) return null
 
-  const id = row['id']
-  lazyStatic(() => getDatabase().prepare(`
-    UPDATE mq_message
-       SET state = 'ordered'
-         , state_updated_at = $stateUpdatedAt
-     WHERE namespace = $namespace
-       AND id = $id;
-  `), [getDatabase()]).run({
-    namespace
-  , id
-  , stateUpdatedAt: now
-  })
+    const messageId = row['id']
+    lazyStatic(() => getDatabase().prepare<
+      {
+        queueId: string
+        messageId: string
+        stateUpdatedAt: number
+      }
+    >(`
+      UPDATE mq_message
+         SET state = ${MessageState.Ordered}
+           , state_updated_at = $stateUpdatedAt
+       WHERE queue_id = $queueId
+         AND id = $messageId;
+    `), [getDatabase()]).run({
+      queueId
+    , messageId
+    , stateUpdatedAt: timestamp
+    })
 
-  downcreaseWaiting(namespace)
-  increaseOrdered(namespace)
+    increaseWaiting(queueId, -1)
+    increaseOrdered(queueId, 1)
 
-  return id
+    return messageId
+  }), [getDatabase()])(queueId, timestamp)
 })

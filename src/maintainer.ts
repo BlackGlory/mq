@@ -1,57 +1,94 @@
-import { toArray } from '@blackglory/prelude'
-import { getConfiguration } from '@dao/configuration.js'
-import { getAllWorkingNamespaces } from '@dao/get-all-working-namespaces.js'
-import { rollbackOutdatedActiveMessages, rollbackOutdatedDraftingMessages, rollbackOutdatedOrderedMessages } from '@dao/rollback-outdated-messages.js'
-import { setDynamicTimeoutLoop } from 'extra-timers'
-import * as SignalDAO from '@dao/signal.js'
-import ms from 'ms'
+import { getQueueConfiguration } from '@dao/get-queue-configuration.js'
+import { getAllWorkingQueueIds } from '@dao/get-all-working-queue-ids.js'
+import { eventHub, Event } from '@src/event-hub.js'
+import { SyncDestructor } from 'extra-defer'
+import { getTimestamp } from '@utils/get-timestamp.js'
+import { removeTimedOutDraftingMessages } from '@dao/remove-timed-out-drafting-messsages.js'
+import { renewTimedOutOrderedMessages } from '@dao/renew-timed-out-ordered-messages.js'
+import { renewTimedOutActiveMessages } from '@dao/renew-timed-out-active-messages.js'
+import { getClosestTimeoutTimestamp } from '@dao/get-closest-timeout-timestamp.js'
+import { setSchedule } from 'extra-timers'
+import { isntNull } from 'extra-utils'
+
+const queueIdToCancelSchedule: Map<string, () => void> = new Map()
 
 export function startMaintainer(): () => void {
-  const stopTickLoop = setDynamicTimeoutLoop(ms('1s'), nextTick)
+  const destructor = new SyncDestructor()
 
-  return () => stopTickLoop()
-}
+  destructor.defer(eventHub.onGlobal(Event.QueueSet, queueId => {
+    rollbackTimedOutMessages(queueId, getTimestamp())
 
-export function nextTick(): null {
-  const ids = toArray(getAllWorkingNamespaces())
-  for (const id of ids) {
-    nextTick(id)
+    updateSchedule(queueId)
+  }))
+
+  destructor.defer(eventHub.onGlobal(Event.QueueReset, queueId => {
+    updateSchedule(queueId)
+  }))
+
+  destructor.defer(eventHub.onGlobal(Event.QueueRemoved, queueId => {
+    updateSchedule(queueId)
+  }))
+
+  destructor.defer(eventHub.onGlobal(Event.DraftingMessageAdded, queueId => {
+    updateSchedule(queueId)
+  }))
+
+  destructor.defer(eventHub.onGlobal(Event.MessageStateWaitingToOrdered, queueId => {
+    updateSchedule(queueId)
+  }))
+
+  destructor.defer(eventHub.onGlobal(Event.MessageStateOrderedToActive, queueId => {
+    updateSchedule(queueId)
+  }))
+
+  const queueIds = getAllWorkingQueueIds()
+  const timestamp = getTimestamp()
+  for (const queueId of queueIds) {
+    rollbackTimedOutMessages(queueId, timestamp)
+
+    updateSchedule(queueId)
   }
 
-  return null
+  return () => {
+    destructor.execute()
 
-  function nextTick(namespace: string): void {
-    let emit = false
-    const timestamp = Date.now()
+    queueIdToCancelSchedule.forEach(cancel => cancel())
+    queueIdToCancelSchedule.clear()
+  }
+}
 
-    const configurations = getConfiguration(namespace)
+function updateSchedule(queueId: string): void {
+  const cancelSchedule = queueIdToCancelSchedule.get(queueId)
+  cancelSchedule?.()
+  queueIdToCancelSchedule.delete(queueId)
 
-    const draftingTimeout = configurations.draftingTimeout ?? 60_000
-    if (draftingTimeout !== Infinity) {
-      rollbackOutdatedDraftingMessages(
-        namespace
-      , timestamp - draftingTimeout
-      )
-    }
+  const timestamp = getClosestTimeoutTimestamp(queueId)
+  if (isntNull(timestamp)) {
+    const cancelSchedule = setSchedule(timestamp, () => {
+      rollbackTimedOutMessages(queueId, getTimestamp())
 
-    const orderedTimeout = configurations.orderedTimeout ?? 60_000
-    if (orderedTimeout !== Infinity) {
-      const changed = rollbackOutdatedOrderedMessages(
-        namespace
-      , timestamp - orderedTimeout
-      )
-      if (changed) emit = true
-    }
+      updateSchedule(queueId)
+    })
+    queueIdToCancelSchedule.set(queueId, cancelSchedule)
+  }
+}
 
-    const activeTimeout = configurations.activeTimeout ??  300_000
-    if (activeTimeout !== Infinity) {
-      const changed = rollbackOutdatedActiveMessages(
-        namespace
-      , timestamp - activeTimeout
-      )
-      if (changed) emit = true
-    }
+function rollbackTimedOutMessages(queueId: string, timestamp: number): void {
+  const config = getQueueConfiguration(queueId)
+  if (!config) return
 
-    if (emit) SignalDAO.emit(namespace)
+  const draftingTimeout = config.draftingTimeout
+  if (removeTimedOutDraftingMessages(queueId, timestamp, draftingTimeout)) {
+    eventHub.emit(queueId, Event.DraftingMessageRemoved)
+  }
+
+  const orderedTimeout = config.orderedTimeout
+  if (renewTimedOutOrderedMessages(queueId, timestamp, orderedTimeout)) {
+    eventHub.emit(queueId, Event.MessageStateOrderedToWaiting)
+  }
+
+  const activeTimeout = config.activeTimeout
+  if (renewTimedOutActiveMessages(queueId, timestamp, activeTimeout)) {
+    eventHub.emit(queueId, Event.MessageStateActiveToWaiting)
   }
 }

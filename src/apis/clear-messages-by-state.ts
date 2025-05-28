@@ -1,0 +1,65 @@
+import { clearMessagesByState as _clearMessagesByState } from '@dao/clear-messages-by-state.js'
+import { hasQueue } from '@dao/has-queue.js'
+import { MessageState, QueueNotFound } from '@src/contract.js'
+import { getDatabase } from '@src/database.js'
+import { lazyStatic, withLazyStatic } from 'extra-lazy'
+import { eventHub, Event } from '@src/event-hub.js'
+
+/**
+ * @throws {QueueNotFound}
+ */
+export const clearMessagesByState = withLazyStatic((
+  queueId: string
+, state: MessageState
+): null => {
+  const changed = lazyStatic(() => getDatabase().transaction((
+    queueId: string
+  , state: MessageState
+  ): boolean => {
+    if (!hasQueue(queueId)) throw new QueueNotFound()
+
+    return _clearMessagesByState(queueId, state)
+  }), [getDatabase()])(queueId, state)
+
+  if (changed) {
+    switch (state) {
+      case MessageState.Drafting: {
+        eventHub.emit(queueId, Event.DraftingMessageRemoved)
+
+        break
+      }
+      case MessageState.Waiting: {
+        eventHub.emit(queueId, Event.WaitingMessageRemoved)
+
+        break
+      }
+      case MessageState.Ordered: {
+        eventHub.emit(queueId, Event.OrderedMessageRemoved)
+
+        break
+      }
+      case MessageState.Active: {
+        eventHub.emit(queueId, Event.ActiveMessageRemoved)
+
+        break
+      }
+      case MessageState.Failed: {
+        eventHub.emit(queueId, Event.FailedMessageRemoved)
+
+        break
+      }
+      case MessageState.Completed: {
+        eventHub.emit(queueId, Event.CompletedMessageRemoved)
+
+        break
+      }
+      case MessageState.Abandoned: {
+        eventHub.emit(queueId, Event.AbandonedMessageRemoved)
+
+        break
+      }
+    }
+  }
+
+  return null
+})

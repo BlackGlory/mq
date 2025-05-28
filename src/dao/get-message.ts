@@ -1,76 +1,101 @@
 import { getDatabase } from '@src/database.js'
-import { NotFound, BadMessageState, IMessage } from '@src/contract.js'
-import { getTimestamp } from './utils/get-timestamp.js'
-import { downcreaseOrdered, increaseActive } from './utils/stats.js'
-import { State } from './utils/state.js'
+import { IMessage, MessageState } from '@src/contract.js'
+import { increaseOrdered, increaseActive } from './increase-queue-stats.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
-import { assert, isntNull } from '@blackglory/prelude'
+import { fromEntries, isntNull } from 'extra-utils'
 
-/**
- * @throws {NotFound}
- * @throws {BadMessageState}
- */
-export const getMessage = withLazyStatic((namespace: string, id: string): IMessage => {
-  return lazyStatic(() => getDatabase().transaction((namespace: string, id: string) => {
-    const timestamp = getTimestamp()
-    const makeMessageActive = lazyStatic(() => getDatabase().prepare(`
-      UPDATE mq_message
-          SET state = 'active'
-            , state_updated_at = $stateUpdatedAt
-        WHERE namespace = $namespace
-          AND id = $id;
-    `), [getDatabase()])
-
-    const row = lazyStatic(() => getDatabase().prepare(`
-      SELECT type
-           , payload
-           , state
+export const getMessage = withLazyStatic((
+  queueId: string
+, messageId: string
+, timestamp: number
+): {
+  message: IMessage
+  orderedToActive: boolean
+} | null => {
+  return lazyStatic(() => getDatabase().transaction((
+    queueId: string
+  , messageId: string
+  , timestamp: number
+  ): {
+    message: IMessage
+    orderedToActive: boolean
+  } | null => {
+    const messageRow = lazyStatic(() => getDatabase().prepare<
+      {
+        queueId: string
+        messageId: string
+      }
+    , {
+        state: MessageState
+        priority: number | null
+      }
+    >(`
+      SELECT state
            , priority
         FROM mq_message
-       WHERE namespace = $namespace
-         AND id = $id;
+       WHERE queue_id = $queueId
+         AND id = $messageId;
     `), [getDatabase()])
-      .get({ namespace, id }) as {
-        type: string | null
-        payload: string | null
-        state: State
-        priority: number | null
-      } | undefined
-    if (!row) throw new NotFound()
+      .get({ queueId, messageId })
+    if (!messageRow) return null
+    let state = messageRow.state
+    let orderedToActive = false
 
-    const state = row['state']
-    switch(state) {
-      case State.Drafting: {
-        throw new BadMessageState(
-          State.Waiting
-        , State.Ordered
-        , State.Active
-        , State.Failed
-        )
+    const activeMessage = lazyStatic(() => getDatabase().prepare<
+      {
+        queueId: string
+        messageId: string
+        stateUpdatedAt: number
       }
-      case State.Ordered: {
-        makeMessageActive.run({
-          namespace
-        , id
-        , stateUpdatedAt: timestamp
-        })
+    >(`
+      UPDATE mq_message
+         SET state = ${MessageState.Active}
+           , state_updated_at = $stateUpdatedAt
+       WHERE queue_id = $queueId
+         AND id = $messageId;
+    `), [getDatabase()])
 
-        downcreaseOrdered(namespace)
-        increaseActive(namespace)
-        break
-      }
+    if (messageRow['state'] === MessageState.Ordered) {
+      activeMessage.run({
+        queueId
+      , messageId
+      , stateUpdatedAt: timestamp
+      })
+
+      increaseOrdered(queueId, -1)
+      increaseActive(queueId, 1)
+
+      state = MessageState.Active
+      orderedToActive = true
     }
 
-    const type = row['type']
-    const payload = row['payload']
-    const priority = row['priority']
-    assert(isntNull(type), 'The type should not be null')
-    assert(isntNull(payload), 'The payload should not be null')
+    const slotRows = lazyStatic(() => getDatabase().prepare<
+      {
+        queueId: string
+        messageId: string
+      }
+    , {
+        name: string
+        value: string | null
+      }
+    >(`
+      SELECT name
+           , value
+        FROM mq_message_slot
+    `), [getDatabase()]).all({ queueId, messageId })
 
     return {
-      type
-    , payload
-    , priority
+      message: {
+        state
+      , priority: messageRow['priority']
+      , slots: fromEntries(slotRows.map(row => [
+          row.name
+        , isntNull(row.value)
+          ? JSON.parse(row.value)
+          : undefined
+        ]))
+      }
+    , orderedToActive
     }
-  }), [getDatabase()])(namespace, id)
+  }), [getDatabase()])(queueId, messageId, timestamp)
 })

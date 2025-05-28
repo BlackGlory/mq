@@ -1,24 +1,36 @@
 import { getDatabase } from '@src/database.js'
-import { downcreaseFailed, increaseWaiting } from './utils/stats.js'
-import { getTimestamp } from './utils/get-timestamp.js'
+import { increaseFailed, increaseWaiting } from './increase-queue-stats.js'
 import { withLazyStatic, lazyStatic } from 'extra-lazy'
+import { MessageState } from '@src/contract.js'
 
-export const renewAllFailedMessages = withLazyStatic(function (namespace: string): void {
-  lazyStatic(() => getDatabase().transaction((namespace: string) => {
-    const timestamp = getTimestamp()
-
-    const result = lazyStatic(() => getDatabase().prepare(`
+/**
+ * @returns 是否有被renew的消息.
+ */
+export const renewAllFailedMessages = withLazyStatic((
+  queueId: string
+, timestamp: number
+): boolean => {
+  return lazyStatic(() => getDatabase().transaction((
+    queueId: string
+  , timestamp: number
+  ): boolean => {
+    const { changes } = lazyStatic(() => getDatabase().prepare<{
+      queueId: string
+      stateUpdatedAt: number
+    }>(`
       UPDATE mq_message
-         SET state = 'waiting'
+         SET state = ${MessageState.Waiting}
            , state_updated_at = $stateUpdatedAt
-       WHERE namespace = $namespace
-         AND state = 'failed';
+       WHERE queue_id = $queueId
+         AND state = ${MessageState.Failed};
     `), [getDatabase()]).run({
-      namespace
+      queueId
     , stateUpdatedAt: timestamp
     })
 
-    downcreaseFailed(namespace, result.changes)
-    increaseWaiting(namespace, result.changes)
-  }), [getDatabase()])(namespace)
+    increaseFailed(queueId, -changes)
+    increaseWaiting(queueId, changes)
+
+    return changes > 0
+  }), [getDatabase()])(queueId, timestamp)
 })
