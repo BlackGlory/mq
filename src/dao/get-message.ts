@@ -82,6 +82,8 @@ export const getMessage = withLazyStatic((
       SELECT name
            , value
         FROM mq_message_slot
+       WHERE queue_id = $queueId
+         AND message_id = $messageId
     `), [getDatabase()]).all({ queueId, messageId })
 
     return {
