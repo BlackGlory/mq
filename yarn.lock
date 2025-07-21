@@ -16,10 +16,10 @@
   resolved "https://registry.yarnpkg.com/@babel/helper-validator-identifier/-/helper-validator-identifier-7.27.1.tgz#a7054dcc145a967dd4dc8fee845a57c1316c9df8"
   integrity sha512-D2hP9eA+Sqx1kBZgzxZh0y1trbuU+JoDkiEwqhQ36nodYqJwyEIhPSdMNd7lOm/4io72luTPWH20Yda0xOuUow==
 
-"@blackglory/better-sqlite3-migrations@^0.1.19":
-  version "0.1.19"
-  resolved "https://registry.yarnpkg.com/@blackglory/better-sqlite3-migrations/-/better-sqlite3-migrations-0.1.19.tgz#f9ba24863415c5ae29ddcea603d653f55cbc9f39"
-  integrity sha512-9wup8iZbBRpYMafIIiGsAJAIg/NylBxmBrbd6Fgn2iFyWhk1r0didFAda7J0SUp4Pv5AuAaHdJZZJjfGZ6QVzw==
+"@blackglory/better-sqlite3-migrations@^0.1.20":
+  version "0.1.20"
+  resolved "https://registry.yarnpkg.com/@blackglory/better-sqlite3-migrations/-/better-sqlite3-migrations-0.1.20.tgz#befccac7c2edfaa0628d550ab0e5d0b51a627d23"
+  integrity sha512-Rkp+Be+DwUU+b9LBePqnYKaFJRCE2gsOwZ7N+I90FtZJd+0vF4xvxyWl1nxLMVxwCtJzbElhCE3baKfZjA2nDw==
   dependencies:
     "@blackglory/errors" "^2.3.0"
     "@blackglory/types" "^1.4.0"
