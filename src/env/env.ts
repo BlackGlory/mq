@@ -1,5 +1,5 @@
 import { ValueGetter } from 'value-getter'
-import { isNumber } from '@blackglory/types'
+import { isNumber } from 'extra-utils'
 import { assert, Getter } from '@blackglory/prelude'
 import { getCache } from '@env/cache.js'
 import * as path from 'path'
