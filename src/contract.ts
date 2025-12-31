@@ -114,11 +114,13 @@ export interface IAPI {
    * `null`为特殊值, 表示无优先级, 代表优先级最低.
    * 如果需要设置优先级, 推荐做法是将`0`视作默认优先级, 在此基础上调整优先级.
    * @throws {QueueNotFound}
+   * @throws {DuplicateMessageId}
    */
   draftMessage(
     queueId: string
   , priority: number | null
   , slotNames: NonEmptyArray<string>
+  , messageId?: string
   ): string
 
   /**
@@ -222,6 +224,7 @@ export class QueueNotFound extends CustomError {}
 export class MessageNotFound extends CustomError {}
 export class SlotNotFound extends CustomError {}
 export class DuplicateMessage extends CustomError {}
+export class DuplicateMessageId extends CustomError {}
 
 export class BadMessageState extends CustomError {
   constructor(...requiredStates: NonEmptyArray<MessageState>) {

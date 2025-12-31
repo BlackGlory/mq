@@ -27,7 +27,7 @@ export const API: ImplementationOf<IAPI> = {
 , removeQueue
 , getQueueStats
 , resetQueue
-, draftMessage
+, draftMessage: draftMessage as ImplementationOf<IAPI>['draftMessage']
 , setMessageSlot
 , orderMessage
 , getMessage
