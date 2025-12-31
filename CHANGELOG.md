@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.3](https://github.com/BlackGlory/mq/compare/v0.7.2...v0.7.3) (2025-12-31)
+
+
+### Features
+
+* add the new argument `messageId` to `draftMessage` ([f91a515](https://github.com/BlackGlory/mq/commit/f91a51512b886804b76e01b4e503615c36fd794e))
+
+
+### Bug Fixes
+
+* dependencies ([03d6d64](https://github.com/BlackGlory/mq/commit/03d6d64e683f51ff9f1245cd22271fcb933b1aa0))
+* peer dependencies ([056dcff](https://github.com/BlackGlory/mq/commit/056dcffb47a8c6522f15ff76a473b44a71bddc12))
+
 ### [0.7.2](https://github.com/BlackGlory/mq/compare/v0.7.1...v0.7.2) (2025-06-28)
 
 
