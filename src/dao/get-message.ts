@@ -38,6 +38,7 @@ export const getMessage = withLazyStatic((
     `), [getDatabase()])
       .get({ queueId, messageId })
     if (!messageRow) return null
+    const priority = messageRow.priority
     let state = messageRow.state
     let orderedToActive = false
 
@@ -55,7 +56,7 @@ export const getMessage = withLazyStatic((
          AND id = $messageId;
     `), [getDatabase()])
 
-    if (messageRow['state'] === MessageState.Ordered) {
+    if (state === MessageState.Ordered) {
       activeMessage.run({
         queueId
       , messageId
@@ -89,7 +90,7 @@ export const getMessage = withLazyStatic((
     return {
       message: {
         state
-      , priority: messageRow['priority']
+      , priority
       , slots: fromEntries(slotRows.map(row => [
           row.name
         , isntNull(row.value)

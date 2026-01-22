@@ -10,6 +10,7 @@ import { draftMessage} from './draft-message.js'
 import { setMessageSlot } from './set-message-slot.js'
 import { orderMessage } from './order-message.js'
 import { getMessage } from './get-message.js'
+import { peekMessage } from './peek-message.js'
 import { completeMessage } from './complete-message.js'
 import { failMessage } from './fail-message.js'
 import { renewMessage } from './renew-message.js'
@@ -31,6 +32,7 @@ export const API: ImplementationOf<IAPI> = {
 , setMessageSlot
 , orderMessage
 , getMessage
+, peekMessage
 , completeMessage
 , failMessage
 , renewMessage

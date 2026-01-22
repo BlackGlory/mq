@@ -69,7 +69,7 @@ describe('getMessage', () => {
           , state: MessageState.Active
           })
           expect(await client.getQueueStats(queueId)).toMatchObject({
-            waiting: 0
+            ordered: 0
           , active: 1
           })
           expect(getRawMessage(queueId, messageId)).toMatchObject({
