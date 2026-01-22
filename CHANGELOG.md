@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.4](https://github.com/BlackGlory/mq/compare/v0.7.3...v0.7.4) (2026-01-22)
+
+
+### Features
+
+* add `peekMessage` ([f51e2b3](https://github.com/BlackGlory/mq/commit/f51e2b3bcaf0288c9bb0f57308be59debdc7ff5a))
+
 ### [0.7.3](https://github.com/BlackGlory/mq/compare/v0.7.2...v0.7.3) (2025-12-31)
 
 
