@@ -54,7 +54,7 @@ export function setRawQueue(raw: IRawQueue): IRawQueue {
     , waiting
     , ordered
     , active
-    , faield
+    , failed
     , completed
     , abandoned
     )
@@ -73,7 +73,7 @@ export function setRawQueue(raw: IRawQueue): IRawQueue {
     , $waiting
     , $ordered
     , $active
-    , $faield
+    , $failed
     , $completed
     , $abandoned
     );
