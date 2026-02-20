@@ -24,6 +24,7 @@ export async function orderMessage(queueId: string, signal?: AbortSignal): Promi
       , eventHub.waitForQueue(queueId, Event.QueueRemoved, signal)
       , eventHub.waitForQueue(queueId, Event.MessageStateDraftingToWaiting, signal)
       , eventHub.waitForQueue(queueId, Event.MessageStateOrderedToWaiting, signal)
+      , eventHub.waitForQueue(queueId, Event.MessageStateOrderedToAbandoned, signal)
       , eventHub.waitForQueue(queueId, Event.MessageStateActiveToFailed, signal)
       , eventHub.waitForQueue(queueId, Event.MessageStateActiveToCompleted, signal)
       , eventHub.waitForQueue(queueId, Event.MessageStateActiveToWaiting, signal)
