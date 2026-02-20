@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.5](https://github.com/BlackGlory/mq/compare/v0.7.4...v0.7.5) (2026-02-20)
+
+
+### Bug Fixes
+
+* **clear-messages-by-state:** sql conditional statements ([82f308f](https://github.com/BlackGlory/mq/commit/82f308fb02f042e88137f360775a1799962ec3f1))
+* **order-message:** wait for `MessageStateOrderedToAbandoned` event ([885a52d](https://github.com/BlackGlory/mq/commit/885a52df12cd750bc72e6cda00f3cf2eef83198e))
+* **renew-message:** emit events ([37aa47f](https://github.com/BlackGlory/mq/commit/37aa47ffe220a0c866a32a62630a3390150c4075))
+
 ### [0.7.4](https://github.com/BlackGlory/mq/compare/v0.7.3...v0.7.4) (2026-01-22)
 
 
