@@ -180,7 +180,7 @@ export const setMessageSlot = withLazyStatic((
         queueId
       , messageId
       , name: slotName
-      , value: JSON.stringify(value)
+      , value: jsonStableStringify(value)
       })
       if (changes === 0) throw new SlotNotFound()
 
