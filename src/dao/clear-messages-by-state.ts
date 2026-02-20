@@ -15,10 +15,17 @@ export const clearMessagesByState = withLazyStatic((
     queueId: string
   , state: MessageState
   ): boolean => {
-    const { changes } = lazyStatic(() => getDatabase().prepare<{ queueId: string }>(`
+    const { changes } = lazyStatic(() => getDatabase().prepare<{
+      queueId: string
+      state: MessageState
+    }>(`
       DELETE FROM mq_message
-       WHERE queue_id = $queueId;
-    `), [getDatabase()]).run({ queueId })
+       WHERE queue_id = $queueId
+         AND state = $state;
+    `), [getDatabase()]).run({
+      queueId
+    , state
+    })
 
     increaseStatByState(queueId, state, -changes)
 
