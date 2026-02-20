@@ -91,12 +91,11 @@ export const getMessage = withLazyStatic((
       message: {
         state
       , priority
-      , slots: fromEntries(slotRows.map(row => [
-          row.name
-        , isntNull(row.value)
-          ? JSON.parse(row.value)
-          : undefined
-        ]))
+      , slots: fromEntries(
+          slotRows
+            .filter(row => isntNull(row.value))
+            .map(row => [row.name, JSON.parse(row.value!)])
+        )
       }
     , orderedToActive
     }
