@@ -51,6 +51,7 @@ export const abandonAllFailedMessages = withLazyStatic((
           removeMessage(queueId, row.id)
         }
 
+        // 调用`removeMessage()`会降低对应状态消息的数量, 在此处加回来.
         increaseAbandoned(queueId, rows.length)
 
         break

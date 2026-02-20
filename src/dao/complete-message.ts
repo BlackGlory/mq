@@ -59,6 +59,8 @@ export const completeMessage = withLazyStatic((
         removed = true
 
         removeMessage(queueId, messageId)
+
+        // 调用`removeMessage()`会降低对应状态消息的数量, 在此处加回来.
         increaseCompleted(queueId, 1)
 
         break
