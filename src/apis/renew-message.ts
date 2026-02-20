@@ -24,7 +24,7 @@ export const renewMessage = withLazyStatic((queueId: string, messageId: string):
     _renewMessage(queueId, messageId, timestamp)
   }), [getDatabase()])(queueId, messageId, timestamp)
 
-  eventHub.emit(messageId, Event.MessageStateFailedToWaiting)
+  eventHub.emit(queueId, Event.MessageStateFailedToWaiting)
 
   return null
 })
